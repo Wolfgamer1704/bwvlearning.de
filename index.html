@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lernhilfe: EVP-Test und WUB-Klausur</title>
+<title>Lernhilfe: EVP, WUB und SUD</title>
 <style>
 :root {
   --bg: #f4f6f9; --surface: #ffffff; --text: #1c2430; --muted: #5a6778; --line: #dde3ea;
@@ -44,7 +44,7 @@ header.top p { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
 .btn.good { background: var(--good); border-color: var(--good); color: #fff; }
 .btn.bad { background: transparent; border-color: var(--bad); color: var(--bad); }
 .btn:focus-visible, .chip:focus-visible, .opt:focus-visible, .fach:focus-visible, .tabs button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible, .bit:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.faches { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.faches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
 .fach { text-align: left; border: 2px solid var(--line); background: var(--surface); color: var(--text); border-radius: 14px; padding: 12px 14px; cursor: pointer; font: inherit; }
 .fach b { display: block; font-size: 1.05rem; }
 .fach span { color: var(--muted); font-size: .84rem; }
@@ -138,8 +138,14 @@ table.calc { border-collapse: collapse; width: 100%; max-width: 560px; margin: 8
 .choice .btnc b { display: block; margin-bottom: 3px; }
 .choice .btnc span { color: var(--muted); font-size: .9rem; }
 .rlist label.opt { display: flex; gap: 10px; align-items: flex-start; }
+pre.code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 10px 0; overflow-x: auto; font: .86rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; tab-size: 4; }
+pre.code code { background: none; padding: 0; font: inherit; }
+pre.code.bad { border-left: 4px solid var(--bad); }
+.q pre.code { margin: 8px 0 4px; }
+.arrcell { min-width: 54px; }
 footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-align: center; }
-@media (max-width: 520px) { .faches { grid-template-columns: 1fr; } .wrap { padding: 10px 10px 50px; } }
+@media (max-width: 720px) { .fach { padding: 10px 8px; } .fach b { font-size: .92rem; } .fach span { display: none; } }
+@media (max-width: 520px) { .wrap { padding: 10px 10px 50px; } }
 @media print { header.top .btn, .tabs, .faches, .row .btn { display: none; } details.sec > .body { display: block; } }
 
 </style>
@@ -147,13 +153,13 @@ footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-ali
 <body>
 <div class="wrap" id="app">
   <header class="top">
-    <div><h1>Lernhilfe</h1><p>Stand 1. November 2026 · Lernhilfen, Abfragen und Probetests</p></div>
+    <div><h1>Lernhilfe</h1><p>Stand 5. November 2026 · EVP, WUB und SUD: Lernhilfen, Abfragen und Probetests</p></div>
     <button class="btn ghost small" data-act="theme" aria-label="Hell oder dunkel umschalten">Hell / Dunkel</button>
   </header>
   <div class="faches" id="faches"></div>
   <div class="tabs" id="tabs"></div>
   <main id="view"></main>
-  <footer class="foot">Alle Zahlen zur Sozialversicherung und Steuer: Stand 2026, online geprüft. Das Material deiner Lehrkraft hat im Zweifel Vorrang.</footer>
+  <footer class="foot">Alle Zahlen zur Sozialversicherung und Steuer: Stand 2026, online geprüft. Java-Beispiele und -Aufgaben (SUD): mit Java 21 ausgeführt und geprüft. Das Material deiner Lehrkraft hat im Zweifel Vorrang.</footer>
 </div>
 <script>
 'use strict';
@@ -588,8 +594,418 @@ function schulnote(pct) {
   return { n: 6, tend: '', text: '6', name: names[6] };
 }
 
+/* ===== SUD-Generatoren (Java-Code nachvollziehen) ===== */
+const SUD = {};
+const jesc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const jpre = (src) => '<pre class="code"><code>' + jesc(src) + '</code></pre>';
+const dstr = (v) => (Number.isInteger(v) ? v.toFixed(1) : String(v));
+const intsOf = (s) => (String(s).replace(/\u2212/g, '-').match(/-?\d+/g) || []).map(Number);
+const sameInts = (s, arr) => { const x = intsOf(s); return x.length === arr.length && x.every((v, i) => v === arr[i]); };
+const stripQ = (s) => String(s).trim().replace(/^["'„“”]+|["'„“”]+$/g, '').replace(/\s+/g, '');
+const sameOut = (s, e) => stripQ(s) === String(e).replace(/\s+/g, '');
+const jnear = (s, v, tol) => {
+  const t = String(s).trim().replace(/\u2212/g, '-').replace(',', '.');
+  return /^-?\d+(\.\d+)?$/.test(t) && Math.abs(parseFloat(t) - v) <= (tol === undefined ? 1e-6 : tol);
+};
+const jlist = (arr) => '{' + arr.join(', ') + '}';
+const uniqInts = (r, n, lo, hi) => { const out = []; while (out.length < n) { const v = r.int(lo, hi); if (out.indexOf(v) < 0) out.push(v); } return out; };
+
+SUD.intDiv = { label: 'Division und Rest (int)', topic: 'Variablen & Operatoren', fn(r) {
+  const b = r.int(2, 9), q = r.int(2, 14), rest = r.int(0, b - 1), a = q * b + rest, op = r.pick(['/', '%']);
+  const v = op === '/' ? q : rest;
+  const code = `int a = ${a};\nint b = ${b};\nSystem.out.println(a ${op} b);`;
+  return { pts: 2, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: op === '/'
+      ? `<b>${v}</b><br>Beide Operanden sind <code>int</code>: ganzzahlige Division, die Nachkommastellen entfallen. ${a} : ${b} = ${q} Rest ${rest}, ausgegeben wird ${q}.`
+      : `<b>${v}</b><br><code>%</code> liefert den Rest der Ganzzahldivision: ${a} : ${b} = ${q} Rest <b>${rest}</b>.` };
+} };
+
+SUD.typeMix = { label: 'int, double und Cast', topic: 'Variablen & Operatoren', fn(r) {
+  const form = r.int(0, 2);
+  let a, b, line, v, why;
+  if (form === 0) {
+    b = r.int(2, 8); a = r.int(b + 1, 40); v = Math.trunc(a / b); line = 'double c = a / b;';
+    why = `<code>a / b</code> wird zuerst als <code>int</code>-Division gerechnet: ${a} / ${b} = ${v}. Erst danach wird das Ergebnis in <code>double</code> umgewandelt, also ${dstr(v)}.`;
+  } else if (form === 1) {
+    b = r.pick([2, 4, 5, 8]); a = r.int(1, 39); v = a / b; line = 'double c = (double) a / b;';
+    why = `Der Cast gilt nur für <code>a</code> und macht die Division zur Gleitkommadivision: ${a} / ${b} = ${dstr(v)}.`;
+  } else {
+    b = r.int(2, 8); a = r.int(b + 1, 40); v = Math.trunc(a / b); line = 'double c = (double) (a / b);';
+    why = `Die Klammer wird zuerst berechnet: ${a} / ${b} ist eine <code>int</code>-Division = ${v}. Der Cast auf <code>double</code> kommt zu spät, Ergebnis ${dstr(v)}.`;
+  }
+  const code = `int a = ${a};\nint b = ${b};\n${line}\nSystem.out.println(c);`;
+  return { pts: 2, ph: 'z. B. 2.5', code, wrap: 'main', expect: dstr(v), ans: dstr(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${dstr(v)}</b><br>${why}` };
+} };
+
+SUD.incDec = { label: 'Inkrement und Dekrement', topic: 'Variablen & Operatoren', fn(r) {
+  const x = r.int(3, 12);
+  const forms = [
+    { line: 'int b = a++;', res: [x + 1, x], why: `Postfix: <code>a++</code> liefert zuerst den alten Wert (${x}) und erhöht danach a auf ${x + 1}. Also b = ${x}.` },
+    { line: 'int b = ++a;', res: [x + 1, x + 1], why: `Präfix: <code>++a</code> erhöht zuerst (a = ${x + 1}) und liefert dann den neuen Wert. Also b = ${x + 1}.` },
+    { line: 'int b = a++ + ++a;', res: [x + 2, 2 * x + 2], why: `Von links nach rechts: <code>a++</code> liefert ${x}, a wird ${x + 1}. Dann <code>++a</code> macht a zu ${x + 2} und liefert ${x + 2}. b = ${x} + ${x + 2} = ${2 * x + 2}.` },
+    { line: 'int b = a-- - --a;', res: [x - 2, 2], why: `<code>a--</code> liefert ${x}, a wird ${x - 1}. Dann <code>--a</code> macht a zu ${x - 2} und liefert ${x - 2}. b = ${x} − ${x - 2} = 2.` },
+    { line: 'int b = a++ * 2;', res: [x + 1, 2 * x], why: `<code>a++</code> liefert den alten Wert ${x}, danach ist a = ${x + 1}. b = ${x} · 2 = ${2 * x}.` },
+    { line: 'int b = --a + a--;', res: [x - 2, 2 * x - 2], why: `<code>--a</code> macht a zu ${x - 1} und liefert ${x - 1}. <code>a--</code> liefert ${x - 1}, danach ist a = ${x - 2}. b = ${x - 1} + ${x - 1} = ${2 * x - 2}.` }
+  ];
+  const f = r.pick(forms);
+  const code = `int a = ${x};\n${f.line}\nSystem.out.println(a + " " + b);`;
+  const out = f.res[0] + ' ' + f.res[1];
+  return { pts: 3, ph: 'z. B. 4 7 (erst a, dann b)', code, wrap: 'main', expect: out, ans: out,
+    prompt: `Was gibt das Programm aus? Die Ausgabe zeigt zuerst <code>a</code>, dann <code>b</code>.${jpre(code)}`,
+    check: (s) => sameInts(s, f.res),
+    solution: `<b>${out}</b><br>${f.why}` };
+} };
+
+SUD.compound = { label: 'Zusammengesetzte Zuweisung', topic: 'Variablen & Operatoren', fn(r) {
+  const x0 = r.int(3, 20), A = r.int(2, 9), B = r.int(2, 5), C = r.int(1, 9), D = r.int(2, 4), last = r.pick(['/=', '%=']);
+  let x = x0; const st = [`x = ${x0}`];
+  x += A; st.push(`x += ${A} → ${x}`);
+  x *= B; st.push(`x *= ${B} → ${x}`);
+  x -= C; st.push(`x -= ${C} → ${x}`);
+  const before = x; x = last === '/=' ? Math.trunc(x / D) : x % D;
+  st.push(`x ${last} ${D} → ${before} ${last === '/=' ? ':' : 'mod'} ${D} = ${x}`);
+  const code = `int x = ${x0};\nx += ${A};\nx *= ${B};\nx -= ${C};\nx ${last} ${D};\nSystem.out.println(x);`;
+  return { pts: 2, ph: 'Zahl', code, wrap: 'main', expect: String(x), ans: String(x),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, x),
+    solution: `<b>${x}</b><br>Schritt für Schritt: ${st.join(' · ')}.${last === '/=' ? ' Die letzte Division ist eine <code>int</code>-Division (abschneiden).' : ' <code>%=</code> speichert den Rest.'}` };
+} };
+
+SUD.strConcat = { label: 'Text und Zahlen verketten', topic: 'Variablen & Operatoren', fn(r) {
+  const form = r.int(0, 6), a = r.int(1, 9), b = r.int(1, 9), w = r.pick(['x', 'cm', 'kg']), n = r.int(1, 9);
+  const cc = r.pick(['a', 'c', 'f', 'k', 'm']), ci = cc.charCodeAt(0);
+  let decl, expr, out, why;
+  if (form <= 3) decl = `int a = ${a};\nint b = ${b};\n`;
+  else decl = `char c = '${cc}';\nint n = ${n};\n`;
+  if (form === 0) { expr = `a + b + "${w}" + a + b`; out = String(a + b) + w + a + b; why = `Links nach rechts: ${a} + ${b} = ${a + b} (noch Zahlen), dann „${w}“ angehängt, danach wird a und b als Text angehängt: ${out}.`; }
+  else if (form === 1) { expr = `"${w}" + a + b`; out = w + a + b; why = `Sobald links ein String steht, wird alles danach angehängt, nicht addiert: „${w}“ + ${a} + ${b} = ${out}.`; }
+  else if (form === 2) { expr = `"${w}" + (a + b)`; out = w + (a + b); why = `Die Klammer wird zuerst berechnet: ${a} + ${b} = ${a + b}, dann angehängt: ${out}.`; }
+  else if (form === 3) { expr = `a + b + "${w}"`; out = String(a + b) + w; why = `${a} + ${b} wird erst addiert (beides <code>int</code>) = ${a + b}, dann kommt „${w}“ dazu: ${out}.`; }
+  else if (form === 4) { expr = 'c + n'; out = String(ci + n); why = `<code>char</code> + <code>int</code> rechnet mit dem Zeichencode: '${cc}' = ${ci}, ${ci} + ${n} = ${ci + n}. Das Ergebnis ist ein <code>int</code>.`; }
+  else if (form === 5) { expr = '(char) (c + n)'; out = String.fromCharCode(ci + n); why = `'${cc}' = ${ci}, plus ${n} = ${ci + n}. Der Cast <code>(char)</code> macht daraus wieder das Zeichen „${out}“.`; }
+  else { expr = '"" + c + n'; out = cc + n; why = `Der leere String macht alles zu Text: „${cc}“ und „${n}“ werden angehängt: ${out}.`; }
+  const code = `${decl}System.out.println(${expr});`;
+  return { pts: 2, ph: 'Ausgabe', code, wrap: 'main', expect: out, ans: out,
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => sameOut(s, out),
+    solution: `<b>${jesc(out)}</b><br>${why}` };
+} };
+
+SUD.castRound = { label: 'Cast, Runden, Zeichen', topic: 'Variablen & Operatoren', fn(r) {
+  const form = r.int(0, 5), d0 = r.int(11, 99) / 10, d = Number.isInteger(d0) ? d0 + 0.3 : d0, ch = r.pick(['A', 'B', 'K', 'M', 'Z']), k = r.int(1, 5), nn = r.int(65, 90);
+  let expr, out, why, numeric = true;
+  if (form === 0) { expr = `(int) ${d}`; out = Math.trunc(d); why = `Der Cast auf <code>int</code> schneidet die Nachkommastellen ab, er rundet nicht.`; }
+  else if (form === 1) { expr = `(int) -${d}`; out = Math.trunc(-d); why = `Abschneiden in Richtung null: −${d} wird zu ${out}.`; }
+  else if (form === 2) { expr = `Math.round(${d})`; out = Math.round(d); why = `<code>Math.round</code> rundet kaufmännisch auf die nächste ganze Zahl (ab ,5 aufwärts).`; }
+  else if (form === 3) { expr = `(int) '${ch}'`; out = ch.charCodeAt(0); why = `Der Cast liefert den ASCII-Code des Zeichens: '${ch}' = ${out}.`; }
+  else if (form === 4) { expr = `(char) ${nn}`; out = String.fromCharCode(nn); numeric = false; why = `Der Code ${nn} gehört zum Zeichen „${out}“.`; }
+  else { expr = `(char) ('${ch}' + ${k})`; out = String.fromCharCode(ch.charCodeAt(0) + k); numeric = false; why = `'${ch}' = ${ch.charCodeAt(0)}, plus ${k} = ${ch.charCodeAt(0) + k}, als <code>char</code> „${out}“.`; }
+  const code = `System.out.println(${expr});`;
+  return { pts: 2, ph: numeric ? 'Zahl' : 'Zeichen', code, wrap: 'main', expect: String(out), ans: String(out),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: numeric ? ((s) => jnear(s, out)) : ((s) => sameOut(s, out)),
+    solution: `<b>${out}</b><br>${why}` };
+} };
+
+SUD.forCount = { label: 'for-Schleife auswerten', topic: 'Schleifen', fn(r) {
+  const form = r.int(0, 2);
+  let code, v, why;
+  if (form === 0) {
+    const S = r.int(0, 5), K = r.int(2, 4), E = S + K * r.int(3, 8) + r.int(0, K - 1); let c = 0;
+    for (let i = S; i < E; i += K) c++;
+    v = c; code = `int count = 0;\nfor (int i = ${S}; i < ${E}; i += ${K}) {\n    count++;\n}\nSystem.out.println(count);`;
+    why = `i läuft ${S}, ${S + K}, ${S + 2 * K} … solange i &lt; ${E}. Das sind <b>${c}</b> Durchläufe.`;
+  } else if (form === 1) {
+    const S = r.int(1, 4), K = r.int(1, 3), E = S + K * r.int(3, 7); let s = 0; const parts = [];
+    for (let i = S; i <= E; i += K) { s += i; parts.push(i); }
+    v = s; code = `int sum = 0;\nfor (int i = ${S}; i <= ${E}; i += ${K}) {\n    sum += i;\n}\nSystem.out.println(sum);`;
+    why = `i nimmt die Werte ${parts.join(', ')} an (bei <code>&lt;=</code> zählt die Obergrenze mit). Summe = <b>${s}</b>.`;
+  } else {
+    const E = r.int(2, 5), S = E + r.int(4, 12), K = r.int(2, 3); let s = 0; const parts = [];
+    for (let i = S; i > E; i -= K) { s += i; parts.push(i); }
+    v = s; code = `int sum = 0;\nfor (int i = ${S}; i > ${E}; i -= ${K}) {\n    sum += i;\n}\nSystem.out.println(sum);`;
+    why = `i zählt abwärts: ${parts.join(', ')} (Bedingung <code>i &gt; ${E}</code>). Summe = <b>${s}</b>.`;
+  }
+  return { pts: 2, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+SUD.whileTrace = { label: 'while-Schleife auswerten', topic: 'Schleifen', fn(r) {
+  const form = r.int(0, 2);
+  let code, v, why;
+  if (form === 0) {
+    let n = r.int(20, 200), steps = 0; const n0 = n, seq = [n];
+    while (n > 1) { n = Math.trunc(n / 2); steps++; seq.push(n); }
+    v = steps; code = `int n = ${n0};\nint steps = 0;\nwhile (n > 1) {\n    n = n / 2;\n    steps++;\n}\nSystem.out.println(steps);`;
+    why = `n halbiert sich (ganzzahlig): ${seq.join(' → ')}. Das sind <b>${steps}</b> Schritte.`;
+  } else if (form === 1) {
+    let x = r.int(1, 5); const L = r.int(50, 300), seq = [x];
+    const x0 = x; while (x < L) { x = x * 2 + 1; seq.push(x); }
+    v = x; code = `int x = ${x0};\nwhile (x < ${L}) {\n    x = x * 2 + 1;\n}\nSystem.out.println(x);`;
+    why = `Werte von x: ${seq.join(' → ')}. Sobald x ≥ ${L}, bricht die Schleife ab: <b>${x}</b>.`;
+  } else {
+    let n = r.int(10, 30), s = 0; const K = r.int(3, 7), n0 = n, parts = [];
+    while (n > 0) { s += n; parts.push(n); n -= K; }
+    v = s; code = `int n = ${n0};\nint s = 0;\nwhile (n > 0) {\n    s += n;\n    n -= ${K};\n}\nSystem.out.println(s);`;
+    why = `n nimmt ${parts.join(', ')} an, solange n &gt; 0. Summe = <b>${s}</b>.`;
+  }
+  return { pts: 3, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+SUD.doWhile = { label: 'while oder do-while?', topic: 'Schleifen', fn(r) {
+  const T = r.int(3, 8), S = T + r.int(0, 6), foot = r.next() < 0.5;
+  const code = foot ? `int i = ${S};\ndo {\n    i++;\n} while (i < ${T});\nSystem.out.println(i);` : `int i = ${S};\nwhile (i < ${T}) {\n    i++;\n}\nSystem.out.println(i);`;
+  const v = foot ? S + 1 : S;
+  return { pts: 2, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: foot
+      ? `<b>${v}</b><br><code>do-while</code> ist fußgesteuert: der Rumpf läuft <b>mindestens einmal</b>, erst danach wird <code>${S + 1} &lt; ${T}</code> geprüft (falsch, Ende).`
+      : `<b>${v}</b><br><code>while</code> ist kopfgesteuert: die Bedingung <code>${S} &lt; ${T}</code> ist schon am Anfang falsch, der Rumpf läuft <b>gar nicht</b>. i bleibt ${S}.` };
+} };
+
+SUD.digitSum = { label: 'Ziffern-Schleifen (% 10, / 10)', topic: 'Schleifen', fn(r) {
+  const form = r.int(0, 2);
+  let n = r.int(100, 99999); if (n % 10 === 0) n += r.int(1, 9);
+  const digits = String(n).split('').map(Number);
+  let code, v, why;
+  if (form === 0) {
+    v = digits.reduce((a, b) => a + b, 0);
+    code = `int n = ${n};\nint sum = 0;\nwhile (n > 0) {\n    sum += n % 10;\n    n /= 10;\n}\nSystem.out.println(sum);`;
+    why = `Jede Runde: letzte Ziffer mit <code>% 10</code> addieren, mit <code>/ 10</code> abschneiden. Ziffern ${digits.reverse().join(', ')} → Quersumme <b>${v}</b>.`;
+  } else if (form === 1) {
+    v = digits.length;
+    code = `int n = ${n};\nint count = 0;\nwhile (n > 0) {\n    n /= 10;\n    count++;\n}\nSystem.out.println(count);`;
+    why = `Pro Runde fällt eine Stelle weg. ${n} hat <b>${v}</b> Stellen.`;
+  } else {
+    v = Number(digits.slice().reverse().join(''));
+    code = `int n = ${n};\nint rev = 0;\nwhile (n > 0) {\n    rev = rev * 10 + n % 10;\n    n /= 10;\n}\nSystem.out.println(rev);`;
+    why = `Die Ziffern werden von hinten nach vorn angehängt: Ergebnis <b>${v}</b> (Zahl rückwärts).`;
+  }
+  return { pts: 3, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+SUD.nested = { label: 'Geschachtelte Schleifen zählen', topic: 'Schleifen', fn(r) {
+  const form = r.int(0, 2), R = r.int(3, 8), C = r.int(2, 7);
+  let code, v, why;
+  if (form === 0) {
+    v = R * C; code = `int count = 0;\nfor (int i = 0; i < ${R}; i++) {\n    for (int j = 0; j < ${C}; j++) {\n        count++;\n    }\n}\nSystem.out.println(count);`;
+    why = `Außen ${R} Runden, innen jedes Mal ${C}: ${R} · ${C} = <b>${v}</b>.`;
+  } else if (form === 1) {
+    v = R * (R + 1) / 2; code = `int count = 0;\nfor (int i = 1; i <= ${R}; i++) {\n    for (int j = 1; j <= i; j++) {\n        count++;\n    }\n}\nSystem.out.println(count);`;
+    why = `Die innere Schleife läuft in Runde i genau i-mal: 1 + 2 + … + ${R} = <b>${v}</b>.`;
+  } else {
+    v = R * (R - 1) / 2; code = `int count = 0;\nfor (int i = 0; i < ${R}; i++) {\n    for (int j = 0; j < i; j++) {\n        count++;\n    }\n}\nSystem.out.println(count);`;
+    why = `Innen läuft j von 0 bis i−1, also i-mal: 0 + 1 + … + ${R - 1} = <b>${v}</b>.`;
+  }
+  return { pts: 3, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+SUD.switchFall = { label: 'switch mit und ohne break', topic: 'Verzweigungen', fn(r) {
+  const n = r.int(3, 4), v0 = r.int(1, 3), letters = r.shuffle(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']).slice(0, n + 1);
+  const vals = [], brk = []; for (let i = 0; i < n; i++) { vals.push(v0 + i); brk.push(i < n - 1 && r.next() < 0.5); }
+  const withDef = r.next() < 0.6, defL = letters[n];
+  const hit = r.next() < 0.75 || !withDef;
+  const inp = hit ? r.pick(vals) : v0 + n + r.int(1, 3);
+  let out = '', start = hit ? vals.indexOf(inp) : n;
+  for (let i = start; i < n; i++) { out += letters[i]; if (brk[i]) break; }
+  let stopped = false; for (let i = start; i < n; i++) if (brk[i]) { stopped = true; break; }
+  if (!stopped && withDef) out += defL;
+  let code = `int n = ${inp};\nswitch (n) {\n`;
+  for (let i = 0; i < n; i++) { code += `    case ${vals[i]}:\n        System.out.print("${letters[i]}");\n` + (brk[i] ? '        break;\n' : ''); }
+  if (withDef) code += `    default:\n        System.out.print("${defL}");\n`;
+  code += '}';
+  return { pts: 3, ph: 'Buchstaben ohne Trennzeichen', code, wrap: 'main', expect: out, ans: out,
+    prompt: `Was gibt das Programm aus? (<code>print</code> macht keinen Zeilenumbruch.)${jpre(code)}`,
+    check: (s) => sameOut(s, out),
+    solution: `<b>${out}</b><br>${hit ? `Der Einsprung erfolgt bei <code>case ${inp}</code>.` : `Kein <code>case</code> passt, es geht bei <code>default</code> weiter.`} Ohne <code>break</code> laufen die folgenden Fälle einfach mit (Fall-through), bis ein <code>break</code> kommt oder der switch endet.` };
+} };
+
+SUD.arrIndex = { label: 'Array: Index und Länge', topic: 'Arrays', fn(r) {
+  const len = r.int(4, 7), a = uniqInts(r, len, 2, 40), form = r.int(0, 3);
+  let expr, v, why;
+  if (form === 0) { expr = 'a[a.length - 1]'; v = a[len - 1]; why = `<code>a.length</code> ist ${len}, der letzte Index ist ${len - 1}. a[${len - 1}] = ${v}.`; }
+  else if (form === 1) { expr = 'a.length'; v = len; why = `<code>length</code> ist die Anzahl der Elemente (ohne Klammern bei Arrays): ${len}.`; }
+  else if (form === 2) { expr = 'a[1] + a[3]'; v = a[1] + a[3]; why = `Index zählt ab 0: a[1] = ${a[1]}, a[3] = ${a[3]}. Summe ${v}.`; }
+  else { expr = 'a[a.length / 2]'; v = a[Math.trunc(len / 2)]; why = `${len} / 2 = ${Math.trunc(len / 2)} (<code>int</code>-Division), also a[${Math.trunc(len / 2)}] = ${v}.`; }
+  const code = `int[] a = ${jlist(a)};\nSystem.out.println(${expr});`;
+  return { pts: 2, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+SUD.arrLoop = { label: 'Array und Schleife auswerten', topic: 'Arrays', fn(r) {
+  const len = r.int(4, 7), a = uniqInts(r, len, 1, 30), form = r.int(0, 5);
+  let body, tail, v, why; const T = r.pick([8, 10, 12, 15, 18]);
+  if (form === 0) {
+    let s = 0; const used = []; for (let i = 0; i < len; i += 2) { s += a[i]; used.push(a[i]); }
+    v = s; body = 'int sum = 0;\nfor (int i = 0; i < a.length; i += 2) {\n    sum += a[i];\n}\n'; tail = 'sum';
+    why = `Es werden die Indizes 0, 2, 4 … addiert: ${used.join(' + ')} = <b>${s}</b>.`;
+  } else if (form === 1) {
+    const c = a.filter((x) => x > T).length;
+    v = c; body = `int count = 0;\nfor (int v : a) {\n    if (v > ${T}) {\n        count++;\n    }\n}\n`; tail = 'count';
+    why = `Gezählt werden die Elemente größer als ${T}: ${a.filter((x) => x > T).join(', ') || 'keine'} → <b>${c}</b>.`;
+  } else if (form === 2) {
+    const b = a.slice(); for (let i = 1; i < len; i++) b[i] += b[i - 1];
+    v = b[len - 1]; body = 'for (int i = 1; i < a.length; i++) {\n    a[i] = a[i] + a[i - 1];\n}\n'; tail = 'a[a.length - 1]';
+    why = `Jedes Element wird zur Summe aller davor: ${jlist(b)}. Das letzte Element ist die Gesamtsumme <b>${v}</b>.`;
+  } else if (form === 3) {
+    v = a[len - 1]; body = 'int[] b = new int[a.length];\nfor (int i = 0; i < a.length; i++) {\n    b[a.length - 1 - i] = a[i];\n}\n'; tail = 'b[0]';
+    why = `Die Reihenfolge wird umgedreht, b[0] bekommt a[${len - 1}] = <b>${v}</b>.`;
+  } else if (form === 4) {
+    v = a[2] * 2; body = 'for (int i = 0; i < a.length; i++) {\n    a[i] *= 2;\n}\n'; tail = 'a[2]';
+    why = `Jedes Element wird verdoppelt (Zugriff über den Index ändert das Array): ${a[2]} · 2 = <b>${v}</b>.`;
+  } else {
+    v = a[0]; body = 'for (int v : a) {\n    v = v * 2;\n}\n'; tail = 'a[0]';
+    why = `Falle: In der for-each-Schleife ist <code>v</code> nur eine <b>Kopie</b> des Elements. Das Array bleibt unverändert, a[0] = <b>${v}</b>.`;
+  }
+  const code = `int[] a = ${jlist(a)};\n${body}System.out.println(${tail});`;
+  return { pts: 3, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+SUD.arrMaxIdx = { label: 'Maximum und Index suchen', topic: 'Arrays', fn(r) {
+  const len = r.int(5, 8), a = uniqInts(r, len, 1, 60), askIdx = r.next() < 0.5, useMin = r.next() < 0.4;
+  const cmp = useMin ? '<' : '>';
+  let m = 0; for (let i = 1; i < len; i++) if (useMin ? a[i] < a[m] : a[i] > a[m]) m = i;
+  const code = `int[] a = ${jlist(a)};\nint best = 0;\nfor (int i = 1; i < a.length; i++) {\n    if (a[i] ${cmp} a[best]) {\n        best = i;\n    }\n}\nSystem.out.println(${askIdx ? 'best' : 'a[best]'});`;
+  const v = askIdx ? m : a[m];
+  return { pts: 3, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus? (<code>best</code> speichert einen <b>Index</b>.)${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>Gesucht ist der Index des ${useMin ? 'kleinsten' : 'größten'} Elements: ${useMin ? 'Minimum' : 'Maximum'} ${a[m]} steht an Index ${m}. ${askIdx ? 'Ausgegeben wird der Index.' : 'Ausgegeben wird das Element a[best].'}` };
+} };
+
+SUD.arrSize = { label: 'Array: Größe und Standardwerte', topic: 'Arrays', fn(r) {
+  const form = r.int(0, 2);
+  let code, v, why, ph = 'Zahl', check, ans;
+  if (form === 0) {
+    const N = r.int(3, 12); v = N - 1; ans = String(v);
+    code = `int[] a = new int[${N}];\nSystem.out.println(a.length - 1);`;
+    why = `Das Array hat ${N} Elemente, die Indizes laufen von 0 bis ${N - 1}. Das ist der höchste gültige Index.`;
+    check = (s) => jnear(s, v);
+  } else if (form === 1) {
+    const R = r.int(2, 6), C = r.int(2, 6); v = R * C; ans = String(v);
+    code = `int[][] m = new int[${R}][${C}];\nSystem.out.println(m.length * m[0].length);`;
+    why = `<code>m.length</code> = ${R} Zeilen, <code>m[0].length</code> = ${C} Spalten → ${R} · ${C} = ${v} Elemente.`;
+    check = (s) => jnear(s, v);
+  } else {
+    const T = r.pick([['int', '0'], ['double', '0.0'], ['boolean', 'false'], ['String', 'null']]);
+    v = T[1]; ans = T[1]; ph = 'Ausgabe';
+    code = `${T[0]}[] a = new ${T[0]}[3];\nSystem.out.println(a[0]);`;
+    why = `Neue Arrays werden automatisch mit Standardwerten gefüllt: Zahlen 0 bzw. 0.0, <code>boolean</code> false, Referenztypen wie <code>String</code> <code>null</code>.`;
+    check = (s) => (T[0] === 'int' || T[0] === 'double' ? jnear(s, 0) : stripQ(s).toLowerCase() === T[1]);
+  }
+  return { pts: 2, ph, code, wrap: 'main', expect: String(v), ans,
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check,
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+SUD.arr2d = { label: 'Zweidimensionales Array', topic: 'Arrays', fn(r) {
+  const R = r.int(2, 4), C = r.int(3, 5), ri = r.int(0, R - 1), ci = r.int(0, C - 1), form = r.int(0, 2);
+  const fs = [['i * ' + C + ' + j', (i, j) => i * C + j, `Jede Zeile beginnt bei i · ${C}, dann wird j addiert.`], ['i + j', (i, j) => i + j, 'Summe aus Zeilen- und Spaltenindex.'], ['i * j', (i, j) => i * j, 'Produkt aus Zeilen- und Spaltenindex (Zeile 0 und Spalte 0 ergeben immer 0).']];
+  const f = fs[form], v = f[1](ri, ci);
+  const code = `int[][] m = new int[${R}][${C}];\nfor (int i = 0; i < ${R}; i++) {\n    for (int j = 0; j < ${C}; j++) {\n        m[i][j] = ${f[0]};\n    }\n}\nSystem.out.println(m[${ri}][${ci}]);`;
+  return { pts: 3, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus? (Der erste Index ist die Zeile, der zweite die Spalte.)${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>m[${ri}][${ci}] = ${f[0].replace(/i/g, ri).replace(/j/g, ci)} = ${v}. ${f[2]}` };
+} };
+
+SUD.callByValue = { label: 'Parameterübergabe (call-by-value)', topic: 'Methoden', fn(r) {
+  const form = r.int(0, 4), K = r.int(2, 9), N = r.int(3, 20), V = r.int(50, 99), F = r.int(1, 9);
+  let code, v, why;
+  if (form === 0) {
+    v = N; code = `static void change(int x) {\n    x = x + ${K};\n}\n\npublic static void main(String[] args) {\n    int n = ${N};\n    change(n);\n    System.out.println(n);\n}`;
+    why = `Bei primitiven Typen wird der <b>Wert kopiert</b> (call-by-value). Die Methode ändert nur ihre eigene Kopie x, n bleibt ${N}.`;
+  } else if (form === 1) {
+    v = N + K; code = `static int change(int x) {\n    return x + ${K};\n}\n\npublic static void main(String[] args) {\n    int n = ${N};\n    n = change(n);\n    System.out.println(n);\n}`;
+    why = `Das Ergebnis wird mit <code>return</code> zurückgegeben und <code>n</code> zugewiesen: ${N} + ${K} = ${v}.`;
+  } else if (form === 2) {
+    v = V; code = `static void fill(int[] a) {\n    a[0] = ${V};\n}\n\npublic static void main(String[] args) {\n    int[] arr = {${F}, 2, 3};\n    fill(arr);\n    System.out.println(arr[0]);\n}`;
+    why = `Bei Arrays wird die <b>Referenz</b> kopiert. Beide Variablen zeigen auf dasselbe Array, die Änderung am Element ist also auch in main sichtbar: ${V}.`;
+  } else if (form === 3) {
+    v = F; code = `static void reset(int[] a) {\n    a = new int[]{0, 0, 0};\n}\n\npublic static void main(String[] args) {\n    int[] arr = {${F}, 2, 3};\n    reset(arr);\n    System.out.println(arr[0]);\n}`;
+    why = `In der Methode wird nur die <b>lokale Referenz</b> a auf ein neues Array umgebogen. Das Array in main bleibt unberührt: arr[0] = ${F}.`;
+  } else {
+    v = N; code = `static int twice(int x) {\n    return x * 2;\n}\n\npublic static void main(String[] args) {\n    int n = ${N};\n    twice(n);\n    System.out.println(n);\n}`;
+    why = `Der Rückgabewert wird nicht gespeichert, er verfällt. n ändert sich nie (call-by-value), Ausgabe ${N}.`;
+  }
+  return { pts: 3, ph: 'Zahl', code, wrap: 'class', expect: String(v), ans: String(v),
+    prompt: `Was gibt <code>main</code> aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+const SUD_WIDEN = ['char', 'int', 'long', 'float', 'double'];
+SUD.overload = { label: 'Überladung: welche Methode wird gerufen?', topic: 'Methoden', fn(r) {
+  const lits = { int: String(r.int(2, 99)), char: "'" + r.pick(['a', 'k', 'x', 'z', 'm']) + "'", long: r.int(2, 99) + 'L', float: (r.int(11, 99) / 10 + 0.05).toFixed(2).replace(/0$/, '') + 'f', double: (r.int(11, 99) / 10 + 0.5).toFixed(1), String: '"' + r.pick(['hi', 'abc', 'Java', 'ok']) + '"' };
+  const mn = r.pick(['show', 'print2', 'test', 'ausgabe']);
+  let overloads, argT, best;
+  for (let guard = 0; guard < 200; guard++) {
+    const pool = r.shuffle(['int', 'long', 'double', 'String']).slice(0, 3);
+    overloads = ['int', 'long', 'double', 'String'].filter((p) => pool.indexOf(p) >= 0);
+    argT = r.pick(['int', 'char', 'long', 'float', 'double', 'String']);
+    const appl = overloads.filter((p) => (argT === 'String' ? p === 'String' : p !== 'String' && SUD_WIDEN.indexOf(p) >= SUD_WIDEN.indexOf(argT)));
+    if (!appl.length) continue;
+    best = appl.slice().sort((x, y) => SUD_WIDEN.indexOf(x) - SUD_WIDEN.indexOf(y))[0];
+    if (argT === 'String') best = 'String';
+    break;
+  }
+  const lit = lits[argT];
+  const code = overloads.map((p) => `static void ${mn}(${p} x) {\n    System.out.println("${p}");\n}`).join('\n\n') + `\n\npublic static void main(String[] args) {\n    ${mn}(${lit});\n}`;
+  const exact = best === argT;
+  return { pts: 3, ph: 'int, long, double oder String', code, wrap: 'class', expect: best, ans: best,
+    prompt: `Welche Zeile gibt das Programm aus?${jpre(code)}`,
+    check: (s) => String(s).trim().toLowerCase().replace(/["']/g, '') === best.toLowerCase(),
+    solution: `<b>${best}</b><br>Das Argument <code>${jesc(lit)}</code> hat den Typ <code>${argT}</code>. ${exact ? 'Es gibt eine Methode mit genau passendem Parametertyp, die wird gewählt.' : `Eine genau passende Methode fehlt, der Compiler wählt deshalb die <b>nächstgrößere</b> passende Variante (Reihenfolge: char → int → long → float → double): <code>${best}</code>.`} Der Rückgabetyp spielt bei der Auswahl keine Rolle.` };
+} };
+
+const ZB = { rules: 'Preis je Zahnbürste 2,50 €. Rabatte und Aufschläge wirken nacheinander, jeweils auf den schon veränderten Preis: <b>Menge</b> ab 500 Stück −5 %, ab 20.000 Stück −10 % (statt −5 %) · <b>Kategorie w (weich)</b> mit <b>Griff k (klein)</b> −5 %; <b>m oder h</b> mit <b>k</b> −2 % · <b>w</b> mit <b>n (normal)</b> oder <b>g (groß)</b> −1 % · <b>h (hart)</b> mit <b>n</b> +2,5 %, <b>h</b> mit <b>g</b> +5 %.' };
+const zbCalc = (menge, kat, griff) => {
+  let p = menge * 2.5; const st = [`${menge} · 2,50 € = ${fmtNum(p, 2)} €`];
+  if (menge >= 20000) { p *= 0.9; st.push(`Menge ≥ 20.000: −10 % → ${fmtNum(p, 3)} €`); }
+  else if (menge >= 500) { p *= 0.95; st.push(`Menge ≥ 500: −5 % → ${fmtNum(p, 3)} €`); }
+  if (griff === 'k') { if (kat === 'w') { p *= 0.95; st.push(`w und k: −5 % → ${fmtNum(p, 3)} €`); } else { p *= 0.98; st.push(`${kat} und k: −2 % → ${fmtNum(p, 3)} €`); } }
+  if (kat === 'w' && (griff === 'n' || griff === 'g')) { p *= 0.99; st.push(`w und ${griff}: −1 % → ${fmtNum(p, 3)} €`); }
+  if (kat === 'h' && griff === 'n') { p *= 1.025; st.push(`h und n: +2,5 % → ${fmtNum(p, 3)} €`); }
+  if (kat === 'h' && griff === 'g') { p *= 1.05; st.push(`h und g: +5 % → ${fmtNum(p, 3)} €`); }
+  return { p, st };
+};
+SUD.zahnbuerste = { label: 'Black-Box-Test: Erwartungswert berechnen', topic: 'Testen', fn(r) {
+  const menge = r.pick([r.int(20, 499), 499, 500, r.int(501, 19999), 19999, 20000, r.int(20001, 40000), 500, 20000]);
+  const kat = r.pick(['w', 'm', 'h']), griff = r.pick(['g', 'n', 'k']);
+  const names = { w: 'weich', m: 'mittelhart', h: 'hart', g: 'groß', n: 'normal', k: 'klein' };
+  const c = zbCalc(menge, kat, griff), v = Math.round(c.p * 100) / 100;
+  return { pts: 3, ph: 'Betrag in €', code: null, wrap: null, expect: String(v), ans: String(v),
+    prompt: `<div class="muted">${ZB.rules}</div>Berechne den <b>erwarteten Endpreis</b> (auf Cent gerundet) für den Testfall: Menge <b>${fmtNum(menge, 0)}</b>, Kategorie <b>${kat}</b> (${names[kat]}), Griff <b>${griff}</b> (${names[griff]}).`,
+    check: (s) => near(s, v, 0.011),
+    solution: `<b>${fmtNum(v, 2)} €</b><br>${c.st.join('<br>')}<br><small>Zwischenwerte nicht runden, erst das Endergebnis auf Cent. Grenzwerte (499/500 und 19.999/20.000) gehören immer in einen Black-Box-Test.</small>` };
+} };
+
+
 if (typeof module !== 'undefined') {
-  module.exports = { SATZ, sozialPunkte, satzText, makeRng, bin, hexs, grp, cleanBits, twos, fromTwos, invert, parseNum, near, EVP, WUB, nettoCalc, genTask, schulnote, SV, eur };
+  module.exports = { SATZ, sozialPunkte, satzText, makeRng, bin, hexs, grp, cleanBits, twos, fromTwos, invert, parseNum, near, EVP, WUB, nettoCalc, genTask, schulnote, SV, eur, SUD, zbCalc };
 }
 
 'use strict';
@@ -1471,6 +1887,876 @@ D.lern.wub.unshift({ id: 'ov', title: 'Überblick: Was kommt in der WUB-Klausur 
 <div class="warn"><b>Zahlen im Material:</b> Euer Blatt rechnet mit den <b>Sätzen von 2024</b> (Zusatzbeitrag 1,7 %, Pflege 3,4 %). Außerdem steht in der Tabelle für die Arbeitslosenversicherung <b>2,4 %</b>, die Musterlösung rechnet aber mit <b>2,6 %</b>. In der Seite kannst du im Rechentrainer und im Rechner zwischen den Sätzen „Arbeitsblatt (2024)“ und „aktuell (2026)“ umschalten. Im Test zählen immer die Zahlen, die in der Aufgabe stehen.</div>` });
 
 'use strict';
+/* ======================= SUD – LERNHILFE (Java) ======================= */
+const RAW = String.raw;
+/* J(code, w): Codeblock. w = 'main' (Anweisungen), 'class' (Methoden/Klassenrumpf), 'skip' (absichtlich fehlerhaft, wird nicht kompiliert) */
+const J = (src, w) => '<pre class="code' + (w === 'skip' ? ' bad' : '') + '" data-w="' + (w || 'main') + '"><code>' + jesc(String(src).replace(/^\n/, '').replace(/\s+$/, '')) + '</code></pre>';
+
+D.lern.sud = [];
+
+D.lern.sud.push({ id: 'ls01', title: '1 · LS01: Ausgabe, Variablen, Datentypen, Operatoren, Eingabe', html: RAW`
+<div class="box"><b>Grundgerüst:</b> Ein Programm besteht aus einer Klasse mit der Methode <code>main</code>. Jede Anweisung endet mit einem <b>Semikolon</b>, zusammengehörige Anweisungen stehen in <b>geschweiften Klammern</b>.</div>
+${J(RAW`
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hallo");   // mit Zeilenumbruch
+        System.out.print("Welt");      // ohne Zeilenumbruch
+    }
+}`, 'skip')}
+
+<h4>Escape-Sequenzen in Texten</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Eingabe</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody>
+<tr><td><code>\n</code></td><td>Zeilenumbruch</td><td><code>"Zeile 1\nZeile 2"</code></td></tr>
+<tr><td><code>\t</code></td><td>Tabulator</td><td><code>"a\tb"</code></td></tr>
+<tr><td><code>\"</code></td><td>Anführungszeichen im Text</td><td><code>"Er sagt \"Hi\""</code></td></tr>
+<tr><td><code>\\</code></td><td>ein Backslash</td><td><code>"\\HIN\\"</code> gibt <code>\HIN\</code> aus</td></tr>
+<tr><td><code>\'</code></td><td>Hochkomma (bei <code>char</code>)</td><td><code>char c = '\'';</code></td></tr></tbody></table></div>
+
+<h4>Variablen</h4>
+<div class="box">Bei der <b>Deklaration</b> passieren drei Dinge: <b>Speicherplatz wird reserviert</b>, der <b>Datentyp wird festgelegt</b>, ein <b>Name wird vergeben</b>. Deklariert wird <b>einmal</b>, verwendet kann die Variable <b>beliebig oft</b> werden. Der Zuweisungsoperator ist <code>=</code>: rechts wird berechnet, das Ergebnis wird links gespeichert.</div>
+${J(RAW`
+int alter;                 // Deklaration
+alter = 19;                // Zuweisung
+double preis = 2.99;       // Deklaration und Initialisierung in einem Schritt
+alter = alter + 1;         // rechts zuerst rechnen (19 + 1), dann in alter speichern
+String name = "Silke";
+name = name + " Muster";   // Texte verketten`)}
+<p><b>Namen:</b> sprechend (<code>alterNachbar</code> statt <code>x</code>), <b>camelCase</b> (klein beginnen, Wortanfänge groß), keine Schlüsselwörter, nicht mit einer Ziffer beginnen, Groß- und Kleinschreibung zählt (<code>Alter</code> ≠ <code>alter</code>). Klassen beginnen groß (<code>Main</code>), Konstanten schreibt man groß: <code>final double MWST = 0.19;</code></p>
+
+<h4>Datentypen</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Typ</th><th>Inhalt</th><th>Wertebereich / Besonderheit</th><th>Beispiel</th></tr></thead><tbody>
+<tr><td><code>byte</code></td><td>ganze Zahl</td><td>−128 … 127 (8 Bit)</td><td><code>byte b = 100;</code></td></tr>
+<tr><td><code>short</code></td><td>ganze Zahl</td><td>−32.768 … 32.767 (16 Bit)</td><td><code>short s = 1000;</code></td></tr>
+<tr><td><code>int</code></td><td>ganze Zahl</td><td>−2.147.483.648 … 2.147.483.647 (32 Bit), <b>Standard für ganze Zahlen</b></td><td><code>int alter = 19;</code></td></tr>
+<tr><td><code>long</code></td><td>ganze Zahl</td><td>±9,2 · 10<sup>18</sup> (64 Bit), Zahl mit Endung <code>L</code></td><td><code>long n = 5000000000L;</code></td></tr>
+<tr><td><code>float</code></td><td>Kommazahl</td><td>ca. 7 Stellen, Zahl mit Endung <code>f</code></td><td><code>float f = 2.5f;</code></td></tr>
+<tr><td><code>double</code></td><td>Kommazahl</td><td>ca. 15 Stellen, <b>Standard für Kommazahlen</b></td><td><code>double d = 2.99;</code></td></tr>
+<tr><td><code>char</code></td><td>ein Zeichen</td><td>in <b>einfachen</b> Hochkommas</td><td><code>char c = 'j';</code></td></tr>
+<tr><td><code>boolean</code></td><td>Wahrheitswert</td><td><code>true</code> oder <code>false</code></td><td><code>boolean ok = true;</code></td></tr>
+<tr><td><code>String</code></td><td>Text</td><td>kein primitiver Typ (Klasse), <b>großes S</b>, in <b>doppelten</b> Anführungszeichen</td><td><code>String s = "Silke";</code></td></tr></tbody></table></div>
+<p>Im Code steht der <b>Punkt</b> als Dezimaltrenner: <code>2.99</code>, nicht <code>2,99</code>. <b>Überlauf:</b> <code>Integer.MAX_VALUE + 1</code> ergibt −2147483648, der Wert springt auf die andere Seite des Bereichs. Kommazahlen sind nur Näherungen: <code>0.1 + 0.2</code> ergibt <code>0.30000000000000004</code>.</p>
+
+<h4>Operatoren</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Operator</th><th>Bedeutung</th><th>Beispiel</th></tr></thead><tbody>
+<tr><td><code>+ − * /</code></td><td>Grundrechenarten (Punkt vor Strich)</td><td><code>2 + 3 * 4</code> = 14</td></tr>
+<tr><td><code>%</code></td><td><b>Modulo: Rest der Ganzzahldivision</b></td><td><code>10 % 3</code> = 1</td></tr>
+<tr><td><code>+= −= *= /= %=</code></td><td>Kurzschreibweise</td><td><code>a += 3</code> ist <code>a = a + 3</code></td></tr>
+<tr><td><code>++  −−</code></td><td>um 1 erhöhen / verringern</td><td><code>a--</code> bei a = 1 ergibt 0</td></tr>
+<tr><td><code>+</code> bei Text</td><td>verkettet</td><td><code>"Hallo " + "Bob!"</code></td></tr></tbody></table></div>
+<p><b>Präfix und Postfix:</b> <code>a++</code> liefert zuerst den <b>alten</b> Wert und erhöht danach, <code>++a</code> erhöht zuerst und liefert den <b>neuen</b> Wert.</p>
+${J(RAW`
+int a = 5;
+int b = a++;     // b = 5, danach a = 6
+a = 5;
+int c = ++a;     // a = 6, c = 6`)}
+
+<div class="warn"><b>Die wichtigste Falle: int / int ist wieder int.</b> Bei zwei ganzen Zahlen werden die Nachkommastellen <b>abgeschnitten</b>. Das Zuweisen an eine <code>double</code>-Variable rettet nichts, weil erst gerechnet und dann umgewandelt wird.</div>
+<div class="scroll"><table class="tbl"><thead><tr><th>Ausdruck</th><th>Ergebnis</th><th>Warum</th></tr></thead><tbody>
+<tr><td><code>10 / 3</code></td><td><b>3</b></td><td>beide <code>int</code>: Ganzzahldivision</td></tr>
+<tr><td><code>10 % 3</code></td><td><b>1</b></td><td>Rest von 10 : 3</td></tr>
+<tr><td><code>double c = 1 / 3;</code></td><td><b>0.0</b></td><td>erst <code>1 / 3 = 0</code>, dann 0 → 0.0</td></tr>
+<tr><td><code>10 / 3.0</code></td><td>3.3333333333333335</td><td>ein Operand ist <code>double</code></td></tr>
+<tr><td><code>(double) 10 / 3</code></td><td>3.3333333333333335</td><td>der Cast gilt nur für die 10, danach <code>double</code> / <code>int</code></td></tr>
+<tr><td><code>(double) (10 / 3)</code></td><td><b>3.0</b></td><td>Klammer zuerst: <code>10 / 3 = 3</code>, Cast kommt zu spät</td></tr></tbody></table></div>
+
+<h4>Ausprobieren: Division und Rest</h4>
+<div id="intplay" class="calcbox"></div>
+
+<h4>Modulo im Alltag</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Aufgabe</th><th>Lösung</th><th>Beispiel</th></tr></thead><tbody>
+<tr><td>gerade oder ungerade?</td><td><code>n % 2 == 0</code> ist gerade</td><td>jede <b>positive ungerade Zahl % 2 = 1</b></td></tr>
+<tr><td>letzte Ziffer (Einerstelle)</td><td><code>n % 10</code></td><td><code>2345 % 10</code> = 5</td></tr>
+<tr><td>letzte Ziffer abschneiden</td><td><code>n / 10</code></td><td><code>2345 / 10</code> = 234</td></tr>
+<tr><td>durch 0 teilen</td><td>bei <code>int</code>: <code>ArithmeticException: / by zero</code></td><td>bei <code>double</code>: <code>Infinity</code> oder <code>NaN</code></td></tr></tbody></table></div>
+<p class="muted">Bei negativen Zahlen hat der Rest das Vorzeichen des ersten Operanden: <code>-7 % 3</code> = −1, <code>-7 / 2</code> = −3 (Abschneiden Richtung null).</p>
+
+<h4>Typumwandlung (Cast) und Runden</h4>
+<ul><li><b>Automatisch (erweitern):</b> in Richtung größerer Typ, kein Datenverlust: <code>byte → short → int → long → float → double</code>, <code>char → int</code>.</li>
+<li><b>Mit Cast (verengern):</b> der Programmierer erzwingt es, Information kann verloren gehen. <code>int x = 3.5;</code> ist ein <b>Compilerfehler</b> (<i>possible lossy conversion</i>), <code>int x = (int) 3.5;</code> ist erlaubt.</li></ul>
+<div class="scroll"><table class="tbl"><thead><tr><th>Ausdruck</th><th>Ergebnis</th><th>Hinweis</th></tr></thead><tbody>
+<tr><td><code>(int) 7.9</code></td><td>7</td><td><b>abschneiden</b>, nicht runden</td></tr>
+<tr><td><code>(int) -7.9</code></td><td>−7</td><td>Richtung null</td></tr>
+<tr><td><code>Math.round(2.5)</code></td><td>3</td><td>kaufmännisch gerundet</td></tr>
+<tr><td><code>Math.round(2.4)</code></td><td>2</td><td></td></tr>
+<tr><td><code>Math.round(-2.5)</code></td><td>−2</td><td>bei Negativem Richtung +∞</td></tr>
+<tr><td><code>Math.round(3.14159 * 100) / 100.0</code></td><td>3.14</td><td>auf 2 Stellen runden; mit <code>/ 100</code> statt <code>/ 100.0</code> käme <b>3</b> heraus</td></tr></tbody></table></div>
+
+<h4>char und String</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Ausdruck</th><th>Ergebnis</th><th>Warum</th></tr></thead><tbody>
+<tr><td><code>'a' + 1</code></td><td>98 (<code>int</code>)</td><td><code>char</code> rechnet mit dem Zeichencode (a = 97)</td></tr>
+<tr><td><code>(char) ('a' + 1)</code></td><td><code>b</code></td><td>Cast zurück auf <code>char</code></td></tr>
+<tr><td><code>"" + 'a' + 1</code></td><td><code>a1</code></td><td>String links: alles wird als Text angehängt</td></tr>
+<tr><td><code>1 + 2 + "x" + 1 + 2</code></td><td><code>3x12</code></td><td>links nach rechts: erst 1 + 2 = 3, dann Text, dann <b>anhängen</b></td></tr>
+<tr><td><code>"x" + (1 + 2)</code></td><td><code>x3</code></td><td>Klammer zuerst</td></tr></tbody></table></div>
+<div class="scroll"><table class="tbl"><thead><tr><th>String-Methode</th><th>Ergebnis für <code>"Hallo"</code></th></tr></thead><tbody>
+<tr><td><code>length()</code> (mit Klammern!)</td><td>5</td></tr>
+<tr><td><code>charAt(1)</code> (zählt ab 0)</td><td><code>'a'</code></td></tr>
+<tr><td><code>substring(1, 3)</code> (Ende exklusiv)</td><td><code>"al"</code></td></tr>
+<tr><td><code>indexOf('l')</code> (−1 wenn nicht gefunden)</td><td>2</td></tr>
+<tr><td><code>toUpperCase()</code></td><td><code>"HALLO"</code></td></tr>
+<tr><td><code>toCharArray()</code></td><td>Array <code>{'H','a','l','l','o'}</code></td></tr></tbody></table></div>
+<div class="box"><b>Strings vergleicht man mit <code>equals</code>, nicht mit <code>==</code>.</b> <code>==</code> prüft, ob es dasselbe Objekt ist, <code>equals</code> prüft den Inhalt. <code>"Abc".equals("abc")</code> ist <code>false</code>, <code>equalsIgnoreCase</code> ignoriert die Schreibweise. <code>compareTo</code> liefert eine <b>negative Zahl, 0 oder eine positive Zahl</b> (nicht nur −1/1).</div>
+
+<h4>Eingabe und Ausgabe</h4>
+${J(RAW`
+String text = JOptionPane.showInputDialog(null, "Alter?");   // liefert String, bei Abbruch null
+int alter = Integer.parseInt(text);                          // String in int umwandeln
+double zahl = Double.parseDouble("3.5");                     // Punkt, kein Komma
+JOptionPane.showMessageDialog(null, "Alter: " + alter);
+int antwort = JOptionPane.showConfirmDialog(null, "Stimmt das?");
+boolean ja = antwort == JOptionPane.YES_OPTION;              // YES_OPTION ist 0`)}
+${J(RAW`
+// Eingabe über die Konsole (wie in deinem Zahnbürsten-Programm)
+BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+int menge = Integer.parseInt(in.readLine());   // readLine() liefert immer einen String
+char kategorie = in.readLine().charAt(0);      // erstes Zeichen der Eingabe`)}
+<ul><li><code>showInputDialog</code> liefert immer einen <b>String</b>, zum Rechnen muss man umwandeln (<code>Integer.parseInt</code>, <code>Double.parseDouble</code>).</li>
+<li>Passt der Text nicht (<code>"3,5"</code>, <code>"abc"</code>, <b>oder <code>null</code> nach Abbruch</b>), gibt es eine <code>NumberFormatException</code>.</li>
+<li><code>showConfirmDialog</code> liefert einen <code>int</code>: YES = 0, NO = 1, CANCEL = 2, Fenster geschlossen = −1. <code>showOptionDialog</code> liefert den <b>Index des Buttons</b> (bei Schließen −1).</li></ul>
+
+<div class="warn"><b>Typische Fehler in LS01:</b> <code>int / int</code> und dann Nachkommastellen erwarten · <code>string</code> klein geschrieben (Compilerfehler <i>cannot find symbol</i>) · <code>char c = "a";</code> oder <code>String s = 'a';</code> (Typen vertauscht) · Variable <b>zweimal deklariert</b> (<i>already defined</i>) · Variable <b>nicht initialisiert</b> benutzt (<i>might not have been initialized</i>) · Komma statt Punkt bei <code>parseDouble</code> · Semikolon vergessen.</div>
+`});
+
+D.lern.sud.push({ id: 'ls02', title: '2 · LS02: Verzweigungen (if, else, switch)', html: RAW`
+<div class="box"><b>Verzweigung</b> = der Programmablauf teilt sich, je nach Bedingung. Die Bedingung muss ein <code>boolean</code> sein. Zusammen mit Schleifen heißen Verzweigungen <b>Kontrollstrukturen</b>.</div>
+${J(RAW`
+int punkte = 74;
+if (punkte >= 90) {
+    System.out.println("sehr gut");
+} else if (punkte >= 75) {
+    System.out.println("gut");
+} else if (punkte >= 50) {
+    System.out.println("bestanden");
+} else {
+    System.out.println("nicht bestanden");
+}                                  // Ausgabe: bestanden`)}
+<ul><li>Es läuft <b>nur der erste Zweig</b>, dessen Bedingung stimmt. Danach wird der Rest der Kette übersprungen.</li>
+<li><b>Einrückung</b> macht die Blockstruktur lesbar (Clean Code). Java braucht sie nicht, die Klammern <code>{ }</code> entscheiden. Ohne Klammern gehört nur die <b>nächste</b> Anweisung zum <code>if</code>.</li>
+<li><b>Verschachteln</b> (ein <code>if</code> in einem <code>if</code>) spart Prüfungen: Ist die äußere Bedingung falsch, wird die innere gar nicht erst ausgewertet.</li></ul>
+
+<h4>Vergleichen und Verknüpfen</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Operator</th><th>Bedeutung</th></tr></thead><tbody>
+<tr><td><code>==  !=  &lt;  &lt;=  &gt;  &gt;=</code></td><td>Vergleiche (Ergebnis <code>boolean</code>). <b>Gleichheit ist <code>==</code></b>, ein einzelnes <code>=</code> ist die Zuweisung.</td></tr>
+<tr><td><code>a.equals(b)</code></td><td>Inhalte von <b>Strings</b> vergleichen</td></tr>
+<tr><td><code>&amp;&amp;</code></td><td>UND: beide Seiten müssen stimmen</td></tr>
+<tr><td><code>||</code></td><td>ODER: mindestens eine Seite muss stimmen</td></tr>
+<tr><td><code>!</code></td><td>NICHT: kehrt um (<code>!true</code> ist <code>false</code>)</td></tr>
+<tr><td><code>( )</code></td><td>Klammern werden zuerst berechnet</td></tr></tbody></table></div>
+<p><b>Rangfolge:</b> <code>!</code> vor <code>&amp;&amp;</code> vor <code>||</code>. Darum ist <code>true || false &amp;&amp; false</code> gleich <code>true</code>, und <code>(true || false) &amp;&amp; false</code> gleich <code>false</code>.</p>
+<div class="box"><b>Kurzschlussauswertung:</b> Bei <code>&amp;&amp;</code> wird die rechte Seite nur ausgewertet, wenn die linke <code>true</code> ist, bei <code>||</code> nur, wenn die linke <code>false</code> ist. Deshalb ist <code>n != 0 &amp;&amp; 10 / n &gt; 1</code> bei n = 0 sicher (Ergebnis <code>false</code>, keine Division). Mit dem einzelnen <code>&amp;</code> würde die Division trotzdem laufen und <code>ArithmeticException</code> auslösen.</div>
+
+<h4>switch</h4>
+${J(RAW`
+int tag = 3;
+switch (tag) {
+    case 1:
+        System.out.println("Montag");
+        break;
+    case 2:
+    case 3:                                          // case 2 und 3 teilen sich den Code
+        System.out.println("Dienstag oder Mittwoch");
+        break;
+    default:
+        System.out.println("anderer Tag");
+}                                                    // Ausgabe: Dienstag oder Mittwoch`)}
+<ul><li><b>Erlaubte Typen:</b> <code>byte, short, char, int</code>, <code>String</code> und <code>enum</code>. <b>Nicht erlaubt:</b> <code>long, float, double, boolean</code> (Compilerfehler <i>selector type … is not allowed</i>).</li>
+<li><code>case</code> vergleicht nur mit <b>festen Werten</b> (Konstanten), keine Bereiche wie <code>&lt; 5</code>.</li>
+<li><code>default</code> darf fehlen. Dann passiert bei einem nicht aufgeführten Wert einfach nichts, man sollte sich dessen bewusst sein.</li>
+<li>Man kann <code>switch</code> verschachteln und <code>if</code> in einem <code>case</code> verwenden.</li></ul>
+<div class="warn"><b>Fall-through:</b> Fehlt das <code>break</code>, läuft der Code <b>in den nächsten case weiter</b>, auch wenn dessen Wert gar nicht passt, bis ein <code>break</code> kommt oder der switch endet.</div>
+${J(RAW`
+int n = 2;
+switch (n) {
+    case 1: System.out.print("A");
+    case 2: System.out.print("B");           // hier geht es los
+    case 3: System.out.print("C"); break;    // läuft mit, dann Abbruch
+    default: System.out.print("E");
+}                                            // Ausgabe: BC`)}
+<p class="muted">Neuere Java-Versionen kennen auch <code>case 1 -&gt; …</code> ohne Fall-through. Falls euer Unterricht nur die Doppelpunkt-Form zeigt, reicht diese.</p>
+
+<h4>Wann welche Struktur?</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Situation</th><th>Besser</th></tr></thead><tbody>
+<tr><td>ein Wert gegen viele feste Werte (Menü, Wochentag)</td><td><code>switch</code></td></tr>
+<tr><td>Bereiche (<code>bmi &lt; 25</code>), mehrere Variablen, <code>&amp;&amp;</code>/<code>||</code>, Typ <code>double</code>/<code>long</code></td><td><code>if / else if</code></td></tr>
+<tr><td>10 Fälle ohne switch</td><td><b>1 × if, 8 × else if, 1 × else</b></td></tr></tbody></table></div>
+
+<div class="warn"><b>Typische Fehler in LS02:</b>
+<ul><li><code>=</code> statt <code>==</code>: bei <code>int</code> ein Compilerfehler, bei <code>boolean</code> kompiliert <code>if (ok = true)</code> sogar und <b>weist zu</b>.</li>
+<li><b>Strings mit <code>==</code></b> vergleichen statt mit <code>equals</code>.</li>
+<li><b>Strichpunkt nach der Bedingung:</b> <code>if (x == 5);</code> hat einen leeren Rumpf, der folgende Block läuft immer.</li>
+<li><b>Lücken bei Bereichen:</b> <code>if (bmi &lt; 40) … else if (bmi &gt; 40) …</code> behandelt den Wert <b>genau 40</b> nicht. Besser <code>&gt;= 40</code> oder einfach <code>else</code>.</li>
+<li><b>Reihenfolge:</b> <code>if (p &gt;= 50) … else if (p &gt;= 90) …</code>: Der zweite Zweig wird nie erreicht, weil 90 schon im ersten passt. Strengste Bedingung zuerst.</li>
+<li><code>break</code> im switch vergessen.</li></ul></div>
+`});
+
+D.lern.sud.push({ id: 'ls03', title: '3 · LS03: Schleifen (for, while, do-while)', html: RAW`
+<div class="box"><b>Schleife</b> (engl. Loop) = Anweisungen werden wiederholt, solange eine Bedingung stimmt. Schleifen und Verzweigungen zusammen heißen <b>Kontrollstrukturen</b>. Wie viele Anweisungen im Rumpf stehen dürfen, ist nicht begrenzt.</div>
+${J(RAW`
+for (int i = 1; i <= 3; i++) {       // Start; Bedingung; Schritt
+    System.out.println(i);            // 1, 2, 3
+}
+
+int n = 3;
+while (n > 0) {                       // prüft VOR jedem Durchlauf
+    System.out.println(n);            // 3, 2, 1
+    n--;
+}
+
+int k = 10;
+do {
+    System.out.println(k);            // 10 (genau einmal)
+    k++;
+} while (k < 5);                      // prüft NACH jedem Durchlauf, Semikolon nicht vergessen`)}
+
+<div class="scroll"><table class="tbl"><thead><tr><th>Schleife</th><th>Art</th><th>Bedingung wird geprüft</th><th>Mindestens … Durchläufe</th><th>Anderer Name</th></tr></thead><tbody>
+<tr><td><code>for</code></td><td><b>zählergesteuert</b>, dabei <b>kopfgesteuert</b></td><td>vor jedem Durchlauf</td><td>0</td><td>abweisende Schleife</td></tr>
+<tr><td><code>while</code></td><td>bedingungsgesteuert, <b>kopfgesteuert</b></td><td>vor jedem Durchlauf</td><td>0</td><td>abweisende Schleife</td></tr>
+<tr><td><code>do … while</code></td><td>bedingungsgesteuert, <b>fußgesteuert</b></td><td>nach jedem Durchlauf</td><td><b>1</b></td><td>nicht abweisende Schleife</td></tr></tbody></table></div>
+<p><b>Merken:</b> <b>Kopf</b>gesteuert = die Bedingung steht am <b>Kopf</b> (Anfang), sie kann schon beim ersten Mal falsch sein, dann läuft der Rumpf <b>nie</b>. <b>Fuß</b>gesteuert = sie steht am <b>Fuß</b> (Ende), der Rumpf läuft <b>mindestens einmal</b>.</p>
+
+<h4>Ablauf der for-Schleife</h4>
+<ol><li><b>Initialisierung</b> (nur einmal, zu Beginn)</li><li><b>Bedingung prüfen</b>: falsch → Ende</li><li><b>Rumpf</b> ausführen</li><li><b>Schritt</b> (z. B. <code>i++</code>, am Ende jedes Durchlaufs) → zurück zu 2</li></ol>
+<p><b>Durchläufe zählen:</b> <code>for (int i = 0; i &lt; n; i++)</code> und <code>for (int i = 1; i &lt;= n; i++)</code> laufen beide <b>n-mal</b>. Bei <code>&lt;=</code> zählt die Obergrenze mit.</p>
+<p><b>Gültigkeitsbereich:</b> Eine im <code>for</code>-Kopf deklarierte Zählervariable gibt es <b>nur in der Schleife</b>. Nach der Schleife ist <code>i</code> unbekannt (Compilerfehler <i>cannot find symbol</i>). Wer den Wert danach braucht, deklariert die Variable <b>vor</b> der Schleife.</p>
+<p><b>break und continue:</b> <code>break</code> beendet die Schleife sofort, <code>continue</code> springt zum nächsten Durchlauf. Summe 1 bis 5 ohne die 3 (<code>continue</code>): 12, mit <code>break</code> bei 3: 3.</p>
+
+<h4>Standardmuster</h4>
+${J(RAW`
+// Summe 1 bis 100
+int sum = 0;
+for (int i = 1; i <= 100; i++) {
+    sum += i;                    // sum ist danach 5050
+}
+
+// Quersumme von 4711: Ziffer abtrennen (% 10), Ziffer entfernen (/ 10)
+int n = 4711, quersumme = 0;
+while (n > 0) {
+    quersumme += n % 10;
+    n /= 10;
+}                                // quersumme ist 13
+
+// Primzahltest: 0, 1 und negative Zahlen sind keine Primzahlen
+int z = 17;
+boolean prim = z >= 2;
+for (int i = 2; i * i <= z && prim; i++) {
+    if (z % i == 0) {
+        prim = false;
+    }
+}                                // prim ist true`)}
+${J(RAW`
+// Quadrat aus Sternen (geschachtelt: innen läuft pro Außenrunde komplett durch)
+int size = 3;
+for (int zeile = 0; zeile < size; zeile++) {
+    for (int spalte = 0; spalte < size; spalte++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}`)}
+${J(RAW`
+// Zahlenraten: Zufallszahl 0 bis 14 (Obergrenze exklusiv), Schleife bis zum Treffer
+Random zufall = new Random();
+int gesucht = zufall.nextInt(15);
+int tipp = -1;
+while (tipp != gesucht) {
+    tipp = Integer.parseInt(JOptionPane.showInputDialog("Tipp?"));
+}`)}
+<p><b>Geschachtelte Schleifen:</b> Außen R Runden, innen jedes Mal C Durchläufe: <b>R · C</b> Durchläufe insgesamt. Läuft die innere Schleife bis <code>i</code>, ergibt sich 1 + 2 + … + R = R · (R + 1) / 2.</p>
+<p><b>Verzweigung wiederholen:</b> Eine Verzweigung steht dazu <b>in</b> einer Schleife (z. B. Menü: <code>while (aktiv) { switch (auswahl) … }</code>). Bei <code>showOptionDialog</code> liefert das Schließen des Fensters <code>-1</code>, so kann man die Schleife beenden.</p>
+
+<div class="warn"><b>Typische Fehler in LS03:</b>
+<ul><li><b>Endlosschleife:</b> Der Zähler wird nie verändert (<code>while (i &lt; 3) { … }</code> ohne <code>i++</code>) oder die Bedingung kann nie falsch werden.</li>
+<li><b>Strichpunkt hinter dem Kopf:</b> <code>for (int i = 0; i &lt; 3; i++);</code> hat einen leeren Rumpf, der folgende Block läuft nur einmal.</li>
+<li><b>Um eins daneben</b> (<i>off by one</i>): <code>&lt;</code> statt <code>&lt;=</code> oder umgekehrt.</li>
+<li><b>Primzahltest:</b> ohne Sonderfall würde <code>1</code> (und 0) als Primzahl gelten, weil die Schleife gar nicht läuft.</li>
+<li><b>Klammern vergessen:</b> ohne <code>{ }</code> gehört nur die erste Anweisung zur Schleife.</li>
+<li><code>showInputDialog</code> liefert bei Abbruch <code>null</code>, <code>Integer.parseInt(null)</code> wirft eine <code>NumberFormatException</code>.</li></ul></div>
+`});
+
+D.lern.sud.push({ id: 'ls04', title: '4 · LS04: Testen (Black-Box-Test, Zahnbürsten-Beispiel)', html: RAW`
+<div class="box"><b>Black-Box-Test:</b> Das Programm wird wie eine <b>schwarze Kiste</b> behandelt. Man gibt Eingaben vor und vergleicht die <b>tatsächliche Ausgabe</b> mit der <b>erwarteten Ausgabe</b>. Wie das Programm innen aufgebaut ist, spielt keine Rolle. Beim <b>White-Box-Test</b> kennt man den Quelltext und prüft gezielt Zweige und Pfade.</div>
+
+<h4>Die Spezifikation aus eurem Protokoll (Zahnbürsten)</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Eingabe / Regel</th><th>Wirkung</th></tr></thead><tbody>
+<tr><td>Preis je Zahnbürste</td><td>2,50 €</td></tr>
+<tr><td>Kategorie</td><td><b>w</b> weich · <b>m</b> mittelhart · <b>h</b> hart</td></tr>
+<tr><td>Griff</td><td><b>g</b> groß · <b>n</b> normal · <b>k</b> klein</td></tr>
+<tr><td>Menge ≥ 500 / ≥ 20.000</td><td>5 % / 10 % Rabatt auf den gesamten Bestellwert</td></tr>
+<tr><td>Kategorie <b>w</b> und Griff <b>k</b></td><td>5 % Rabatt; sonstige Kombinationen mit <b>k</b>: 2 %</td></tr>
+<tr><td>Kategorie <b>w</b> und Griff <b>n</b> oder <b>g</b></td><td>1 % Rabatt</td></tr>
+<tr><td>Kategorie <b>h</b> und Griff <b>n</b> / <b>g</b></td><td>Aufschlag 2,5 % / 5 %</td></tr></tbody></table></div>
+<p><b>Die Werte beziehen sich auf den bereits veränderten Preis</b>, die Schritte werden also nacheinander angewendet (Mengenrabatt zuerst, danach Griff und Kategorie). Ausgabe: Höhe des Rabatts und zu zahlender Preis.</p>
+
+<h4>Wie ein Testfall aussieht</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Menge</th><th>Kat.</th><th>Griff</th><th>Erwartet: Preis</th><th>Ausgegeben: Preis</th><th>Bestanden</th></tr></thead><tbody>
+<tr><td>100</td><td>w</td><td>g</td><td>247,50 € (250 · 0,99)</td><td>(vom Programm)</td><td>ja / nein</td></tr>
+<tr><td>499</td><td>m</td><td>n</td><td>1.247,50 € (kein Mengenrabatt)</td><td></td><td></td></tr>
+<tr><td>500</td><td>m</td><td>n</td><td>1.187,50 € (1.250 · 0,95)</td><td></td><td></td></tr>
+<tr><td>20.000</td><td>h</td><td>g</td><td>47.250,00 € (50.000 · 0,9 · 1,05)</td><td></td><td></td></tr></tbody></table></div>
+<div class="box"><b>Der erwartete Wert wird vorher aus der Spezifikation berechnet</b>, nicht aus dem Programm abgeschrieben. Sonst bestätigt der Test nur den Fehler des Programms.</div>
+
+<h4>Welche Testfälle wählt man?</h4>
+<ul><li><b>Äquivalenzklassen:</b> Eingaben, die das Programm gleich behandelt, bilden eine Klasse. Aus jeder Klasse genügt ein Vertreter (z. B. Menge 100 für „unter 500“).</li>
+<li><b>Grenzwerte:</b> Die meisten Fehler passieren an den Grenzen. Hier: <b>499 und 500</b> sowie <b>19.999 und 20.000</b>. Ein Programm mit <code>&gt; 500</code> statt <code>&gt;= 500</code> fällt nur bei genau 500 auf.</li>
+<li><b>Alle Kombinationen:</b> 3 Kategorien × 3 Griffe = 9 Fälle, jeweils mit und ohne Mengenrabatt.</li>
+<li><b>Fehlerhafte Eingaben:</b> Kategorie <code>x</code>, Menge 0 oder negativ, Text statt Zahl. Das Programm soll nachfragen und nicht abstürzen. Man muss unterscheiden, ob es <b>nachfragt</b> oder <b>abstürzt</b>.</li></ul>
+<div class="warn"><b>Aus deinem Code:</b> Die Testausgabe in <code>testing</code> verwendet <code>orderSize &gt; 500</code>, die Regel lautet aber <b>ab</b> 500 (<code>&gt;=</code>). Genau solche Grenzfehler findet man nur mit dem Testwert 500. Die Berechnung selbst nutzt korrekt <code>menge &lt; 500</code> als Gegenteil.</div>
+`});
+
+D.lern.sud.push({ id: 'ls05', title: '5 · LS05: Methoden und Überladung', html: RAW`
+<div class="box"><b>Methode</b> = benannter Codeblock, der mehrfach aufgerufen werden kann. Vorteile: <b>Wiederholung vermeiden</b> (DRY, <i>don’t repeat yourself</i>), Übersicht, Wiederverwendung, Wartbarkeit. Eine Methode soll <b>genau eine Aufgabe</b> haben (Clean Code).</div>
+${J(RAW`
+public static double flaeche(double breite, double hoehe) {   // Definition
+    return breite * hoehe;
+}
+
+public static void main(String[] args) {
+    double a = flaeche(3.0, 4.5);     // Aufruf, Argumente: 3.0 und 4.5 (a ist 13.5)
+}`, 'class')}
+<div class="scroll"><table class="tbl"><thead><tr><th>Begriff</th><th>Bedeutung</th><th>Im Beispiel</th></tr></thead><tbody>
+<tr><td><b>Definition</b> (Implementation)</td><td>Die Methode schreiben, erstellen</td><td>der Block mit <code>flaeche(…) { … }</code></td></tr>
+<tr><td><b>Aufruf</b></td><td>Die Methode benutzen, ausführen</td><td><code>flaeche(3.0, 4.5)</code></td></tr>
+<tr><td><b>Parameter</b></td><td>Variable in der <b>Definition</b>, Platzhalter</td><td><code>breite</code>, <code>hoehe</code></td></tr>
+<tr><td><b>Argument</b></td><td>konkreter <b>Wert</b> beim Aufruf</td><td><code>3.0</code>, <code>4.5</code></td></tr>
+<tr><td><b>Rückgabetyp</b></td><td>Typ des Ergebnisses, <code>void</code> = nichts</td><td><code>double</code></td></tr>
+<tr><td><b>Rückgabe</b> (<code>return</code>)</td><td>liefert den Wert <b>an den Aufrufer</b> zurück und beendet die Methode</td><td><code>return breite * hoehe;</code></td></tr>
+<tr><td><b>Signatur</b></td><td>Rückgabetyp, Name, Parameterliste (so in eurem Übungsblatt). Streng nach Java-Definition zählen nur <b>Name und Parameterliste</b>.</td><td><code>double flaeche(double, double)</code></td></tr>
+<tr><td><b>Scope</b> (Gültigkeitsbereich)</td><td>Wo eine Variable bekannt ist: nur im Block, in dem sie deklariert wurde</td><td><code>breite</code> gibt es nur in <code>flaeche</code></td></tr>
+<tr><td><b>call-by-value</b></td><td>Beim Aufruf wird der <b>Wert kopiert</b></td><td>siehe unten</td></tr>
+<tr><td><b>Überladung</b></td><td>gleicher Name, <b>andere Parameterliste</b></td><td>siehe unten</td></tr></tbody></table></div>
+<p><b>Namen:</b> Methoden beginnen mit einem <b>Kleinbuchstaben</b> und werden <b>camelCase</b> geschrieben, meist als Verb (<code>berechneSumme</code>). Methoden, die ein <code>boolean</code> liefern, heißen oft <code>istGerade</code> oder <code>hatWert</code>. Aus <code>static main</code> kann man direkt nur andere <code>static</code>-Methoden aufrufen.</p>
+
+<h4>Scope: warum geht die Variable aus main hier nicht?</h4>
+${J(RAW`
+static void zeige() {
+    System.out.println(alter);        // FEHLER: cannot find symbol, alter gehört zu main
+}
+public static void main(String[] args) {
+    int alter = 19;
+    zeige();
+}`, 'skip')}
+<p>Jede Methode hat ihren <b>eigenen Gültigkeitsbereich</b>. Was die Methode braucht, bekommt sie als <b>Parameter</b> (oder sie nutzt eine <code>static</code>-Variable der Klasse). Variablen mit gleichem Namen in verschiedenen Methoden sind voneinander unabhängig.</p>
+
+<h4>call-by-value</h4>
+${J(RAW`
+static void erhoehe(int x) { x = x + 5; }                 // ändert nur die Kopie
+static int erhoeheUndGibZurueck(int x) { return x + 5; }
+
+public static void main(String[] args) {
+    int n = 7;
+    erhoehe(n);                          // n bleibt 7
+    n = erhoeheUndGibZurueck(n);         // n ist jetzt 12 (Ergebnis wurde gespeichert)
+}`, 'class')}
+<div class="box"><b>Primitive Typen</b> (int, double, boolean, char …): Der <b>Wert</b> wird kopiert, die Methode kann die Variable des Aufrufers nicht ändern. <b>Arrays und Objekte:</b> Kopiert wird die <b>Referenz</b> (die „Adresse“). Die Methode kann die <b>Elemente</b> ändern (sichtbar draußen), aber mit <code>a = new int[…]</code> nur ihre eigene Referenz umbiegen (draußen unverändert).</div>
+${J(RAW`
+static void fuelle(int[] a) { a[0] = 99; }                // draußen sichtbar
+static void neu(int[] a) { a = new int[]{0, 0, 0}; }      // draußen wirkungslos
+
+public static void main(String[] args) {
+    int[] arr = {1, 2, 3};
+    neu(arr);       // arr[0] ist weiterhin 1
+    fuelle(arr);    // arr[0] ist jetzt 99
+}`, 'class')}
+
+<h4>Überladung (Overloading)</h4>
+<div class="box">Gleicher Methodenname im selben Gültigkeitsbereich (Klasse), aber <b>unterschiedliche Parameterliste</b>. Der Compiler erkennt die richtige Methode an <b>Anzahl, Datentypen und Reihenfolge der Parameter</b>. <b>Nicht</b> entscheidend sind der <b>Rückgabetyp</b>, die Parameter<b>namen</b> und die Klasse.</div>
+${J(RAW`
+static int addiere(int a, int b)           { return a + b; }
+static double addiere(double a, double b)  { return a + b; }
+static int addiere(int a, int b, int c)    { return a + b + c; }
+
+public static void main(String[] args) {
+    int x = addiere(1, 2);            // int-Version: 3
+    double y = addiere(1.5, 2);       // double-Version (2 wird erweitert): 3.5
+    int z = addiere(1, 2, 3);         // Version mit drei Parametern: 6
+}`, 'class')}
+<p><b>Auswahlregel des Compilers:</b> 1. Anzahl der Argumente muss passen, 2. <b>genau passende</b> Typen gewinnen, 3. sonst wird <b>automatisch erweitert</b> (<code>char → int → long → float → double</code>) und die nächstgrößere passende Variante gewählt. Bei <code>f(int)</code> und <code>f(double)</code> ruft <code>f('a')</code> deshalb die <code>int</code>-Version, <code>f(5L)</code> die <code>double</code>-Version. Zwei Methoden, die sich <b>nur im Rückgabetyp</b> unterscheiden, sind ein Compilerfehler (<i>already defined</i>).</p>
+
+<h4>Rekursion</h4>
+${J(RAW`
+static int fakultaet(int n) {
+    if (n <= 1) {
+        return 1;                    // Basisfall: hier hört die Rekursion auf
+    }
+    return n * fakultaet(n - 1);     // rekursiver Aufruf mit kleinerem Problem
+}                                    // fakultaet(5) ist 120`, 'class')}
+<p>Eine <b>rekursive</b> Methode ruft sich selbst auf. Sie braucht einen <b>Basisfall</b>, sonst ruft sie sich endlos auf und es kommt zu einem <code>StackOverflowError</code>. Die Rückgabe dient nicht der Rekursion, sondern liefert allgemein das <b>Ergebnis an den Aufrufer</b>, mit oder ohne Rekursion.</p>
+
+<h4>Signaturen herleiten</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Beschreibung</th><th>Signatur</th><th>Überlegung</th></tr></thead><tbody>
+<tr><td>Wörter eines Textes zählen</td><td><code>int zaehleWoerter(String text)</code></td><td>Ergebnis: Anzahl → <code>int</code>; Eingabe: Text → <code>String</code></td></tr>
+<tr><td>Ist eine Zahl durch 3 teilbar?</td><td><code>boolean istDurchDreiTeilbar(int n)</code></td><td>Ja/Nein → <code>boolean</code></td></tr>
+<tr><td>Umfang eines Kreises</td><td><code>double kreisUmfang(double radius)</code></td><td>Maße sind Kommazahlen → <code>double</code></td></tr>
+<tr><td>Text n-mal wiederholen</td><td><code>String wiederhole(String text, int anzahl)</code></td><td>Ergebnis ist Text, Anzahl ist <code>int</code></td></tr>
+<tr><td>Zeichen in einem Text zählen</td><td><code>int zaehle(String text, char zeichen)</code></td><td>ein einzelnes Zeichen → <code>char</code></td></tr>
+<tr><td>Würfeln (keine Eingabe nötig)</td><td><code>int wuerfle()</code></td><td>leere Parameterliste ist erlaubt</td></tr>
+<tr><td>Linie ausgeben (nur Ausgabe)</td><td><code>void zeigeLinie(int laenge)</code></td><td>kein Ergebnis → <code>void</code></td></tr></tbody></table></div>
+<p>Faustregel: <b>Rückgabetyp = was kommt heraus?</b> (nichts → <code>void</code>, Ja/Nein → <code>boolean</code>, Anzahl → <code>int</code>, Text → <code>String</code>, Messwert → <code>double</code>). <b>Parameter = was braucht die Methode?</b> Zum Aufruf <code>char b = antwortEinlesen("Ja oder Nein: ");</code> passt <code>static char antwortEinlesen(String text)</code>: Der Rückgabetyp ergibt sich aus der Variablen links, der Parametertyp aus dem Argument.</p>
+
+<div class="warn"><b>Typische Fehler in LS05:</b>
+<ul><li><code>string</code> statt <code>String</code> (Compilerfehler).</li>
+<li><b>return vergessen</b> bei nicht-void-Methode (<i>missing return statement</i>), auch wenn nur ein Zweig <code>return</code> hat.</li>
+<li>Rückgabewert einer <code>void</code>-Methode verwenden (<code>int r = f();</code>, <i>void cannot be converted</i>).</li>
+<li>Rückgabewert <b>nicht speichern</b>: <code>twice(n);</code> verändert n nicht.</li>
+<li>Falsche <b>Anzahl</b> oder falsche <b>Typen</b> der Argumente (Compilerfehler).</li>
+<li>Methode <b>in</b> einer Methode definieren (nicht erlaubt).</li>
+<li>Nicht-<code>static</code>-Methode aus <code>static main</code> aufrufen.</li></ul></div>
+`});
+
+D.lern.sud.push({ id: 'arr', title: '6 · Arrays (Zusatz: nicht in deinem SUD-Ordner)', html: RAW`
+<div class="warn"><b>Hinweis:</b> Zu Arrays lag in deinem SUD-Ordner kein Material. Dieser Abschnitt folgt dem üblichen Java-Stoff und ist mit Java 21 geprüft. Gleiche ihn mit euren Folien ab, besonders bei Schreibweisen und Methoden, die euer Lehrer verwendet (z. B. <code>Arrays.toString</code> oder nur Schleifen).</div>
+<div class="box"><b>Array</b> = feste Anzahl gleichartiger Elemente unter einem Namen, angesprochen über den <b>Index</b>. Der Index <b>beginnt bei 0</b>, das letzte Element hat Index <code>length − 1</code>. Die <b>Länge ist fest</b> und kann nicht geändert werden.</div>
+${J(RAW`
+int[] zahlen = new int[5];             // 5 Elemente, alle 0
+int[] primzahlen = {2, 3, 5, 7};       // Array-Literal, Länge 4
+String[] namen = new String[3];        // Elemente sind null
+zahlen[0] = 42;                        // schreiben
+int erste = primzahlen[0];             // lesen: 2
+int laenge = primzahlen.length;        // Länge: 4 (bei Arrays OHNE Klammern)
+int letzte = primzahlen[primzahlen.length - 1];   // 7`)}
+<p><b>Standardwerte</b> eines neuen Arrays: Zahlen <code>0</code> bzw. <code>0.0</code>, <code>boolean</code> <code>false</code>, <code>char</code> der Zeichencode 0, Referenztypen wie <code>String</code> <code>null</code>.</p>
+<p><b>length</b> ist bei Arrays ein Attribut (<code>a.length</code>, <b>keine Klammern</b>), bei Strings eine Methode (<code>s.length()</code>, <b>mit Klammern</b>). Falsch geschrieben ist es ein Compilerfehler.</p>
+<div class="box"><b>Zugriff außerhalb:</b> Index kleiner 0 oder größer gleich <code>length</code> löst zur Laufzeit eine <code>ArrayIndexOutOfBoundsException</code> aus (<i>Index 5 out of bounds for length 5</i>). Bei <code>new int[5]</code> ist 4 der höchste Index.</div>
+
+<h4>Ausprobieren: Index-Zugriff</h4>
+<div id="arrplay"></div>
+
+<h4>Durchlaufen</h4>
+${J(RAW`
+int[] a = {3, 1, 2};
+
+for (int i = 0; i < a.length; i++) {    // klassisch: Index verfügbar, Elemente änderbar
+    a[i] = a[i] * 2;                    // a ist jetzt {6, 2, 4}
+}
+
+int summe = 0;
+for (int wert : a) {                    // for-each: nur lesen
+    summe += wert;                      // summe ist 12
+}`)}
+<div class="warn"><b>for-each-Falle:</b> Die Laufvariable ist nur eine <b>Kopie</b> des Elements. <code>for (int v : a) { v = v * 2; }</code> verändert das Array <b>nicht</b>. Zum Ändern braucht man die Index-Schleife. Und <code>i &lt;= a.length</code> statt <code>i &lt; a.length</code> endet in einer <code>ArrayIndexOutOfBoundsException</code>.</div>
+
+<h4>Arrays sind Referenzen</h4>
+${J(RAW`
+int[] a = {3, 1, 2};
+int[] b = a;                  // KEINE Kopie: beide Namen zeigen auf dasselbe Array
+b[0] = 9;                     // a[0] ist jetzt auch 9
+
+int[] c = {9, 1, 2};
+boolean gleich1 = (a == c);                 // false: == vergleicht die Referenzen
+boolean gleich2 = Arrays.equals(a, c);      // true: Arrays.equals vergleicht die Inhalte
+
+int[] kopie = Arrays.copyOf(a, 5);          // {9, 1, 2, 0, 0}: neue Länge, Rest 0
+int[] klon = a.clone();                     // echte Kopie`)}
+<p><code>System.out.println(a)</code> gibt bei einem <code>int[]</code> keine Elemente aus, sondern eine Referenz wie <code>[I@1b6d3586</code>. Für die Elemente: <code>Arrays.toString(a)</code> (zweidimensional <code>Arrays.deepToString</code>). Dafür braucht man <code>import java.util.Arrays;</code>.</p>
+
+<h4>Arrays und Methoden</h4>
+${J(RAW`
+static int summe(int[] werte) {              // Array als Parameter (Referenz wird kopiert)
+    int s = 0;
+    for (int w : werte) {
+        s += w;
+    }
+    return s;
+}
+
+static int[] verdoppeln(int[] werte) {       // Array als Rückgabe
+    int[] neu = new int[werte.length];
+    for (int i = 0; i < werte.length; i++) {
+        neu[i] = werte[i] * 2;
+    }
+    return neu;
+}`, 'class')}
+
+<h4>Standardalgorithmen</h4>
+${J(RAW`
+int[] a = {4, 8, 15, 16, 23, 42};
+
+// Maximum: Startwert ist das ERSTE Element (nicht 0, sonst scheitert man bei lauter negativen Zahlen)
+int max = a[0];
+for (int i = 1; i < a.length; i++) {
+    if (a[i] > max) { max = a[i]; }
+}
+
+// Mittelwert: einer der Operanden muss double sein, sonst Ganzzahldivision
+int sum = 0;
+for (int v : a) { sum += v; }
+double mittel = (double) sum / a.length;           // 18.0
+
+// lineare Suche: Index oder -1
+int gesucht = 15, index = -1;
+for (int i = 0; i < a.length; i++) {
+    if (a[i] == gesucht) { index = i; break; }
+}                                                  // index ist 2
+
+// zwei Elemente tauschen: Hilfsvariable nötig
+int tmp = a[0];
+a[0] = a[1];
+a[1] = tmp;
+
+// umdrehen: nur bis zur Hälfte laufen, sonst tauscht man alles zweimal
+for (int i = 0; i < a.length / 2; i++) {
+    int t = a[i];
+    a[i] = a[a.length - 1 - i];
+    a[a.length - 1 - i] = t;
+}`)}
+<div class="scroll"><table class="tbl"><thead><tr><th>Hilfsmethode (<code>java.util.Arrays</code>)</th><th>Wirkung</th></tr></thead><tbody>
+<tr><td><code>Arrays.toString(a)</code></td><td>Text <code>[1, 2, 5, 9]</code></td></tr>
+<tr><td><code>Arrays.sort(a)</code></td><td>sortiert aufsteigend (Strings alphabetisch, Großbuchstaben vor Kleinbuchstaben)</td></tr>
+<tr><td><code>Arrays.fill(a, 7)</code></td><td>alle Elemente auf 7</td></tr>
+<tr><td><code>Arrays.copyOf(a, n)</code></td><td>Kopie mit neuer Länge n (kürzer: abgeschnitten, länger: mit 0 aufgefüllt)</td></tr>
+<tr><td><code>Arrays.equals(a, b)</code></td><td>Inhalte gleich?</td></tr></tbody></table></div>
+
+<h4>Zweidimensionale Arrays</h4>
+${J(RAW`
+int[][] m = new int[3][4];                       // 3 Zeilen, 4 Spalten, alles 0
+int[][] lit = {{1, 2, 3}, {4, 5, 6}};            // 2 Zeilen, 3 Spalten
+int x = lit[1][2];                               // Zeile 1, Spalte 2: 6
+int zeilen = lit.length;                         // 2
+int spalten = lit[0].length;                     // 3
+
+for (int i = 0; i < m.length; i++) {             // außen: Zeilen
+    for (int j = 0; j < m[i].length; j++) {      // innen: Spalten
+        m[i][j] = i * j;
+    }
+}`)}
+<p>Ein 2D-Array ist ein Array von Arrays. Zeilen können unterschiedlich lang sein (<code>new int[3][]</code>, die Zeilen sind dann zunächst <code>null</code>).</p>
+
+<h4>Arrays und Texte</h4>
+${J(RAW`
+char[] zeichen = "Hallo".toCharArray();          // Länge 5
+String wieder = String.valueOf(zeichen);         // "Hallo"
+String[] teile = "a,b,c".split(",");             // {"a", "b", "c"}`)}
+<p>Auch <code>main(String[] args)</code> enthält ein Array: <code>args</code> sind die Startparameter des Programms als <code>String</code>-Array.</p>
+
+<div class="warn"><b>Typische Fehler bei Arrays:</b>
+<ul><li><b>Index = Länge</b> (<code>a[a.length]</code>) oder <code>&lt;=</code> in der Schleife.</li>
+<li>Länge ändern wollen: nicht möglich. Man erzeugt ein neues Array (<code>Arrays.copyOf</code>) oder nimmt eine <code>ArrayList</code>.</li>
+<li><code>int[] a; a[0] = 1;</code>: nicht erzeugt (<i>might not have been initialized</i>). Ist es <code>null</code>, gibt es eine <code>NullPointerException</code>.</li>
+<li><code>new int[-1]</code> löst eine <code>NegativeArraySizeException</code> aus. <code>new int[3]{1, 2, 3}</code> ist ein Compilerfehler: entweder Größe <b>oder</b> Werte angeben.</li>
+<li><code>a == b</code> statt <code>Arrays.equals(a, b)</code>, und Kopie mit <code>b = a</code> (ist nur ein zweiter Name).</li>
+<li>Mittelwert mit <code>int</code>-Division: <code>(2 + 3) / 2</code> ergibt 2, nicht 2.5.</li></ul></div>
+`});
+
+'use strict';
+/* ======================= SUD – KORREKTUREN deiner Kontrollfragen ======================= */
+D.lern.sud.push({ id: 'korr', title: '7 · Korrekturen: Das stimmt in deinen Kontrollfragen nicht', html: RAW`
+<div class="warn"><b>Wichtig vor der Klausur:</b> Ich habe deine ausgefüllten Kontrollfragen und deinen Code mit Java gegengeprüft. An diesen Stellen steht etwas Falsches oder Ungenaues. Lerne die rechte Spalte. Wo euer Lehrer eigene Formulierungen verwendet, haben seine Folien Vorrang (markiert mit <span class="tag open">Lehrer fragen</span>).</div>
+
+<h4>LS01 · Variablen, Operatoren, Aufgabe 3</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
+<tr><td>Welche drei Dinge passieren bei der Deklaration?</td><td>(nicht beantwortet)</td><td>Speicherplatz reservieren · Datentyp festlegen · Namen vergeben</td></tr>
+<tr><td><code>int a=1, b=3; double c; c = a/b;</code> Was steht in c?</td><td>0.33…</td><td><b>0.0</b>. <code>a/b</code> ist eine Ganzzahldivision (1 / 3 = 0), erst danach wird 0 zu 0.0.</td></tr>
+<tr><td>Ergebnis von <b>jeder ungeraden Zahl % 2</b>?</td><td>5</td><td><b>1</b> (bei positiven ungeraden Zahlen), gerade Zahlen ergeben 0.</td></tr>
+<tr><td>Einerstelle von 2345 bestimmen</td><td>String, <code>str.endswith</code></td><td><b><code>zahl % 10</code></b> (= 5). <code>endswith</code> gibt es in Python, in Java heißt es <code>endsWith</code> und liefert nur <code>true</code>/<code>false</code>.</td></tr>
+<tr><td>Ändert sich die Division, wenn die <b>Ergebnisvariable</b> <code>double</code> ist?</td><td>ja</td><td><b>Nein.</b> <code>zahl1 / zahl2</code> bleibt eine <code>int</code>-Division, ergebnis ist dann 3.0 statt 3, aber der Wert bleibt 3.</td></tr>
+<tr><td>Ändert sich das Ergebnis bei <code>(double) zahl1 / zahl2</code>? Warum?</td><td>Nein, da das Ergebnis der Integer-Teilung zum double geparsed wird</td><td><b>Ja</b> (3.3333333333333335 statt 3.0). Durch den <b>Cast</b> ist ein Operand <code>double</code>, es wird als Kommazahl gerechnet. Deine Begründung beschreibt den Fall <b>ohne</b> Cast.</td></tr></tbody></table></div>
+
+<h4>LS02 · Verzweigungen</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
+<tr><td>Strings vergleichen</td><td><code>str.isEqual(str)</code></td><td><b><code>str1.equals(str2)</code></b>. <code>isEqual</code> gibt es in Java nicht.</td></tr>
+<tr><td>Welche Datentypen im <code>switch</code>?</td><td>ALLE</td><td><b>Nicht alle:</b> <code>byte, short, char, int, String, enum</code>. <b>Nicht</b> <code>long, float, double, boolean</code>.</td></tr>
+<tr><td>10 Fälle ohne switch: wie viele if-else-Strukturen?</td><td>8 (erstes if, letztes else)</td><td>Eine Kette aus <b>1 × if, 8 × else if, 1 × else</b> = 10 Zweige. Nenne die Zusammensetzung, „8“ allein ist missverständlich. <span class="tag open">Lehrer fragen</span> wie gezählt wird.</td></tr></tbody></table></div>
+
+<h4>LS03 · Schleifen</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
+<tr><td>Kopf- und fußgesteuerte Schleife</td><td>Kopf „feuert direkt“, Fuß „macht erst etwas, bevor die neue Iteration anfängt“</td><td><b>Kopfgesteuert:</b> Bedingung wird <b>vor</b> dem Durchlauf geprüft, der Rumpf kann <b>nie</b> laufen. <b>Fußgesteuert:</b> Bedingung <b>nach</b> dem Durchlauf, der Rumpf läuft <b>mindestens einmal</b> (<code>do-while</code>).</td></tr>
+<tr><td>Andere Begriffe für kopf-/fußgesteuert</td><td>bedingungs- / zählergesteuert</td><td><b>abweisende</b> Schleife (kopfgesteuert) und <b>nicht abweisende</b> Schleife (fußgesteuert). „Bedingungsgesteuert“ (<code>while</code>, <code>do-while</code>) und „zählergesteuert“ (<code>for</code>) ist eine <b>andere</b> Einteilung. <span class="tag open">Lehrer fragen</span></td></tr>
+<tr><td>Wofür geschweifte Klammern bei Schleifen?</td><td>zeigen, welcher Code zu welcher Funktion gehört, deklarieren Scopes</td><td>Sie fassen die Anweisungen des <b>Schleifenrumpfs</b> zu einem Block zusammen. <b>Ohne Klammern gehört nur die erste Anweisung zur Schleife.</b> (Der Gültigkeitsbereich ist eine Folge davon.)</td></tr>
+<tr><td>Ist die zählergesteuerte Schleife kopf- oder fußgesteuert?</td><td>fußgesteuert, weil sie das Hochzählen am Ende ausführt</td><td><b>Kopfgesteuert.</b> Die Bedingung (<code>i &lt; n</code>) wird vor jedem Durchlauf geprüft. Das Hochzählen am Ende ändert daran nichts.</td></tr></tbody></table></div>
+
+<h4>LS05 · Methoden und Überladung</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
+<tr><td>Wozu dient eine Rückgabe?</td><td>Rekursion und Benutzen der Funktion im oberen Scope</td><td>Die Methode liefert ein <b>Ergebnis an den Aufrufer</b> zurück (und endet), das dieser speichern oder weiterverwenden kann. Rekursion ist nur ein Spezialfall.</td></tr>
+<tr><td>Signatur zu <code>char buchstabe = antwortEinlesen("Ja oder Nein: ");</code></td><td><code>public static string antwortEinlesen(string outText)</code></td><td><b><code>public static char antwortEinlesen(String outText)</code></b>: Rückgabetyp <code>char</code> (das Ergebnis geht in eine <code>char</code>-Variable) und <code>String</code> mit <b>großem S</b>.</td></tr>
+<tr><td>An welchen drei Kriterien unterscheidet der Rechner überladene Methoden?</td><td>Param, Klasse, Return</td><td><b>Anzahl, Datentypen und Reihenfolge der Parameter.</b> Nicht die Klasse und <b>nicht der Rückgabetyp</b>.</td></tr>
+<tr><td>Signaturen-Übung Nr. 14</td><td><code>boolean, …, string text</code></td><td><code>boolean istNurKleinbuchstaben(String text)</code>: <code>String</code> groß schreiben. Zeichen sind besser als <code>char</code> statt <code>String</code> typisiert (Nr. 9, 11), eine Höhe eher <code>int</code> (Nr. 6), Kilometer eher <code>double</code> (Nr. 2).</td></tr></tbody></table></div>
+
+<h4>Aus deinem Code</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Stelle</th><th>Problem</th><th>Besser</th></tr></thead><tbody>
+<tr><td>LS05 <code>a3.fahrenheitToCelsius</code></td><td><code>f / 1.8</code>: der Versatz fehlt (212 °F ergäbe 117,8 statt 100)</td><td><code>(f - 32) / 1.8</code></td></tr>
+<tr><td>LS05 <code>a2.getInteger</code></td><td><code>text == ""</code> vergleicht Referenzen; der Parameter <code>text</code> wird nicht im Dialog verwendet</td><td><code>text == null || text.equals("")</code> bzw. <code>text.isEmpty()</code>, und <code>text</code> in <code>showInputDialog</code> einsetzen</td></tr>
+<tr><td>LS02 <code>numberToWholeString</code></td><td><code>number &gt; 10</code> lässt 10 durch, das Array hat nur Index 0 bis 9: <code>ArrayIndexOutOfBoundsException</code>; negative Zahlen werden nicht abgefangen</td><td><code>number &lt; 0 || number &gt; 9</code></td></tr>
+<tr><td>LS02 BMI</td><td><code>else if (bmi &gt; 40)</code>: genau 40 trifft keinen Zweig</td><td>letzter Zweig als <code>else</code> oder <code>&gt;= 40</code></td></tr>
+<tr><td>LS03 <code>prime</code></td><td>0 und 1 werden als Primzahl gemeldet (die Schleife läuft nie)</td><td>Sonderfall <code>number &lt; 2</code> vorab</td></tr>
+<tr><td>LS03 Eingabe</td><td><code>showInputDialog</code> liefert bei Abbruch <code>null</code>, <code>Integer.parseInt(null)</code> stürzt ab, bevor <code>checkIfJOPWasclosed</code> greift</td><td>erst auf <code>null</code> prüfen, dann umwandeln</td></tr>
+<tr><td>LS04 <code>testing</code></td><td><code>orderSize &gt; 500</code>, die Regel gilt <b>ab</b> 500</td><td><code>&gt;= 500</code>, <code>&gt;= 20000</code></td></tr>
+<tr><td>LS04 Protokoll Test 1</td><td>„250*0,01 = 247,5“: 250 · 0,01 ist 2,5</td><td>Rabatt 250 · 0,01 = 2,50 €, Preis 250 − 2,50 = 247,50 € (oder 250 · 0,99)</td></tr></tbody></table></div>
+`});
+
+/* ======================= SUD – ÜBERBLICK ======================= */
+D.lern.sud.forEach((s) => { s.open = false; });
+D.lern.sud.unshift({ id: 'ov', title: 'Überblick: Was kommt in der SUD-Klausur dran?', open: true, html: RAW`
+<p>Grundlage ist dein SUD-Ordner (Java, Lernsituationen LS01 bis LS05) und, wie von dir genannt, das Thema <b>Arrays</b>:</p>
+<div class="scroll"><table class="tbl"><thead><tr><th>Thema</th><th>Inhalte</th><th>Quelle im Ordner</th><th>Abschnitt</th></tr></thead><tbody>
+<tr><td><b>LS01</b></td><td>Ausgabe, Variablen, Datentypen, Operatoren, Eingabe</td><td>Aufgaben, Kontrollfragen „Variablen und Operatoren“, dein Code</td><td>1</td></tr>
+<tr><td><b>LS02</b></td><td>Verzweigungen: if/else, switch</td><td>Kontrollfragen „Verzweigungen“, BMI-Aufgabe</td><td>2</td></tr>
+<tr><td><b>LS03</b></td><td>Schleifen: for, while, do-while, Muster</td><td>Kontrollfragen „Schleifen“, Bustarif, Quersumme, Primzahl</td><td>3</td></tr>
+<tr><td><b>LS04</b></td><td>Testen: Black-Box-Test (Zahnbürsten)</td><td>Zahnbuersten.java, BlackBoxProtokoll.md</td><td>4</td></tr>
+<tr><td><b>LS05</b></td><td>Methoden, Parameter, Rückgabe, Scope, Überladung</td><td>Vokabelliste und Kontrollfragen, Signaturen-Übung, a2 bis a5, Taschenrechner</td><td>5</td></tr>
+<tr><td><b>Arrays</b></td><td>Erzeugen, Index, Schleifen, Referenz, Methoden, 2D</td><td><b>nicht im Ordner</b></td><td>6</td></tr>
+<tr><td><b>Korrekturen</b></td><td>Fehler in deinen Antworten und in deinem Code</td><td>alle Kontrollfragen</td><td>7</td></tr></tbody></table></div>
+<div class="box"><b>Empfohlener Lernweg:</b> 1. Abschnitte 1 bis 6 lesen, die Codebeispiele im Kopf nachvollziehen · 2. <b>Abschnitt 7 zuerst ernst nehmen</b>, dort stehen deine Fehler · 3. Karteikarten, bis jede Karte „gewusst“ ist · 4. <b>Code-Trainer</b>: Programme lesen und die Ausgabe bestimmen, je Aufgabentyp etwa 10 Stück · 5. Quiz · 6. <b>Probetest</b> mit Zeitanzeige. Zum Schluss die Freitextaufgaben von Hand (auf Papier) lösen.</div>
+<div class="box"><b>Die häufigsten Prüfungsfallen:</b>
+<ul><li><code>int / int</code> ist wieder <code>int</code>: <code>double c = 1 / 3;</code> ergibt <b>0.0</b>.</li>
+<li><b>Strings</b> mit <code>equals</code> vergleichen, nicht mit <code>==</code>.</li>
+<li><code>switch</code>: ohne <code>break</code> <b>Fall-through</b>; nur <code>byte, short, char, int, String, enum</code>.</li>
+<li><code>for</code> und <code>while</code> sind <b>kopfgesteuert</b> (0 bis n Durchläufe), <code>do-while</code> ist <b>fußgesteuert</b> (mindestens 1).</li>
+<li><b>Überladung</b>: Anzahl, Typen, Reihenfolge der Parameter, <b>nicht</b> der Rückgabetyp.</li>
+<li><b>call-by-value</b>: primitive Werte werden kopiert, bei Arrays wird die <b>Referenz</b> kopiert (Elemente änderbar).</li>
+<li><b>Arrays:</b> Index beginnt bei 0, höchster Index ist <code>length − 1</code>, <code>length</code> bei Arrays ohne Klammern.</li>
+<li><code>i &lt; n</code> oder <code>i &lt;= n</code>? <b>Um eins daneben</b> ist der häufigste Schleifenfehler.</li></ul></div>
+<div class="box"><b>Checkliste, wenn du Code von Hand schreibst:</b> Semikolon · Klammern paarweise · Typ passt zur Zuweisung · <code>String</code> groß · <code>equals</code> statt <code>==</code> · alle Variablen deklariert · <code>return</code> in jedem Zweig · Schleifenbedingung (<code>&lt;</code> oder <code>&lt;=</code>) · Index nie gleich <code>length</code> · bei Mittelwerten <code>double</code> verwenden.</div>
+<div class="warn"><b>Was ich nicht gesehen habe:</b> die <b>Folien und Erklärungen eures Lehrers</b> (im Ordner liegen nur Aufgaben, Kontrollfragen und dein Code), das Aufgabenblatt zu LS04 und jegliches Material zu <b>Arrays</b>. Arrays habe ich nach dem üblichen Java-Stoff geschrieben. Frage bei Unsicherheit, was genau im Test verlangt wird (Schreibweisen, ob Hilfsmethoden wie <code>Arrays.sort</code> erlaubt sind). <b>Alle Codebeispiele habe ich mit Java 21 geprüft</b>, ebenso die Lösungen der Code-Aufgaben im Trainer und im Probetest.</div>
+`});
+
+/* ======================= SUD – KARTEIKARTEN ======================= */
+D.cards.sud = [
+/* Variablen & Operatoren */
+{ t: 'Variablen & Operatoren', q: 'Welche drei Dinge passieren bei der Deklaration einer Variablen?', a: 'Speicherplatz wird reserviert, der Datentyp wird festgelegt, ein Name wird vergeben. Beispiel: <code>int alter;</code>' },
+{ t: 'Variablen & Operatoren', q: 'Wie oft deklariert man eine Variable, wie oft kann man sie verwenden?', a: 'Einmal deklarieren (pro Gültigkeitsbereich), danach beliebig oft lesen und überschreiben.' },
+{ t: 'Variablen & Operatoren', q: 'Wie funktioniert der Zuweisungsoperator?', a: '<code>=</code>: rechts wird berechnet, das Ergebnis wird links gespeichert. <code>ergebnis = 45 * 4.5;</code> ist richtig, <code>45 * 4.5 = ergebnis;</code> falsch. Bei <code>zahl1 = zahl2;</code> wird zahl1 verändert.' },
+{ t: 'Variablen & Operatoren', q: 'Datentyp von <code>\'j\'</code> und von <code>"n"</code>?', a: '<code>\'j\'</code> mit einfachen Hochkommas ist ein <b>char</b> (ein Zeichen). <code>"n"</code> mit doppelten Anführungszeichen ist ein <b>String</b> (Text).' },
+{ t: 'Variablen & Operatoren', q: 'Welche primitiven Datentypen gibt es?', a: '<code>byte, short, int, long, float, double, char, boolean</code>. <code>String</code> ist <b>kein</b> primitiver Typ (Klasse, großes S).' },
+{ t: 'Variablen & Operatoren', q: 'Wertebereich von <code>int</code>, und was passiert darüber?', a: '−2.147.483.648 bis 2.147.483.647 (32 Bit). Größer: <code>long</code> (Endung L). Überlauf: <code>Integer.MAX_VALUE + 1</code> ergibt −2147483648.' },
+{ t: 'Variablen & Operatoren', q: 'Welchen Typ nimmt man für Kommazahlen?', a: '<code>double</code> (Standard, ca. 15 Stellen). <code>float</code> braucht die Endung f (<code>2.5f</code>). Im Code steht der <b>Punkt</b> als Dezimaltrenner.' },
+{ t: 'Variablen & Operatoren', q: 'Was macht der Operator <code>%</code>?', a: 'Modulo: Rest der Ganzzahldivision. <code>10 % 3</code> = 1. Gerade: <code>n % 2 == 0</code>. Einerstelle: <code>n % 10</code>.' },
+{ t: 'Variablen & Operatoren', q: '<code>int a = 1, b = 3; double c = a / b;</code> Was steht in c?', a: '<b>0.0</b>. <code>a / b</code> ist eine <code>int</code>-Division (= 0), erst danach wird zu double umgewandelt. Mit <code>(double) a / b</code> ergäbe es 0.333….' },
+{ t: 'Variablen & Operatoren', q: 'Wann wird bei <code>/</code> abgeschnitten, wann nicht?', a: 'Sind <b>beide</b> Operanden ganzzahlig, wird abgeschnitten (<code>10 / 4</code> = 2). Ist <b>einer</b> <code>double</code>, wird als Kommazahl gerechnet (<code>10 / 4.0</code> = 2.5). <code>(double) (10 / 4)</code> = 2.0.' },
+{ t: 'Variablen & Operatoren', q: 'Unterschied <code>a++</code> und <code>++a</code>?', a: '<code>a++</code> liefert zuerst den <b>alten</b> Wert, erhöht danach. <code>++a</code> erhöht zuerst und liefert den <b>neuen</b> Wert. Mit a = 5: <code>b = a++;</code> ergibt b = 5, a = 6.' },
+{ t: 'Variablen & Operatoren', q: 'Ergebnis jeder positiven ungeraden Zahl <code>% 2</code>?', a: '<b>1</b>. Gerade Zahlen ergeben 0.' },
+{ t: 'Variablen & Operatoren', q: 'Wie bekommt man die letzte Ziffer einer Zahl, wie entfernt man sie?', a: 'Letzte Ziffer: <code>n % 10</code> (2345 → 5). Entfernen: <code>n / 10</code> (2345 → 234).' },
+{ t: 'Variablen & Operatoren', q: 'Was macht der Cast <code>(int) 7.9</code>, was <code>Math.round(7.9)</code>?', a: '<code>(int) 7.9</code> schneidet ab: <b>7</b> (auch <code>(int) -7.9</code> ergibt −7). <code>Math.round(7.9)</code> rundet: <b>8</b>.' },
+{ t: 'Variablen & Operatoren', q: 'Was passiert bei <code>int x = 3.5;</code>?', a: 'Compilerfehler (<i>possible lossy conversion from double to int</i>). Erlaubt: <code>int x = (int) 3.5;</code> oder eine <code>double</code>-Variable.' },
+{ t: 'Variablen & Operatoren', q: '<code>1 + 2 + "x" + 1 + 2</code> ergibt?', a: '<code>"3x12"</code>. Links nach rechts: 1 + 2 = 3, dann Text, ab da wird alles <b>angehängt</b>. <code>"x" + (1 + 2)</code> ergibt <code>"x3"</code>.' },
+{ t: 'Variablen & Operatoren', q: '<code>\'a\' + 1</code> und <code>(char) (\'a\' + 1)</code>?', a: '<b>98</b> (<code>int</code>, a hat den Code 97) und <b>\'b\'</b> (Cast zurück auf <code>char</code>).' },
+{ t: 'Variablen & Operatoren', q: 'Wie vergleicht man zwei Strings?', a: '<code>s1.equals(s2)</code> (Inhalt). <code>==</code> prüft nur, ob es dasselbe Objekt ist. <code>equalsIgnoreCase</code> ignoriert Groß-/Kleinschreibung. <code>isEqual</code> gibt es nicht.' },
+{ t: 'Variablen & Operatoren', q: 'Wichtige Escape-Sequenzen?', a: '<code>\\n</code> Zeilenumbruch · <code>\\t</code> Tabulator · <code>\\"</code> Anführungszeichen · <code>\\\\</code> Backslash · <code>\\\'</code> Hochkomma.' },
+{ t: 'Variablen & Operatoren', q: 'Namenskonventionen in Java?', a: '<b>camelCase</b> für Variablen und Methoden (<code>alterNachbar</code>), Klassen groß (<code>Main</code>), Konstanten <code>GROSS</code> mit <code>final</code>. Namen sollen <b>sprechend</b> sein.' },
+{ t: 'Variablen & Operatoren', q: 'Wie liest man mit JOptionPane eine Zahl ein?', a: '<code>JOptionPane.showInputDialog(…)</code> liefert einen <b>String</b> (<code>null</code> bei Abbruch). Dann <code>Integer.parseInt(text)</code> bzw. <code>Double.parseDouble(text)</code>. Dezimalpunkt statt Komma, sonst <code>NumberFormatException</code>.' },
+{ t: 'Variablen & Operatoren', q: 'Was liefern <code>showConfirmDialog</code> und <code>showOptionDialog</code>?', a: 'Je einen <code>int</code>. Confirm: YES = 0, NO = 1, CANCEL = 2, Fenster geschlossen = −1. Option: <b>Index des gewählten Buttons</b>, −1 bei Schließen.' },
+/* Verzweigungen */
+{ t: 'Verzweigungen', q: 'Warum sind Einrückungen wichtig?', a: 'Sie machen die Blockstruktur lesbar (Clean Code). Java braucht sie nicht (dort zählen die Klammern <code>{ }</code>), Python schon.' },
+{ t: 'Verzweigungen', q: 'Welche Vergleichsoperatoren gibt es?', a: '<code>==  !=  &lt;  &lt;=  &gt;  &gt;=</code>, für Strings <code>equals</code>. Gleichheit ist <code>==</code>, ein einzelnes <code>=</code> ist die Zuweisung.' },
+{ t: 'Verzweigungen', q: 'Logische Operatoren und ihre Rangfolge?', a: '<code>!</code> (NICHT), <code>&amp;&amp;</code> (UND), <code>||</code> (ODER). Rangfolge: <code>!</code> vor <code>&amp;&amp;</code> vor <code>||</code>. Klammern werden zuerst berechnet.' },
+{ t: 'Verzweigungen', q: 'Was ist Kurzschlussauswertung?', a: 'Bei <code>&amp;&amp;</code> wird die rechte Seite nur ausgewertet, wenn die linke wahr ist; bei <code>||</code> nur, wenn die linke falsch ist. So ist <code>n != 0 &amp;&amp; 10 / n &gt; 1</code> bei n = 0 sicher.' },
+{ t: 'Verzweigungen', q: 'Wie verhält sich eine else-if-Kette?', a: 'Es läuft nur der <b>erste</b> Zweig, dessen Bedingung wahr ist, der Rest wird übersprungen. Strengste Bedingung zuerst, sonst werden Zweige nie erreicht.' },
+{ t: 'Verzweigungen', q: '10 Fälle ohne switch: wie sieht die Struktur aus?', a: '<b>1 × if, 8 × else if, 1 × else</b> = 10 Zweige.' },
+{ t: 'Verzweigungen', q: 'Aufbau eines switch?', a: '<code>switch (wert) { case 1: …; break; case 2: …; break; default: …; }</code> Pro Fall ein fester Wert, <code>break</code> beendet den Fall, <code>default</code> fängt den Rest.' },
+{ t: 'Verzweigungen', q: 'Welche Datentypen darf ein switch haben?', a: '<code>byte, short, char, int, String, enum</code>. <b>Nicht</b> <code>long, float, double, boolean</code>.' },
+{ t: 'Verzweigungen', q: 'Was passiert, wenn ein <code>break</code> fehlt?', a: '<b>Fall-through:</b> Der Code läuft in den nächsten <code>case</code> weiter, bis ein <code>break</code> kommt oder der switch endet.' },
+{ t: 'Verzweigungen', q: 'Darf man <code>default</code> weglassen?', a: 'Ja. Nicht aufgeführte Werte bewirken dann nichts. Man sollte das bewusst entscheiden.' },
+{ t: 'Verzweigungen', q: 'Wann switch, wann if?', a: 'switch: ein Wert gegen viele <b>feste</b> Werte (Menü, Wochentag). if: <b>Bereiche</b>, mehrere Variablen, kombinierte Bedingungen, <code>double</code>/<code>long</code>.' },
+{ t: 'Verzweigungen', q: 'Wozu verschachtelt man Verzweigungen?', a: 'Ist die äußere Bedingung falsch, werden die inneren nicht geprüft: <b>weniger Prüfungen</b>, früher Abbruch, bessere Übersicht.' },
+{ t: 'Verzweigungen', q: 'Typische Fehler bei if?', a: '<code>=</code> statt <code>==</code> · Strings mit <code>==</code> · Strichpunkt hinter <code>if (…)</code> · Lücken bei Bereichen (<code>&lt; 40</code> und <code>&gt; 40</code> lassen 40 aus) · falsche Reihenfolge der Bedingungen.' },
+/* Schleifen */
+{ t: 'Schleifen', q: 'Wie heißt der Überbegriff für Verzweigungen und Schleifen?', a: '<b>Kontrollstrukturen</b>. „Schleife“ heißt auch Loop oder Wiederholungsstruktur.' },
+{ t: 'Schleifen', q: 'Unterschied kopf- und fußgesteuert?', a: '<b>Kopf:</b> Bedingung <b>vor</b> dem Durchlauf, Rumpf kann nie laufen (<code>while</code>, <code>for</code>). <b>Fuß:</b> Bedingung <b>nach</b> dem Durchlauf, Rumpf läuft mindestens einmal (<code>do-while</code>).' },
+{ t: 'Schleifen', q: 'Andere Namen für kopf- und fußgesteuert?', a: 'Kopfgesteuert = <b>abweisende</b> Schleife, fußgesteuert = <b>nicht abweisende</b> Schleife. (Bedingungs- vs. zählergesteuert ist eine andere Einteilung.)' },
+{ t: 'Schleifen', q: 'Ist die for-Schleife kopf- oder fußgesteuert?', a: '<b>Kopfgesteuert</b> (und zählergesteuert). Die Bedingung wird vor jedem Durchlauf geprüft.' },
+{ t: 'Schleifen', q: 'Ablauf einer for-Schleife?', a: '1. Initialisierung (einmal) → 2. Bedingung prüfen → 3. Rumpf → 4. Schritt (<code>i++</code>) → zurück zu 2.' },
+{ t: 'Schleifen', q: 'Wie oft läuft <code>for (int i = 0; i &lt; n; i++)</code>, wie oft <code>for (int i = 1; i &lt;= n; i++)</code>?', a: 'Beide <b>n-mal</b>. Bei <code>&lt;=</code> zählt die Obergrenze mit.' },
+{ t: 'Schleifen', q: 'Wofür braucht man geschweifte Klammern bei Schleifen?', a: 'Sie fassen den <b>Schleifenrumpf</b> zusammen. Ohne Klammern gehört nur die <b>erste</b> Anweisung zur Schleife.' },
+{ t: 'Schleifen', q: 'Kann man die Zählervariable nach der Schleife verwenden?', a: 'Nur wenn sie <b>vor</b> der Schleife deklariert wurde. Im <code>for</code>-Kopf deklariert, gilt sie nur in der Schleife.' },
+{ t: 'Schleifen', q: 'Was machen <code>break</code> und <code>continue</code>?', a: '<code>break</code> beendet die Schleife sofort. <code>continue</code> überspringt den Rest des Durchlaufs und geht zum nächsten.' },
+{ t: 'Schleifen', q: 'Wie berechnet man die Quersumme?', a: '<code>while (n &gt; 0) { sum += n % 10; n /= 10; }</code> Letzte Ziffer addieren, dann abschneiden. 4711 → 13.' },
+{ t: 'Schleifen', q: 'Wie prüft man, ob eine Zahl prim ist?', a: 'Teiler von 2 bis √n probieren (<code>i * i &lt;= n</code>); findet man einen, ist sie nicht prim. <b>0 und 1 sind keine Primzahlen</b>, das braucht einen Sonderfall.' },
+{ t: 'Schleifen', q: 'Wie oft läuft der Rumpf bei geschachtelten Schleifen?', a: 'Außen R Runden, innen jedes Mal C: <b>R · C</b>. Läuft innen bis i: 1 + 2 + … + R = R · (R + 1) / 2.' },
+{ t: 'Schleifen', q: 'Wann entsteht eine Endlosschleife?', a: 'Wenn die Bedingung nie falsch wird, z. B. der Zähler nicht verändert wird (<code>while (i &lt; 3) { … }</code> ohne <code>i++</code>).' },
+{ t: 'Schleifen', q: 'Wie wiederholt man eine Verzweigung?', a: 'Sie steht in einer Schleife (z. B. Menü: <code>while (aktiv) { switch … }</code>). Beim Schließen eines Dialogs liefert <code>showOptionDialog</code> −1.' },
+/* Testen */
+{ t: 'Testen', q: 'Was ist ein Black-Box-Test?', a: 'Das Programm wird als schwarze Kiste behandelt: Eingaben vorgeben, <b>tatsächliche</b> Ausgabe mit der <b>erwarteten</b> vergleichen. Der Quelltext ist egal.' },
+{ t: 'Testen', q: 'Unterschied Black-Box und White-Box?', a: 'Black-Box: nur Ein- und Ausgabe. White-Box: der Quelltext ist bekannt, man prüft gezielt Zweige und Pfade.' },
+{ t: 'Testen', q: 'Woher kommt der erwartete Wert?', a: 'Aus der <b>Spezifikation</b>, vorher von Hand berechnet, nicht aus dem Programm abgeschrieben.' },
+{ t: 'Testen', q: 'Was sind Äquivalenzklassen und Grenzwerte?', a: 'Äquivalenzklasse: Eingaben, die gleich behandelt werden (ein Vertreter genügt). Grenzwerte liegen an den Klassengrenzen, dort passieren die meisten Fehler (hier 499/500 und 19.999/20.000).' },
+{ t: 'Testen', q: 'Welche Spalten hat euer Testprotokoll?', a: 'Menge, Kategorie, Griff, Erwartet: Rabatt, Erwartet: Preis, Ausgegeben: Rabatt, Ausgegeben: Preis, Bestanden.' },
+{ t: 'Testen', q: 'Regeln der Zahnbürsten-Aufgabe?', a: '2,50 € je Stück · Menge ab 500: −5 %, ab 20.000: −10 % · w+k −5 %, sonst k −2 % · w+n/g −1 % · h+n +2,5 %, h+g +5 % · jeweils auf den schon veränderten Preis.' },
+{ t: 'Testen', q: 'Was gehört außer gültigen Werten in einen Test?', a: '<b>Ungültige Eingaben</b> (Kategorie <code>x</code>, Menge 0 oder negativ, Text statt Zahl): Das Programm soll nachfragen, nicht abstürzen.' },
+/* Methoden */
+{ t: 'Methoden', q: 'Wofür sind Methoden gut?', a: 'Wiederholung vermeiden (DRY), Übersicht, Wiederverwendung, Wartbarkeit. Jede Methode hat <b>eine Aufgabe</b> (Clean Code).' },
+{ t: 'Methoden', q: 'Unterschied Parameter und Argument?', a: '<b>Parameter</b>: Variable in der <b>Definition</b> (Platzhalter). <b>Argument</b>: konkreter <b>Wert</b> beim Aufruf. <code>add(1, 2)</code>: 1 und 2 sind Argumente.' },
+{ t: 'Methoden', q: 'Unterschied Definition und Aufruf?', a: 'Definition (Implementation): Methode <b>schreiben</b>. Aufruf: Methode <b>benutzen</b>, ausführen.' },
+{ t: 'Methoden', q: 'Wozu dient die Rückgabe (<code>return</code>)?', a: 'Sie liefert ein <b>Ergebnis an den Aufrufer</b> und beendet die Methode. <code>void</code> = keine Rückgabe.' },
+{ t: 'Methoden', q: 'Was ist eine Signatur?', a: 'Im Unterricht: <b>Rückgabetyp, Name, Parameterliste</b>. Streng nach Java zählen nur Name und Parameterliste.' },
+{ t: 'Methoden', q: 'Wie beginnen Methodennamen?', a: 'Mit einem Kleinbuchstaben, <b>camelCase</b>, meist als Verb (<code>berechneSumme</code>), bei <code>boolean</code> oft <code>istX</code>.' },
+{ t: 'Methoden', q: 'Warum sieht eine Methode die Variablen aus main nicht?', a: '<b>Scope</b>: Eine Variable gilt nur in dem Block, in dem sie deklariert wurde. Was die Methode braucht, bekommt sie als Parameter.' },
+{ t: 'Methoden', q: 'Was bedeutet call-by-value?', a: 'Beim Aufruf wird der <b>Wert kopiert</b>. Die Methode ändert nur ihre Kopie, die Variable des Aufrufers bleibt gleich.' },
+{ t: 'Methoden', q: 'call-by-value bei Arrays?', a: 'Kopiert wird die <b>Referenz</b>. Die Methode kann <b>Elemente ändern</b> (draußen sichtbar), mit <code>a = new int[…]</code> aber nur ihre eigene Referenz umbiegen (draußen unverändert).' },
+{ t: 'Methoden', q: 'Was ist Überladung?', a: 'Gleicher Methodenname im selben Scope mit <b>unterschiedlicher Parameterliste</b>.' },
+{ t: 'Methoden', q: 'An welchen Kriterien erkennt der Compiler überladene Methoden?', a: '<b>Anzahl, Datentypen und Reihenfolge der Parameter.</b> Nicht: Rückgabetyp, Parameternamen, Klasse.' },
+{ t: 'Methoden', q: 'Wie wählt der Compiler bei Überladung?', a: 'Genau passende Typen zuerst, sonst automatisch erweitern (<code>char → int → long → float → double</code>) und die nächstgrößere nehmen. <code>f(\'a\')</code> mit <code>f(int)</code>/<code>f(double)</code> ruft die <code>int</code>-Version.' },
+{ t: 'Methoden', q: 'Was ist Rekursion, was braucht sie?', a: 'Eine Methode ruft sich selbst auf. Sie braucht einen <b>Basisfall</b>, sonst <code>StackOverflowError</code>.' },
+{ t: 'Methoden', q: 'Signatur zu <code>char b = antwortEinlesen("Ja oder Nein: ");</code>?', a: '<code>static char antwortEinlesen(String text)</code>. Rückgabetyp aus der Variablen links, Parametertyp aus dem Argument.' },
+{ t: 'Methoden', q: 'Typische Methodenfehler?', a: '<code>string</code> statt <code>String</code> · <code>return</code> vergessen · Rückgabe nicht gespeichert · falsche Argumentzahl · Methode in Methode · nicht-<code>static</code> aus <code>main</code> aufrufen.' },
+/* Arrays */
+{ t: 'Arrays', q: 'Was ist ein Array?', a: 'Feste Anzahl gleichartiger Elemente unter einem Namen, über den <b>Index</b> angesprochen. Index ab 0, Länge nicht änderbar.' },
+{ t: 'Arrays', q: 'Wie erzeugt man ein Array?', a: '<code>int[] a = new int[5];</code> (5 Nullen) oder <code>int[] a = {2, 3, 5};</code> (Literal). Entweder Größe <b>oder</b> Werte angeben.' },
+{ t: 'Arrays', q: 'Standardwerte eines neuen Arrays?', a: 'Zahlen <code>0</code> / <code>0.0</code>, <code>boolean</code> <code>false</code>, Referenztypen (z. B. <code>String</code>) <code>null</code>.' },
+{ t: 'Arrays', q: 'Höchster gültiger Index?', a: '<code>a.length - 1</code>. Bei <code>new int[5]</code> ist es 4. Index = <code>length</code> löst <code>ArrayIndexOutOfBoundsException</code> aus.' },
+{ t: 'Arrays', q: 'Länge eines Arrays und eines Strings?', a: 'Array: <code>a.length</code> (<b>ohne</b> Klammern). String: <code>s.length()</code> (<b>mit</b> Klammern).' },
+{ t: 'Arrays', q: 'Typische Schleife über ein Array?', a: '<code>for (int i = 0; i &lt; a.length; i++) { … a[i] … }</code> Nicht <code>&lt;=</code>! Zum Lesen auch <code>for (int w : a)</code>.' },
+{ t: 'Arrays', q: 'Warum ändert <code>for (int v : a) { v = v * 2; }</code> das Array nicht?', a: '<code>v</code> ist nur eine <b>Kopie</b> des Elements. Zum Ändern braucht man die Index-Schleife <code>a[i] = a[i] * 2;</code>.' },
+{ t: 'Arrays', q: 'Was bewirkt <code>int[] b = a;</code>?', a: 'Keine Kopie! Beide Namen zeigen auf <b>dasselbe</b> Array. Kopie: <code>a.clone()</code> oder <code>Arrays.copyOf(a, a.length)</code>.' },
+{ t: 'Arrays', q: 'Arrays vergleichen?', a: '<code>a == b</code> prüft nur die Referenz. Inhalte: <code>Arrays.equals(a, b)</code>.' },
+{ t: 'Arrays', q: 'Elemente eines Arrays ausgeben?', a: '<code>Arrays.toString(a)</code> liefert <code>[1, 2, 3]</code>. <code>System.out.println(a)</code> gibt nur eine Referenz wie <code>[I@1b6d3586</code> aus.' },
+{ t: 'Arrays', q: 'Zwei Elemente tauschen?', a: 'Mit Hilfsvariable: <code>int tmp = a[0]; a[0] = a[1]; a[1] = tmp;</code>' },
+{ t: 'Arrays', q: 'Maximum finden: womit startet man?', a: 'Mit dem <b>ersten Element</b> (<code>int max = a[0];</code>), nicht mit 0 (sonst Fehler bei lauter negativen Zahlen). Dann ab Index 1 vergleichen.' },
+{ t: 'Arrays', q: 'Mittelwert eines <code>int</code>-Arrays?', a: '<code>(double) summe / a.length</code>. Ohne <code>double</code> entsteht eine Ganzzahldivision: <code>(2 + 3) / 2</code> = 2.' },
+{ t: 'Arrays', q: 'Array umdrehen: Wie weit läuft die Schleife?', a: 'Nur bis zur <b>Hälfte</b> (<code>i &lt; a.length / 2</code>), dabei <code>a[i]</code> mit <code>a[a.length - 1 - i]</code> tauschen. Sonst wird alles zweimal getauscht.' },
+{ t: 'Arrays', q: 'Aufbau eines 2D-Arrays?', a: '<code>int[][] m = new int[3][4];</code> = 3 Zeilen, 4 Spalten. <code>m.length</code> = Zeilen, <code>m[0].length</code> = Spalten, Zugriff <code>m[zeile][spalte]</code>.' },
+{ t: 'Arrays', q: 'Kann man ein Array vergrößern?', a: 'Nein, die Länge ist fest. Man erzeugt ein neues Array (<code>Arrays.copyOf(a, neueLaenge)</code>) oder verwendet eine <code>ArrayList</code>.' },
+{ t: 'Arrays', q: 'Welche Ausnahmen gibt es bei Arrays?', a: '<code>ArrayIndexOutOfBoundsException</code> (falscher Index) · <code>NegativeArraySizeException</code> (<code>new int[-1]</code>) · <code>NullPointerException</code> (Array ist <code>null</code>).' },
+{ t: 'Arrays', q: 'Wie wird ein Array an eine Methode übergeben?', a: 'Als Parameter <code>int[] werte</code>, Aufruf <code>summe(arr)</code>. Die Referenz wird kopiert, Elemente sind änderbar. Rückgabe ebenfalls als <code>int[]</code> möglich.' },
+{ t: 'Arrays', q: 'Wie wandelt man einen String in ein Zeichen-Array um?', a: '<code>"Hallo".toCharArray()</code> ergibt ein <code>char[]</code> der Länge 5. Zurück: <code>String.valueOf(zeichen)</code>.' }
+];
+
+/* ======================= SUD – QUIZ (Multiple Choice) ======================= */
+const mq = (t, q, ok, wrong, w) => ({ t, q, o: [ok].concat(wrong), a: 0, w });
+D.mc.sud = [
+/* --- Variablen & Operatoren --- */
+mq('Variablen & Operatoren', '<code>int a = 1, b = 3; double c = a / b;</code> Was steht danach in <code>c</code>?', '0.0', ['0.3333333333333333', '0.33', '1.0'], '<code>a / b</code> ist eine Ganzzahldivision (1 / 3 = 0), erst danach wird 0 in <code>double</code> umgewandelt. Erst <code>(double) a / b</code> ergäbe 0.333….'),
+mq('Variablen & Operatoren', 'Was liefert <code>10 % 3</code>?', '1', ['3', '0', '0.33'], 'Rest der Ganzzahldivision: 10 = 3 · 3 + 1.'),
+mq('Variablen & Operatoren', 'Welchen Datentyp hat der Ausdruck <code>\'j\'</code>?', 'char', ['String', 'int', 'boolean'], 'Einfache Hochkommas stehen für ein einzelnes Zeichen (<code>char</code>). <code>"j"</code> in doppelten Anführungszeichen wäre ein <code>String</code>.'),
+mq('Variablen & Operatoren', 'Welchen Datentyp hat der Ausdruck <code>"n"</code>?', 'String', ['char', 'int', 'Character'], 'Doppelte Anführungszeichen ergeben immer einen <code>String</code>, auch bei nur einem Zeichen.'),
+mq('Variablen & Operatoren', 'Was steht nach <code>int a = 5; a += 3;</code> in <code>a</code>?', '8', ['53', '3', '15'], '<code>a += 3</code> ist <code>a = a + 3</code>, also 8.'),
+mq('Variablen & Operatoren', 'Welche Zeile ist in Java richtig?', '<code>ergebnis = 45 * 4.5;</code>', ['<code>45 * 4.5 = ergebnis;</code>', '<code>ergebnis == 45 * 4.5;</code>', '<code>45 * 4.5 -&gt; ergebnis;</code>'], 'Links steht die Variable, die den Wert bekommt. <code>=</code> weist zu, <code>==</code> vergleicht.'),
+mq('Variablen & Operatoren', 'Was steht nach <code>String s = "Hallo "; s += "Bob!";</code> in <code>s</code>?', 'Hallo Bob!', ['Hallo', 'Bob!', 'Hallo + Bob!'], '<code>+=</code> hängt bei Strings an.'),
+mq('Variablen & Operatoren', 'Was gibt <code>System.out.println(1 + 2 + "x" + 1 + 2);</code> aus?', '3x12', ['12x12', '3x3', 'x312'], 'Links nach rechts: 1 + 2 = 3 (noch Zahlen), dann kommt der Text, ab da wird alles angehängt: 3, x, 1, 2.'),
+mq('Variablen & Operatoren', 'Was passiert bei <code>int x = 3.5;</code>?', 'Compilerfehler (lossy conversion)', ['x ist 3', 'x ist 4', 'x ist 3.5'], 'Ein <code>double</code> passt nicht ohne Cast in einen <code>int</code>. Mit <code>(int) 3.5</code> wäre es erlaubt und ergäbe 3.'),
+mq('Variablen & Operatoren', 'Was ergibt <code>(int) 7.9</code>?', '7', ['8', '7.9', '7.0'], 'Der Cast schneidet die Nachkommastellen ab, er rundet nicht.'),
+mq('Variablen & Operatoren', 'Was ergibt <code>Math.round(2.5)</code>?', '3', ['2', '2.5', '3.0'], '<code>Math.round</code> rundet kaufmännisch (ab ,5 aufwärts) und liefert eine ganze Zahl.'),
+mq('Variablen & Operatoren', 'Was ergibt <code>\'a\' + 1</code> (ohne Cast)?', '98 (int)', ['b (char)', 'a1 (String)', 'Compilerfehler'], '<code>char</code> rechnet mit dem Zeichencode (a = 97). Das Ergebnis ist ein <code>int</code>. Erst <code>(char) (\'a\' + 1)</code> ergibt <code>b</code>.'),
+mq('Variablen & Operatoren', 'Werte nach <code>int a = 5; int b = a++;</code>?', 'a = 6, b = 5', ['a = 6, b = 6', 'a = 5, b = 5', 'a = 5, b = 6'], 'Postfix: <code>a++</code> liefert erst den alten Wert (5) und erhöht danach a auf 6.'),
+mq('Variablen & Operatoren', 'Wie vergleicht man zwei Strings auf gleichen Inhalt?', '<code>s1.equals(s2)</code>', ['<code>s1 == s2</code>', '<code>s1.isEqual(s2)</code>', '<code>s1 = s2</code>'], '<code>equals</code> vergleicht den Inhalt. <code>==</code> prüft die Referenz, <code>isEqual</code> gibt es nicht, <code>=</code> ist die Zuweisung.'),
+mq('Variablen & Operatoren', 'Wie bekommt man die letzte Ziffer von 2345?', '<code>2345 % 10</code>', ['<code>2345 / 10</code>', '<code>2345 % 2</code>', '<code>2345 / 5</code>'], '<code>% 10</code> liefert den Rest und damit die Einerstelle (5). <code>/ 10</code> würde sie abschneiden (234).'),
+mq('Variablen & Operatoren', 'Welche drei Dinge passieren bei der Deklaration einer Variablen?', 'Speicher reservieren, Datentyp festlegen, Namen vergeben', ['Wert zuweisen, Speicher freigeben, Typ ändern', 'Namen löschen, Wert berechnen, Typ prüfen', 'Variable ausgeben, Wert kopieren, Namen ändern'], 'Bei <code>int alter;</code> wird Speicher reserviert, der Typ <code>int</code> festgelegt und der Name <code>alter</code> vergeben.'),
+tf('Variablen & Operatoren', 'Eine Variable muss einmal deklariert werden und kann danach beliebig oft verwendet werden.', true, 'Deklarieren: einmal pro Gültigkeitsbereich. Lesen und Überschreiben: beliebig oft.'),
+tf('Variablen & Operatoren', 'Der Datentyp <code>int</code> kann Nachkommastellen speichern.', false, '<code>int</code> speichert nur ganze Zahlen. Für Kommazahlen nimmt man <code>double</code>.'),
+mq('Variablen & Operatoren', 'Was liefert <code>JOptionPane.showInputDialog(…)</code>?', 'einen String (<code>null</code> bei Abbruch)', ['einen int', 'ein double', 'einen boolean'], 'Die Eingabe ist immer Text. Zum Rechnen muss man mit <code>Integer.parseInt</code> oder <code>Double.parseDouble</code> umwandeln.'),
+mq('Variablen & Operatoren', 'Was passiert bei <code>Integer.parseInt("3,5")</code>?', 'NumberFormatException', ['Ergebnis 3', 'Ergebnis 3.5', 'Ergebnis 35'], 'Der Text ist keine gültige ganze Zahl. Auch Kommazahlen müssen mit <b>Punkt</b> geschrieben sein, und bei <code>int</code> sind sie gar nicht erlaubt.'),
+tf('Variablen & Operatoren', 'Jede positive ungerade Zahl ergibt bei <code>% 2</code> den Rest 1.', true, 'Gerade Zahlen ergeben 0, ungerade 1. So prüft man auf gerade: <code>n % 2 == 0</code>.'),
+mq('Variablen & Operatoren', 'Was gibt <code>System.out.println((double) (10 / 4));</code> aus?', '2.0', ['2.5', '2', '3.0'], 'Die Klammer wird zuerst berechnet: <code>10 / 4</code> ist eine <code>int</code>-Division = 2. Der Cast kommt zu spät, 2 wird zu 2.0.'),
+tf('Variablen & Operatoren', '<code>"Abc".equals("abc")</code> ergibt <code>true</code>.', false, '<code>equals</code> beachtet Groß- und Kleinschreibung. <code>equalsIgnoreCase</code> würde <code>true</code> liefern.'),
+mq('Variablen & Operatoren', 'Was passiert bei <code>final int MAX = 5; MAX = 6;</code>?', 'Compilerfehler: final darf nicht neu zugewiesen werden', ['MAX ist danach 6', 'MAX ist danach 11', 'Laufzeitfehler'], '<code>final</code> macht aus der Variablen eine Konstante.'),
+mq('Variablen & Operatoren', 'Was bewirkt <code>\\n</code> in einem Text?', 'Zeilenumbruch', ['Tabulator', 'Leerzeichen', 'Textende'], '<code>\\t</code> ist der Tabulator, <code>\\"</code> ein Anführungszeichen im Text, <code>\\\\</code> ein Backslash.'),
+/* --- Verzweigungen --- */
+mq('Verzweigungen', 'Was passiert, wenn in einem <code>switch</code> das <code>break</code> fehlt?', 'Die folgenden Fälle laufen mit (Fall-through)', ['Compilerfehler', 'Nur der erste Fall läuft', 'Das Programm endet'], 'Ohne <code>break</code> geht es im nächsten <code>case</code> weiter, bis ein <code>break</code> kommt oder der switch endet.'),
+mq('Verzweigungen', 'Welche Typen sind in <code>switch (…)</code> erlaubt?', '<code>int</code>, <code>char</code>, <code>String</code>', ['<code>long</code>, <code>double</code>, <code>boolean</code>', '<code>float</code> und <code>double</code>', 'nur <code>int</code>'], 'Erlaubt: <code>byte, short, char, int, String, enum</code>. Nicht erlaubt: <code>long, float, double, boolean</code>.'),
+mq('Verzweigungen', 'Was passiert bei <code>int x = 3; if (x = 5) { … }</code>?', 'Compilerfehler (int ist kein boolean)', ['Bedingung ist wahr', 'Bedingung ist falsch', 'x wird verglichen'], 'Ein einzelnes <code>=</code> weist zu und liefert hier einen <code>int</code>. Eine Bedingung braucht <code>boolean</code>, also <code>x == 5</code>.'),
+mq('Verzweigungen', 'Was ergibt <code>true || false &amp;&amp; false</code>?', 'true', ['false', 'Compilerfehler', 'null'], '<code>&amp;&amp;</code> bindet stärker als <code>||</code>: <code>false &amp;&amp; false</code> ist false, dann <code>true || false</code> ist true.'),
+mq('Verzweigungen', 'Was ergibt <code>a != 0 &amp;&amp; 10 / a &gt; 1</code> bei <code>a = 0</code>?', '<code>false</code>, ohne Fehler', ['ArithmeticException', '<code>true</code>', 'Compilerfehler'], 'Kurzschluss: Die linke Seite ist schon falsch, die rechte (Division durch 0) wird gar nicht ausgewertet.'),
+mq('Verzweigungen', 'Ein Wert soll auf 10 verschiedene Fälle geprüft werden (ohne switch). Wie sieht die Kette aus?', '1 × if, 8 × else if, 1 × else', ['10 × if und 10 × else', '9 × if und 1 × switch', '1 × if und 9 × else'], 'Eine Kette: erster Fall mit <code>if</code>, die mittleren mit <code>else if</code>, der Rest mit <code>else</code>.'),
+mq('Verzweigungen', 'Darf man <code>default</code> im switch weglassen?', 'Ja, nicht aufgeführte Werte bewirken dann nichts', ['Nein, Compilerfehler', 'Ja, aber dann stürzt das Programm bei anderen Werten ab', 'Nein, es wird automatisch ergänzt'], '<code>default</code> ist optional. Man sollte sich der Folge bewusst sein.'),
+mq('Verzweigungen', 'Wann ist <code>switch</code> ungeeignet?', 'bei Bereichen wie <code>bmi &lt; 25</code>', ['bei einer Menüauswahl 1 bis 4', 'bei einer Wochentagsnummer', 'bei einem <code>char</code>-Wert'], '<code>case</code> vergleicht nur mit festen Werten, nicht mit Bereichen.'),
+mq('Verzweigungen', `Was passiert bei <code>bmi = 40</code>?${J(`double bmi = 40;\nif (bmi < 25) {\n    // A\n} else if (bmi < 40) {\n    // B\n} else if (bmi > 40) {\n    // C\n}`, 'main')}`, 'Kein Zweig wird ausgeführt', ['Zweig B', 'Zweig C', 'Compilerfehler'], '40 ist weder kleiner als 40 noch größer als 40. Solche Lücken vermeidet man mit <code>else</code> oder <code>&gt;=</code>.'),
+tf('Verzweigungen', 'Mit <code>==</code> vergleicht man bei Strings zuverlässig den Inhalt.', false, '<code>==</code> prüft, ob es dasselbe Objekt ist. Für den Inhalt <code>equals</code> verwenden.'),
+mq('Verzweigungen', 'Was macht der Operator <code>!</code>?', 'Er kehrt einen Wahrheitswert um', ['Er vergleicht auf Ungleichheit', 'Er multipliziert', 'Er beendet das Programm'], '<code>!true</code> ist <code>false</code>. Ungleichheit prüft man mit <code>!=</code>.'),
+mq('Verzweigungen', `Welche Ausgabe entsteht bei <code>x = 12</code>?${J(`int x = 12;\nif (x > 10) {\n    System.out.println("A");\n} else if (x > 5) {\n    System.out.println("B");\n}`, 'main')}`, 'nur A', ['A und B', 'nur B', 'keine'], 'Bei einer else-if-Kette läuft nur der erste zutreffende Zweig.'),
+mq('Verzweigungen', `Was gibt das Programm aus?${J(`int x = 3;\nif (x == 5);\n{\n    System.out.println("ja");\n}`, 'main')}`, 'ja', ['nichts', 'Compilerfehler', 'nein'], 'Der Strichpunkt direkt hinter der Bedingung ist ein leerer Rumpf. Der folgende Block ist ein ganz normaler Block und läuft immer.'),
+mq('Verzweigungen', 'Warum verschachtelt man Verzweigungen häufig, statt viele nacheinander zu schreiben?', 'Es werden weniger Bedingungen geprüft (früher Abbruch)', ['Es läuft immer schneller um den Faktor 10', 'Der Compiler verlangt es', 'Es spart Variablen'], 'Ist die äußere Bedingung falsch, werden die inneren nicht mehr geprüft. Das spart Prüfungen und ist übersichtlicher.'),
+/* --- Schleifen --- */
+mq('Schleifen', 'Was unterscheidet eine fußgesteuerte von einer kopfgesteuerten Schleife?', 'Der Rumpf läuft mindestens einmal (Bedingung am Ende)', ['Sie läuft immer endlos', 'Sie hat keinen Zähler', 'Die Bedingung wird nie geprüft'], 'Fußgesteuert (<code>do-while</code>) prüft nach dem Durchlauf. Kopfgesteuerte Schleifen können 0-mal laufen.'),
+mq('Schleifen', `Was gibt das Programm aus?${J(`int i = 10;\ndo {\n    i++;\n} while (i < 5);\nSystem.out.println(i);`, 'main')}`, '11', ['10', '5', '6'], 'Der Rumpf läuft einmal (i wird 11), erst danach wird <code>11 &lt; 5</code> geprüft (falsch).'),
+mq('Schleifen', 'Ist die <code>for</code>-Schleife kopf- oder fußgesteuert?', 'kopfgesteuert', ['fußgesteuert', 'beides', 'keins von beiden'], 'Die Bedingung wird vor jedem Durchlauf geprüft. Das Hochzählen am Ende macht sie nicht zur fußgesteuerten Schleife.'),
+mq('Schleifen', 'Wie oft läuft der Rumpf von <code>for (int i = 2; i &lt;= 6; i++)</code>?', '5-mal', ['4-mal', '6-mal', '7-mal'], 'i nimmt die Werte 2, 3, 4, 5, 6 an (bei <code>&lt;=</code> zählt die 6 mit).'),
+mq('Schleifen', `Was passiert in der letzten Zeile?${J(`for (int i = 0; i < 3; i++) {\n}\nSystem.out.println(i);`, 'skip')}`, 'Compilerfehler: i ist hier unbekannt', ['Ausgabe 3', 'Ausgabe 0', 'Ausgabe null'], 'Eine im <code>for</code>-Kopf deklarierte Variable gilt nur in der Schleife.'),
+mq('Schleifen', 'Was bewirken <code>break</code> und <code>continue</code>?', '<code>break</code> beendet die Schleife, <code>continue</code> springt zum nächsten Durchlauf', ['<code>break</code> pausiert, <code>continue</code> beendet', 'beide beenden das Programm', '<code>break</code> startet neu, <code>continue</code> beendet'], '<code>break</code> verlässt die Schleife sofort. <code>continue</code> überspringt den Rest des aktuellen Durchlaufs.'),
+mq('Schleifen', `Was ist hier das Problem?${J(`int i = 0;\nwhile (i < 3) {\n    System.out.println(i);\n}`, 'main')}`, 'Endlosschleife: i wird nie erhöht', ['Compilerfehler', 'Die Schleife läuft nie', 'Sie gibt 0, 1, 2 aus'], 'Die Bedingung <code>i &lt; 3</code> bleibt immer wahr, weil im Rumpf kein <code>i++</code> steht.'),
+mq('Schleifen', `Wie oft läuft der Rumpf?${J(`for (int i = 0; i < 3; i++);\n{\n    System.out.println("x");\n}`, 'main')}`, 'Der Block läuft einmal (Schleife hat leeren Rumpf)', ['3-mal', 'gar nicht', 'Compilerfehler'], 'Der Strichpunkt hinter dem Kopf ist der (leere) Schleifenrumpf. Der Block danach ist unabhängig und läuft einmal.'),
+mq('Schleifen', 'Welche zwei Anweisungen bilden im Rumpf die Quersumme?', '<code>sum += n % 10; n /= 10;</code>', ['<code>sum += n / 10; n %= 10;</code>', '<code>sum = n % 10; n = n * 10;</code>', '<code>sum++; n--;</code>'], 'Die Einerstelle (<code>% 10</code>) wird addiert, dann wird sie mit <code>/ 10</code> abgeschnitten.'),
+mq('Schleifen', 'Wie heißt der Überbegriff für Verzweigungen und Schleifen?', 'Kontrollstrukturen', ['Datenstrukturen', 'Operatoren', 'Methoden'], 'Kontrollstrukturen steuern den Ablauf des Programms.'),
+tf('Schleifen', 'Für den Primzahltest genügt es, Teiler bis zur Wurzel der Zahl zu prüfen.', true, 'Jeder Teiler größer als √n hat einen Partner kleiner als √n.'),
+tf('Schleifen', 'Die Zahl 1 ist eine Primzahl.', false, '1 ist keine Primzahl. Ein Programm, dessen Schleife bei 1 gar nicht läuft, meldet sie fälschlich als Primzahl, deshalb braucht man einen Sonderfall.'),
+mq('Schleifen', `Was gibt das Programm aus?${J(`int n = 20;\nint steps = 0;\nwhile (n > 1) {\n    n = n / 2;\n    steps++;\n}\nSystem.out.println(steps);`, 'main')}`, '4', ['5', '3', '10'], 'n: 20 → 10 → 5 → 2 → 1, das sind 4 Schritte (jeweils ganzzahlig halbiert).'),
+mq('Schleifen', 'Was gehört zur Schleife, wenn man die geschweiften Klammern weglässt?', 'nur die erste Anweisung danach', ['alle folgenden Anweisungen', 'keine', 'die ganze Methode'], 'Ohne <code>{ }</code> endet der Rumpf nach der ersten Anweisung.'),
+mq('Schleifen', `Was gibt das Programm aus?${J(`int count = 0;\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 4; j++) {\n        count++;\n    }\n}\nSystem.out.println(count);`, 'main')}`, '12', ['7', '3', '4'], 'Außen 3 Runden, innen jedes Mal 4: 3 · 4 = 12.'),
+mq('Schleifen', 'Was liefert <code>showInputDialog</code>, wenn der Benutzer „Abbrechen“ klickt?', '<code>null</code>', ['einen leeren String', '0', '−1'], 'Bei <code>null</code> wirft <code>Integer.parseInt</code> eine <code>NumberFormatException</code>, deshalb zuerst auf <code>null</code> prüfen.'),
+/* --- Testen --- */
+mq('Testen', 'Was ist ein Black-Box-Test?', 'Verhalten über Ein- und Ausgabe prüfen, ohne den Quelltext zu betrachten', ['Jede Zeile des Quelltexts einzeln lesen', 'Nur den Compiler laufen lassen', 'Das Programm ohne Eingabe starten'], 'Man vergleicht erwartete und tatsächliche Ausgabe. Wie das Programm innen arbeitet, spielt keine Rolle.'),
+mq('Testen', 'Bei „Rabatt ab 500 Stück“: Welche Mengen sind die wichtigsten Grenzwerte?', '499 und 500', ['100 und 200', '501 und 502', '0 und 1'], 'Fehler wie <code>&gt;</code> statt <code>&gt;=</code> zeigen sich nur an der Grenze (500).'),
+tf('Testen', 'Der erwartete Wert eines Testfalls wird aus der Spezifikation berechnet, nicht aus dem Programm abgeschrieben.', true, 'Sonst bestätigt der Test nur den Fehler des Programms.'),
+mq('Testen', 'Was unterscheidet White-Box von Black-Box?', 'Bei White-Box ist der Quelltext bekannt und wird gezielt geprüft', ['White-Box testet nur die Oberfläche', 'White-Box braucht keine Testdaten', 'Es gibt keinen Unterschied'], 'Black-Box: nur Ein- und Ausgabe. White-Box: Zweige und Pfade im Code.'),
+tf('Testen', 'Zu einem guten Test gehören auch ungültige Eingaben wie Kategorie „x“ oder eine negative Menge.', true, 'Das Programm soll nachfragen oder die Eingabe ablehnen und nicht abstürzen.'),
+mq('Testen', `Zahnbürsten: Menge 100, Kategorie w, Griff g. Wie hoch ist der erwartete Preis?<div class="muted">2,50 € je Stück; w mit n oder g: −1 %.</div>`, '247,50 €', ['250,00 €', '237,50 €', '262,50 €'], '100 · 2,50 € = 250 €, davon 1 % abziehen: 250 · 0,99 = 247,50 €.'),
+mq('Testen', `Zahnbürsten: Menge 500, Kategorie m, Griff n. Erwarteter Preis?<div class="muted">Ab 500 Stück −5 %; für m mit n gibt es keinen weiteren Zu- oder Abschlag.</div>`, '1.187,50 €', ['1.250,00 €', '1.312,50 €', '1.125,00 €'], '500 · 2,50 € = 1.250 €, −5 % → 1.250 · 0,95 = 1.187,50 €.'),
+/* --- Methoden --- */
+mq('Methoden', 'Wofür sind Methoden gut?', 'Wiederholungen vermeiden und Code strukturieren', ['Der Code läuft dadurch immer schneller', 'Variablen werden automatisch global', 'Der Compiler verlangt eine pro Programm'], 'Eine Methode schreibt man einmal und ruft sie beliebig oft auf (DRY, Wartbarkeit, Übersicht).'),
+mq('Methoden', 'Was ist der Unterschied zwischen Parameter und Argument?', 'Parameter stehen in der Definition, Argumente sind die Werte beim Aufruf', ['Beides ist dasselbe', 'Parameter sind Werte, Argumente sind Variablen', 'Argumente stehen nur in <code>main</code>'], 'Bei <code>add(1, 2)</code> sind 1 und 2 Argumente. In <code>int add(int a, int b)</code> sind <code>a</code> und <code>b</code> Parameter.'),
+mq('Methoden', 'Welcher Rückgabetyp passt zu „Methode prüft, ob ein Text mit einem Großbuchstaben beginnt“?', '<code>boolean</code>', ['<code>String</code>', '<code>void</code>', '<code>char</code>'], 'Ja/Nein-Ergebnisse sind <code>boolean</code>.'),
+mq('Methoden', 'Welche Signatur passt zu <code>char buchstabe = antwortEinlesen("Ja oder Nein: ");</code>?', '<code>static char antwortEinlesen(String text)</code>', ['<code>static String antwortEinlesen(char text)</code>', '<code>static void antwortEinlesen(String text)</code>', '<code>static char antwortEinlesen(char text)</code>'], 'Das Ergebnis wird einer <code>char</code>-Variablen zugewiesen (Rückgabetyp <code>char</code>), das Argument ist ein Text (Parameter <code>String</code>).'),
+mq('Methoden', 'Woran erkennt der Compiler überladene Methoden?', 'an Anzahl, Typen und Reihenfolge der Parameter', ['am Rückgabetyp', 'an der Klasse', 'an den Parameternamen'], 'Rückgabetyp und Parameternamen zählen nicht.'),
+tf('Methoden', 'Zwei Methoden, die sich nur im Rückgabetyp unterscheiden, sind gültige Überladungen.', false, 'Das ist ein Compilerfehler (<i>method is already defined</i>), denn der Aufruf wäre nicht eindeutig.'),
+mq('Methoden', `Was gibt das Programm aus?${J(`static void f(int x) { System.out.println("int"); }\nstatic void f(double x) { System.out.println("double"); }\n\npublic static void main(String[] args) {\n    f('a');\n}`, 'class')}`, 'int', ['double', 'char', 'Compilerfehler'], 'Es gibt keine <code>f(char)</code>. <code>char</code> wird zu <code>int</code> erweitert, und <code>int</code> ist die nächste passende Variante.'),
+mq('Methoden', `Was gibt <code>main</code> aus?${J(`static void inc(int x) {\n    x = x + 5;\n}\n\npublic static void main(String[] args) {\n    int n = 7;\n    inc(n);\n    System.out.println(n);\n}`, 'class')}`, '7', ['12', '5', '0'], 'call-by-value: Die Methode ändert nur ihre Kopie. n bleibt 7.'),
+mq('Methoden', `Was gibt <code>main</code> aus?${J(`static void fill(int[] a) {\n    a[0] = 99;\n}\n\npublic static void main(String[] args) {\n    int[] arr = {1, 2, 3};\n    fill(arr);\n    System.out.println(arr[0]);\n}`, 'class')}`, '99', ['1', '0', 'Compilerfehler'], 'Bei Arrays wird die Referenz kopiert. Beide zeigen auf dasselbe Array, die Änderung ist auch in <code>main</code> sichtbar.'),
+mq('Methoden', 'Was passiert, wenn eine Methode eine in <code>main</code> deklarierte Variable benutzt?', 'Compilerfehler: falscher Gültigkeitsbereich (Scope)', ['Es funktioniert, Variablen sind überall bekannt', 'Der Wert wird automatisch kopiert', 'Laufzeitfehler'], 'Lokale Variablen gelten nur in ihrem Block. Man übergibt sie als Parameter.'),
+mq('Methoden', 'Wie sollte ein Methodenname beginnen?', 'mit einem Kleinbuchstaben (camelCase)', ['mit einem Großbuchstaben', 'mit einer Ziffer', 'mit einem Unterstrich und Großbuchstaben'], 'Methoden und Variablen schreibt man in camelCase, Klassen beginnen groß.'),
+mq('Methoden', 'Was bedeutet der Rückgabetyp <code>void</code>?', 'Die Methode liefert kein Ergebnis zurück', ['Die Methode liefert 0', 'Die Methode hat keine Parameter', 'Die Methode darf nicht aufgerufen werden'], 'Dann ist die Methode nur für ihre Wirkung da (z. B. Ausgabe).'),
+mq('Methoden', 'Was ist der Fehler?<pre class="code bad" data-w="skip"><code>static int f(int x) {\n    if (x &gt; 0) {\n        return 1;\n    }\n}</code></pre>', 'missing return statement: für x &lt;= 0 fehlt ein return', ['Der Rückgabetyp muss void sein', 'Es fehlt ein Semikolon nach der Klammer', 'x darf nicht verglichen werden'], 'Jeder mögliche Weg durch die Methode muss ein <code>return</code> erreichen.'),
+mq('Methoden', 'Wozu braucht eine rekursive Methode einen Basisfall?', 'Sonst ruft sie sich endlos auf (StackOverflowError)', ['Damit sie schneller läuft', 'Damit sie einen Rückgabewert hat', 'Er wird vom Compiler verlangt'], 'Der Basisfall beendet die Rekursion.'),
+mq('Methoden', 'Warum soll eine Methode nur eine Aufgabe haben?', 'Übersicht, Wartbarkeit und Wiederverwendbarkeit (Clean Code)', ['Sonst kompiliert sie nicht', 'Sonst läuft sie langsamer', 'Sonst darf sie keinen Namen haben'], 'Kleine Methoden mit einer Aufgabe sind leichter zu lesen, zu testen und wiederzuverwenden.'),
+mq('Methoden', 'Was passiert bei <code>f(1)</code>, wenn nur <code>static void f(int a, int b)</code> existiert?', 'Compilerfehler: falsche Anzahl der Argumente', ['b ist automatisch 0', 'Laufzeitfehler', 'Die Methode läuft mit b = null'], 'Anzahl und Typen der Argumente müssen zu einer Signatur passen.'),
+/* --- Arrays --- */
+mq('Arrays', 'Welche Werte stehen nach <code>int[] a = new int[3];</code> im Array?', '0, 0, 0', ['null, null, null', 'leer', 'zufällige Werte'], 'Zahlen-Arrays werden mit 0 gefüllt, <code>boolean</code> mit false, Referenztypen mit <code>null</code>.'),
+mq('Arrays', 'Was ist der höchste gültige Index bei <code>new int[5]</code>?', '4', ['5', '6', '1'], 'Der Index beginnt bei 0, also 0 bis 4.'),
+mq('Arrays', 'Was passiert bei <code>int[] a = new int[5]; a[5] = 1;</code>?', 'ArrayIndexOutOfBoundsException zur Laufzeit', ['Compilerfehler', 'Das Array wird automatisch größer', 'a[5] wird ignoriert'], 'Index 5 liegt hinter dem letzten Element (Index 4). Der Compiler erkennt das nicht, erst das laufende Programm.'),
+mq('Arrays', 'Wie bekommt man die Länge eines Arrays <code>a</code>?', '<code>a.length</code>', ['<code>a.length()</code>', '<code>a.size()</code>', '<code>len(a)</code>'], 'Bei Arrays ist <code>length</code> ein Attribut ohne Klammern. Bei Strings ist <code>length()</code> eine Methode.'),
+tf('Arrays', 'Bei Arrays schreibt man <code>length</code> ohne Klammern, bei Strings <code>length()</code> mit Klammern.', true, '<code>a.length</code> für Arrays, <code>s.length()</code> für Strings.'),
+mq('Arrays', `Was ist danach <code>a[0]</code>?${J(`int[] a = {3, 1, 2};\nint[] b = a;\nb[0] = 9;`, 'main')}`, '9', ['3', '0', '1'], '<code>b = a</code> kopiert nur die Referenz. Beide Namen zeigen auf dasselbe Array.'),
+mq('Arrays', 'Was prüft <code>a == b</code> bei zwei Arrays?', 'ob beide dasselbe Array (dieselbe Referenz) sind', ['ob alle Elemente gleich sind', 'ob die Längen gleich sind', 'ob beide sortiert sind'], 'Für den Inhalt nimmt man <code>Arrays.equals(a, b)</code>.'),
+mq('Arrays', 'Welcher Wert steht nach <code>new String[2]</code> in den Elementen?', 'null', ['""', '0', 'false'], 'Referenztypen sind ohne Zuweisung <code>null</code>.'),
+mq('Arrays', `Was gilt für <code>a</code> danach?${J(`int[] a = {1, 2, 3};\nfor (int v : a) {\n    v = v * 2;\n}`, 'main')}`, 'unverändert {1, 2, 3}', ['{2, 4, 6}', '{1, 2, 3} mit Fehler', '{0, 0, 0}'], '<code>v</code> ist eine Kopie des Elements. Zum Ändern braucht man <code>a[i] = a[i] * 2;</code>.'),
+mq('Arrays', 'Was ergibt <code>(a[0] + a[1]) / a.length</code> bei <code>int[] a = {2, 3}</code>?', '2 (Ganzzahldivision)', ['2.5', '3', '5'], '<code>(2 + 3) / 2</code> sind zwei <code>int</code>, also 5 / 2 = 2. Für 2.5: <code>(double) (a[0] + a[1]) / a.length</code>.'),
+mq('Arrays', 'Wie ist <code>new int[3][4]</code> aufgebaut?', '3 Zeilen und 4 Spalten', ['4 Zeilen und 3 Spalten', '12 Zeilen und 1 Spalte', '7 Elemente'], 'Der erste Index ist die Zeile, der zweite die Spalte. <code>m.length</code> = 3, <code>m[0].length</code> = 4.'),
+mq('Arrays', 'Kann man die Größe eines Arrays nachträglich ändern?', 'Nein, man erzeugt ein neues Array oder nimmt eine ArrayList', ['Ja, mit <code>a.length = 10;</code>', 'Ja, mit <code>a.add()</code>', 'Ja, mit <code>a.resize(10)</code>'], 'Die Länge ist fest. <code>Arrays.copyOf(a, neueLaenge)</code> erzeugt ein neues Array.'),
+mq('Arrays', 'Was gibt <code>System.out.println(a)</code> bei <code>int[] a = {1, 2}</code> aus?', 'eine Referenz wie <code>[I@1b6d3586</code>', ['<code>[1, 2]</code>', '<code>1 2</code>', 'Compilerfehler'], 'Für die Elemente nimmt man <code>Arrays.toString(a)</code>.'),
+mq('Arrays', 'Welche Anweisungen vertauschen <code>a[0]</code> und <code>a[1]</code> richtig?', '<code>int t = a[0]; a[0] = a[1]; a[1] = t;</code>', ['<code>a[0] = a[1]; a[1] = a[0];</code>', '<code>a[0] = a[0] + a[1];</code>', '<code>int t = a[0]; a[1] = t;</code>'], 'Ohne Hilfsvariable geht der erste Wert verloren: Nach <code>a[0] = a[1];</code> steht in beiden dasselbe.'),
+mq('Arrays', 'Womit startet man die Suche nach dem Maximum in <code>int[] a</code>?', '<code>int max = a[0];</code>', ['<code>int max = 0;</code>', '<code>int max = a.length;</code>', '<code>int max = -1;</code>'], 'Mit dem ersten Element funktioniert es auch, wenn alle Werte negativ sind.'),
+mq('Arrays', 'Welche Schleifenbedingung durchläuft ein Array <code>a</code> richtig?', '<code>i &lt; a.length</code>', ['<code>i &lt;= a.length</code>', '<code>i &lt; a.length - 2</code>', '<code>i &lt;= a.length - 2</code>'], 'Gültig sind die Indizes 0 bis <code>length − 1</code>. <code>&lt;=</code> endet in einer <code>ArrayIndexOutOfBoundsException</code>.'),
+mq('Arrays', 'Was ist <code>a[0]</code> nach <code>int[] a = {5, 2, 9, 1}; Arrays.sort(a);</code>?', '1', ['5', '9', '2'], '<code>Arrays.sort</code> sortiert aufsteigend: {1, 2, 5, 9}.'),
+mq('Arrays', 'Was passiert bei <code>int[] a; a[0] = 1;</code>?', 'Compilerfehler: Variable ist nicht initialisiert', ['a[0] wird auf 1 gesetzt', 'ArrayIndexOutOfBoundsException', 'Das Array hat automatisch Länge 1'], 'Die Variable zeigt noch auf kein Array. Erst <code>a = new int[…]</code> erzeugt eines.'),
+mq('Arrays', 'Welche Zeile ist als Array-Erzeugung gültig?', '<code>int[] a = {1, 2, 3};</code>', ['<code>int[] a = new int[3]{1, 2, 3};</code>', '<code>int a[] = new int[];</code>', '<code>int[3] a;</code>'], 'Entweder die Größe angeben (<code>new int[3]</code>) oder die Werte (<code>{1, 2, 3}</code>), nicht beides.'),
+mq('Arrays', 'Wie viele Elemente hat <code>"Hallo".toCharArray()</code>?', '5', ['4', '6', '1'], 'Für jedes Zeichen ein Element: H, a, l, l, o.')
+];
+
+/* ======================= SUD – FREITEXTAUFGABEN (Selbstbewertung) ======================= */
+D.self.sud = [
+{ t: 'Variablen & Operatoren', pts: 3, q: 'Erkläre den Unterschied zwischen <code>10 / 4</code> und <code>(double) 10 / 4</code> und nenne jeweils das Ergebnis.',
+  m: '<code>10 / 4</code>: beide Operanden sind <code>int</code>, es wird <b>ganzzahlig</b> geteilt, die Nachkommastellen entfallen: <b>2</b>. <code>(double) 10 / 4</code>: der Cast macht die 10 zu <code>double</code>, damit wird als Kommazahl gerechnet: <b>2.5</b>. Wird erst die Klammer berechnet, <code>(double) (10 / 4)</code>, ist das Ergebnis wieder 2.0. <i>1 P. ganzzahlige Division mit Ergebnis 2, 1 P. Cast mit Ergebnis 2.5, 1 P. Begründung (Typ der Operanden).</i>' },
+{ t: 'Variablen & Operatoren', pts: 3, q: 'Deklariere passende Variablen (mit Initialisierung) für: das Alter einer Person, den Preis eines Artikels, den Anfangsbuchstaben eines Namens und einen Ja/Nein-Wert „ist schulpflichtig“. Erhöhe danach das Alter um 1 und hänge an einen Namen <code>"Max"</code> ein Leerzeichen und <code>"Muster"</code> an.',
+  m: `${J(`int alter = 17;\ndouble preis = 2.99;\nchar anfangsbuchstabe = 'M';\nboolean istSchulpflichtig = true;\n\nalter = alter + 1;            // oder alter++;\n\nString name = "Max";\nname = name + " Muster";      // oder name += " Muster";`)}<i>1 P. richtige Typen (int, double, char, boolean), 1 P. Literale richtig (einfache Hochkommas bei char, Punkt bei double), 1 P. Erhöhen und Anhängen.</i>` },
+{ t: 'Verzweigungen', pts: 4, q: 'Schreibe eine Verzweigung, die zu einer Punktzahl <code>punkte</code> ausgibt: ab 90 „sehr gut“, ab 75 „gut“, ab 50 „bestanden“, sonst „nicht bestanden“.',
+  m: `${J(`if (punkte >= 90) {\n    System.out.println("sehr gut");\n} else if (punkte >= 75) {\n    System.out.println("gut");\n} else if (punkte >= 50) {\n    System.out.println("bestanden");\n} else {\n    System.out.println("nicht bestanden");\n}`)}<i>1 P. if/else-if/else-Kette, 1 P. richtige Vergleichsoperatoren (<code>&gt;=</code>), 1 P. Reihenfolge von streng nach locker, 1 P. Syntax (Klammern, Semikolons).</i>` },
+{ t: 'Verzweigungen', pts: 3, q: 'Schreibe ein <code>switch</code>, das zu einer Zahl <code>tag</code> (1 bis 7) „Wochenende“ für 6 und 7 ausgibt, „Werktag“ für 1 bis 5 und „ungültig“ sonst. Nutze möglichst wenig Code.',
+  m: `${J(`switch (tag) {\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5:\n        System.out.println("Werktag");\n        break;\n    case 6:\n    case 7:\n        System.out.println("Wochenende");\n        break;\n    default:\n        System.out.println("ungültig");\n}`)}Mehrere <code>case</code> ohne <code>break</code> teilen sich den Code (gewollter Fall-through). <i>1 P. Struktur mit <code>default</code>, 1 P. <code>break</code> richtig gesetzt, 1 P. Zusammenfassen der Fälle.</i>` },
+{ t: 'Schleifen', pts: 3, q: 'Schreibe eine Schleife, die die Summe aller geraden Zahlen von 1 bis 20 berechnet und ausgibt. Wie lautet das Ergebnis?',
+  m: `${J(`int summe = 0;\nfor (int i = 1; i <= 20; i++) {\n    if (i % 2 == 0) {\n        summe += i;\n    }\n}\nSystem.out.println(summe);   // 110`)}Ergebnis <b>110</b> (2 + 4 + … + 20). Alternativ <code>i += 2</code> ab 2. <i>1 P. Schleife mit richtigen Grenzen (<code>&lt;= 20</code>), 1 P. Test auf gerade (<code>i % 2 == 0</code>), 1 P. Summe und Ergebnis 110.</i>` },
+{ t: 'Schleifen', pts: 4, q: 'Schreibe eine Schleife, die die Quersumme einer positiven Zahl <code>n</code> berechnet (z. B. 4711 → 13). Erkläre, was in jedem Schritt passiert.',
+  m: `${J(`int sum = 0;\nwhile (n > 0) {\n    sum += n % 10;   // letzte Ziffer addieren\n    n /= 10;         // letzte Ziffer abschneiden\n}\nSystem.out.println(sum);`)}4711: 1 → 71 → 471 → 4711 ergibt 1 + 1 + 7 + 4 = 13. <i>1 P. Schleifenbedingung (<code>n &gt; 0</code>), 1 P. <code>% 10</code> für die Ziffer, 1 P. <code>/ 10</code> zum Abschneiden, 1 P. Summe richtig geführt.</i>` },
+{ t: 'Schleifen', pts: 3, q: 'Erkläre den Unterschied zwischen <code>while</code> und <code>do-while</code> und gib ein Beispiel, bei dem sich die Ausgabe unterscheidet.',
+  m: `<code>while</code> ist <b>kopfgesteuert</b>: Die Bedingung wird vor dem Durchlauf geprüft, der Rumpf kann nie laufen. <code>do-while</code> ist <b>fußgesteuert</b>: Die Bedingung wird nach dem Durchlauf geprüft, der Rumpf läuft <b>mindestens einmal</b>.${J(`int i = 10;\nwhile (i < 5) { i++; }       // Rumpf läuft nie, i bleibt 10\n\nint k = 10;\ndo { k++; } while (k < 5);  // Rumpf läuft einmal, k ist 11`)}<i>1 P. kopf/fuß richtig zugeordnet, 1 P. „mindestens einmal“ bzw. „kann nie laufen“, 1 P. passendes Beispiel.</i>` },
+{ t: 'Methoden', pts: 4, q: 'Schreibe eine Methode <code>istGerade</code>, die für eine ganze Zahl prüft, ob sie gerade ist, und zeige einen Aufruf in <code>main</code>.',
+  m: `${J(`public static boolean istGerade(int zahl) {\n    return zahl % 2 == 0;\n}\n\npublic static void main(String[] args) {\n    boolean ergebnis = istGerade(8);          // true\n    System.out.println(istGerade(7));         // false\n}`, 'class')}<i>1 P. Rückgabetyp <code>boolean</code>, 1 P. Parameter <code>int</code>, 1 P. <code>return</code> mit richtiger Bedingung, 1 P. Aufruf mit Argument.</i>` },
+{ t: 'Methoden', pts: 4, q: 'Schreibe eine Methode <code>maximum(int a, int b)</code> und überlade sie so, dass sie auch drei Zahlen verarbeiten kann. Warum ist das eine Überladung?',
+  m: `${J(`public static int maximum(int a, int b) {\n    if (a > b) {\n        return a;\n    }\n    return b;\n}\n\npublic static int maximum(int a, int b, int c) {\n    return maximum(maximum(a, b), c);\n}`, 'class')}Beide Methoden heißen gleich, haben aber eine <b>unterschiedliche Parameterliste</b> (zwei bzw. drei <code>int</code>), das ist eine Überladung. Der Rückgabetyp spielt dafür keine Rolle. <i>1 P. erste Methode, 1 P. zweite Methode, 1 P. gleicher Name mit anderer Parameteranzahl, 1 P. Begründung.</i>` },
+{ t: 'Methoden', pts: 3, q: 'Erkläre <b>call-by-value</b> und zeige an einem kurzen Beispiel, warum sich <code>n</code> in <code>main</code> nicht ändert.',
+  m: `Beim Aufruf wird der <b>Wert</b> des Arguments in den Parameter <b>kopiert</b>. Die Methode arbeitet mit der Kopie, die Variable des Aufrufers bleibt unverändert.${J(`static void erhoehe(int x) {\n    x = x + 5;                 // ändert nur die Kopie\n}\n\npublic static void main(String[] args) {\n    int n = 7;\n    erhoehe(n);\n    System.out.println(n);     // 7\n}`, 'class')}Bei Arrays wird die Referenz kopiert, deshalb sind Änderungen an den <b>Elementen</b> auch außerhalb sichtbar. <i>1 P. Erklärung (Wert wird kopiert), 1 P. Beispiel mit Ausgabe 7, 1 P. Hinweis auf Arrays/Referenz.</i>` },
+{ t: 'Arrays', pts: 4, q: 'Schreibe eine Methode <code>summe</code>, die alle Elemente eines <code>int</code>-Arrays addiert und zurückgibt.',
+  m: `${J(`public static int summe(int[] werte) {\n    int s = 0;\n    for (int i = 0; i < werte.length; i++) {\n        s += werte[i];\n    }\n    return s;\n}`, 'class')}Auch mit for-each möglich: <code>for (int w : werte) { s += w; }</code>. <i>1 P. Signatur (<code>int summe(int[])</code>), 1 P. Startwert 0, 1 P. Schleife <code>&lt; werte.length</code>, 1 P. Rückgabe.</i>` },
+{ t: 'Arrays', pts: 4, q: 'Schreibe eine Methode, die den <b>Mittelwert</b> eines <code>int</code>-Arrays als <code>double</code> berechnet. Worauf muss man achten?',
+  m: `${J(`public static double mittelwert(int[] werte) {\n    int summe = 0;\n    for (int w : werte) {\n        summe += w;\n    }\n    return (double) summe / werte.length;\n}`, 'class')}Achtung: <code>summe / werte.length</code> wären zwei <code>int</code> und damit eine <b>Ganzzahldivision</b> (2 statt 2.5). Ein Operand muss <code>double</code> sein (Cast). <i>1 P. Summe, 1 P. Rückgabetyp <code>double</code>, 1 P. Cast oder anderer double-Operand, 1 P. Begründung.</i>` },
+{ t: 'Arrays', pts: 4, q: 'Schreibe eine Methode, die den <b>Index des größten Elements</b> eines <code>int</code>-Arrays liefert.',
+  m: `${J(`public static int indexDesMaximums(int[] a) {\n    int best = 0;                  // Index des bisher größten Elements\n    for (int i = 1; i < a.length; i++) {\n        if (a[i] > a[best]) {\n            best = i;\n        }\n    }\n    return best;\n}`, 'class')}Startwert ist das <b>erste Element</b> (Index 0), verglichen wird ab Index 1. <i>1 P. Startwert Index 0, 1 P. Schleife ab 1 bis <code>&lt; a.length</code>, 1 P. Vergleich <code>a[i] &gt; a[best]</code>, 1 P. Index (nicht den Wert) speichern und zurückgeben.</i>` },
+{ t: 'Arrays', pts: 3, q: 'Drehe die Reihenfolge der Elemente eines <code>int</code>-Arrays <code>a</code> <b>in dem Array selbst</b> um (ohne zweites Array). Warum läuft die Schleife nur bis zur Hälfte?',
+  m: `${J(`for (int i = 0; i < a.length / 2; i++) {\n    int tmp = a[i];\n    a[i] = a[a.length - 1 - i];\n    a[a.length - 1 - i] = tmp;\n}`)}Es werden Paare getauscht (erstes mit letztem, zweites mit vorletztem …). Liefe die Schleife bis zum Ende, würde jedes Paar zweimal getauscht und alles wäre wieder wie vorher. <i>1 P. Tausch mit Hilfsvariable, 1 P. richtiger Gegenindex <code>a.length - 1 - i</code>, 1 P. Begründung der halben Länge.</i>` },
+{ t: 'Arrays', pts: 3, q: 'Was ist eine <code>ArrayIndexOutOfBoundsException</code>? Nenne ein Beispiel und wie man sie vermeidet.',
+  m: `Sie tritt <b>zur Laufzeit</b> auf, wenn man auf einen Index zugreift, den es nicht gibt (kleiner 0 oder größer gleich <code>length</code>). Beispiel: ${J(`int[] a = new int[5];\na[5] = 1;      // Index 5 gibt es nicht, höchster Index ist 4\n\nfor (int i = 0; i <= a.length; i++) { }   // <= läuft einmal zu weit`, 'main')}Vermeiden: Schleifen mit <code>i &lt; a.length</code>, Index vor dem Zugriff prüfen. <i>1 P. Erklärung, 1 P. Beispiel, 1 P. Vermeidung.</i>` },
+{ t: 'Testen', pts: 3, q: 'Du sollst die Rabattregel „ab 500 Stück 5 % Rabatt“ per Black-Box-Test prüfen. Nenne vier sinnvolle Testmengen und begründe die Auswahl.',
+  m: 'Sinnvoll sind z. B. <b>100</b> (typischer Wert ohne Rabatt), <b>499</b> (Grenzwert knapp darunter, kein Rabatt), <b>500</b> (Grenzwert, Rabatt gilt gerade schon) und <b>600</b> (typischer Wert mit Rabatt). Dazu gehören die Grenzen bei 19.999 und 20.000 für den zweiten Rabatt. Die Grenzwerte sind wichtig, weil Fehler wie <code>&gt;</code> statt <code>&gt;=</code> nur dort auffallen. Der erwartete Preis wird vorher aus der Regel berechnet. <i>1 P. zwei Grenzwerte (499 und 500), 1 P. Werte aus beiden Klassen, 1 P. Begründung.</i>' },
+{ t: 'Methoden', pts: 4, q: 'Finde die drei Fehler und schreibe die korrigierte Methode.<pre class="code bad" data-w="skip"><code>static int quadrat(int x) {\n    int ergebnis = x * x;\n}\n\nstatic void pruefe(string text) {\n    if (text == "ja") {\n        System.out.println("ok");\n    }\n}</code></pre>',
+  m: `<b>1.</b> <code>quadrat</code> hat kein <code>return</code> (<i>missing return statement</i>). <b>2.</b> <code>string</code> muss <code>String</code> heißen. <b>3.</b> Strings vergleicht man mit <code>equals</code>, nicht mit <code>==</code>.${J(`static int quadrat(int x) {\n    int ergebnis = x * x;\n    return ergebnis;\n}\n\nstatic void pruefe(String text) {\n    if (text.equals("ja")) {\n        System.out.println("ok");\n    }\n}`, 'class')}<i>Je 1 P. pro gefundenem Fehler, 1 P. für die korrigierte, vollständige Fassung.</i>` }
+];
+
+
+'use strict';
 (function () {
   const $ = (s, el) => (el || document).querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -1487,7 +2773,8 @@ D.lern.wub.unshift({ id: 'ov', title: 'Überblick: Was kommt in der WUB-Klausur 
 
   const FACH = {
     evp: { label: 'EVP-Test', sub: 'Zahlensysteme · Bits & Bytes · Codes · Zweierkomplement', gens: EVP },
-    wub: { label: 'WUB-Klausur', sub: 'Kündigung · Lohnabrechnung & Steuern · Soziale Sicherung', gens: WUB }
+    wub: { label: 'WUB-Klausur', sub: 'Kündigung · Lohnabrechnung & Steuern · Soziale Sicherung', gens: WUB },
+    sud: { label: 'SUD-Klausur', sub: 'Java: Variablen · Verzweigungen · Schleifen · Methoden · Arrays', gens: SUD }
   };
   const TABS = [['lern', 'Lernhilfe'], ['kk', 'Karteikarten'], ['qz', 'Quiz'], ['tr', 'Rechentrainer'], ['pt', 'Probetest']];
   const PLAN = {
@@ -1498,23 +2785,27 @@ D.lern.wub.unshift({ id: 'ov', title: 'Überblick: Was kommt in der WUB-Klausur 
     wub: {
       kurz: { name: 'Kurztest', min: 30, gens: ['kuendFrist', 'sozialauswahl', 'netto'], mc: 9, self: 3 },
       voll: { name: 'Vollständiger Test', min: 60, gens: ['kuendFrist', 'sozialauswahl', 'sozialauswahl', 'netto', 'svAn', 'agKosten'], mc: 18, self: 7 }
+    },
+    sud: {
+      kurz: { name: 'Kurztest', min: 30, gens: ['intDiv', 'typeMix', 'incDec', 'forCount', 'switchFall', 'arrLoop', 'callByValue', 'overload'], mc: 8, self: 3 },
+      voll: { name: 'Vollständiger Test', min: 75, gens: ['intDiv', 'typeMix', 'incDec', 'strConcat', 'castRound', 'forCount', 'whileTrace', 'digitSum', 'switchFall', 'arrLoop', 'arrMaxIdx', 'arr2d', 'callByValue', 'overload', 'zahnbuerste'], mc: 14, self: 6 }
     }
   };
   const state = { fach: 'evp', tab: 'lern' };
-  const S = { evp: {}, wub: {} };
+  const S = { evp: {}, wub: {}, sud: {} };
   const view = () => $('#view');
 
   /* ---------- Rahmen ---------- */
   function drawFrame() {
     $('#faches').innerHTML = Object.keys(FACH).map((k) =>
       `<button class="fach ${state.fach === k ? 'on' : ''}" data-act="fach" data-v="${k}"><b>${FACH[k].label}</b><span>${FACH[k].sub}</span></button>`).join('');
-    $('#tabs').innerHTML = TABS.map(([k, n]) => `<button class="${state.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${n}</button>`).join('');
+    $('#tabs').innerHTML = TABS.map(([k, n]) => `<button class="${state.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${k === 'tr' && state.fach === 'sud' ? 'Code-Trainer' : n}</button>`).join('');
   }
   function render() {
     drawFrame();
     const v = view();
     ({ lern: viewLern, kk: viewKK, qz: viewQZ, tr: viewTR, pt: viewPT })[state.tab](v);
-    if (state.tab === 'lern') { if (state.fach === 'evp') initBitplay(); else initNettoCalc(); }
+    if (state.tab === 'lern') { if (state.fach === 'evp') initBitplay(); else if (state.fach === 'wub') initNettoCalc(); else initSudPlay(); }
     if (state.tab === 'tr') { const i = $('#tin'); if (i && !S[state.fach].tr.checked) i.focus(); }
   }
 
@@ -1540,6 +2831,48 @@ D.lern.wub.unshift({ id: 'ov', title: 'Überblick: Was kommt in der WUB-Klausur 
       if (a && a.dataset.act === 'bneg') { const u = (256 - parseInt(bits.join(''), 2)) & 255; bits = u.toString(2).padStart(8, '0').split('').map(Number); draw(); }
     };
     draw();
+  }
+  function initSudPlay() {
+    const ip = $('#intplay');
+    if (ip) {
+      ip.innerHTML = `<div class="grid"><label>Zahl a (ganze Zahl)<input type="number" id="ip-a" value="10" min="-999" max="999" step="1"></label>
+        <label>Zahl b (ganze Zahl)<input type="number" id="ip-b" value="3" min="-999" max="999" step="1"></label></div><div id="ip-out"></div>`;
+      const num = (id) => Math.max(-999, Math.min(999, Math.trunc(parseFloat($(id).value))));
+      const ds = (v) => (Number.isInteger(v) ? v.toFixed(1) : String(v));
+      const calc = () => {
+        const a = num('#ip-a'), b = num('#ip-b'), out = $('#ip-out');
+        if (isNaN(a) || isNaN(b)) { out.innerHTML = '<p class="muted">Bitte zwei ganze Zahlen eingeben.</p>'; return; }
+        const zero = b === 0, exc = '<b>ArithmeticException</b>: / by zero';
+        const dv = zero ? (a === 0 ? 'NaN' : a > 0 ? 'Infinity' : '-Infinity') : ds(a / b);
+        const rows = [
+          ['int a = ' + a + ', b = ' + b + ';', 'Ausgangswerte'],
+          ['a / b', zero ? exc : String(Math.trunc(a / b)), 'int / int: Nachkommastellen entfallen'],
+          ['a % b', zero ? exc : String(a % b), 'Rest der Ganzzahldivision'],
+          ['double c = a / b;', zero ? exc : ds(Math.trunc(a / b)), 'erst int-Division, dann Umwandlung'],
+          ['(double) a / b', dv, 'Cast nur auf a, dann Kommazahl-Division'],
+          ['(double) (a / b)', zero ? exc : ds(Math.trunc(a / b)), 'Klammer zuerst: int-Division, Cast zu spät']
+        ];
+        out.innerHTML = '<div class="scroll"><table class="tbl"><thead><tr><th>Java</th><th>Ergebnis</th><th>Warum</th></tr></thead><tbody>' +
+          rows.map((r) => '<tr><td><code>' + esc(r[0]) + '</code></td><td>' + (r[2] ? r[1] : '') + '</td><td>' + esc(r[2] || r[1]) + '</td></tr>').join('') + '</tbody></table></div>';
+      };
+      ip.oninput = calc; calc();
+    }
+    const ap = $('#arrplay');
+    if (ap) {
+      const arr = [4, 8, 15, 16, 23, 42];
+      let idx = 2;
+      const draw = () => {
+        const ok = idx >= 0 && idx < arr.length;
+        ap.innerHTML = `<p class="muted">Das Array: <code>int[] a = {4, 8, 15, 16, 23, 42};</code> Klicke ein Feld an oder gib einen Index ein.</p>
+          <div class="bits">${arr.map((v, i) => `<button class="bit arrcell ${ok && i === idx ? 'on' : ''}" data-ai="${i}" aria-label="Index ${i}, Wert ${v}"><span class="bw">Index ${i}</span><span class="bv">${v}</span></button>`).join('')}</div>
+          <div class="row" style="margin-top:0"><label class="inl">Index <input type="number" id="ap-i" value="${idx}" min="-9" max="20" step="1" style="width:90px"></label></div>
+          <div class="fb ${ok ? 'ok' : 'no'}"><code>a[${idx}]</code> ergibt ${ok ? '<b>' + arr[idx] + '</b>' : '<b>ArrayIndexOutOfBoundsException</b>: Index ' + idx + ' out of bounds for length ' + arr.length}.
+          <br><span class="muted"><code>a.length</code> ist ${arr.length}, der höchste gültige Index ist ${arr.length - 1}.</span></div>`;
+      };
+      ap.onclick = (e) => { const b = e.target.closest('[data-ai]'); if (b) { idx = +b.dataset.ai; draw(); } };
+      ap.onchange = (e) => { if (e.target.id === 'ap-i') { const v = Math.trunc(parseFloat(e.target.value)); if (!isNaN(v)) { idx = v; draw(); const i2 = $('#ap-i'); if (i2) i2.focus(); } } };
+      draw();
+    }
   }
   function initNettoCalc() {
     const el = $('#nettocalc'); if (!el) return;
@@ -1733,7 +3066,7 @@ D.lern.wub.unshift({ id: 'ov', title: 'Überblick: Was kommt in der WUB-Klausur 
         <div class="row"><label class="inl">Test-Nr. (optional, gleiche Nr. = gleicher Test) <input type="number" id="ptseed" placeholder="z. B. 123456" min="1" style="width:170px"></label></div></div>`;
       return;
     }
-    const parts = [['input', 'Teil A · Rechen- und Codierungsaufgaben'], ['mc', 'Teil B · Multiple Choice'], ['self', 'Teil C · Freitext']];
+    const parts = [['input', f === 'sud' ? 'Teil A · Programme lesen: Was wird ausgegeben?' : 'Teil A · Rechen- und Codierungsaufgaben'], ['mc', 'Teil B · Multiple Choice'], ['self', 'Teil C · Freitext']];
     const body = parts.map(([k, name]) => { const ts = pt.tasks.filter((t) => t.kind === k); if (!ts.length) return ''; return `<h3 class="part">${name} (${ts.reduce((a, t) => a + t.pts, 0)} P.)</h3>` + ts.map((t) => taskHTML(t, pt.phase === 'done')).join(''); }).join('');
     if (pt.phase === 'run') {
       v.innerHTML = `<div class="card"><div class="row" style="margin-top:0;justify-content:space-between"><div><b>${pt.name}</b> · Test-Nr. ${pt.seed} · ${pt.total} Punkte</div><span class="timer" id="timer">Noch ${fmtT(pt.limit * 60)}</span></div></div>${body}
