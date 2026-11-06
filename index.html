@@ -1997,22 +1997,22 @@ int c = ++a;     // a = 6, c = 6`)}
 <tr><td><code>toCharArray()</code></td><td>Array <code>{'H','a','l','l','o'}</code></td></tr></tbody></table></div>
 <div class="box"><b>Strings vergleicht man mit <code>equals</code>, nicht mit <code>==</code>.</b> <code>==</code> prüft, ob es dasselbe Objekt ist, <code>equals</code> prüft den Inhalt. <code>"Abc".equals("abc")</code> ist <code>false</code>, <code>equalsIgnoreCase</code> ignoriert die Schreibweise. <code>compareTo</code> liefert eine <b>negative Zahl, 0 oder eine positive Zahl</b> (nicht nur −1/1).</div>
 
-<h4>Eingabe und Ausgabe</h4>
+<h4>Eingabe mit Scanner</h4>
 ${J(RAW`
-String text = JOptionPane.showInputDialog(null, "Alter?");   // liefert String, bei Abbruch null
-int alter = Integer.parseInt(text);                          // String in int umwandeln
-double zahl = Double.parseDouble("3.5");                     // Punkt, kein Komma
-JOptionPane.showMessageDialog(null, "Alter: " + alter);
-int antwort = JOptionPane.showConfirmDialog(null, "Stimmt das?");
-boolean ja = antwort == JOptionPane.YES_OPTION;              // YES_OPTION ist 0`)}
-${J(RAW`
-// Eingabe über die Konsole (wie in deinem Zahnbürsten-Programm)
-BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-int menge = Integer.parseInt(in.readLine());   // readLine() liefert immer einen String
-char kategorie = in.readLine().charAt(0);      // erstes Zeichen der Eingabe`)}
-<ul><li><code>showInputDialog</code> liefert immer einen <b>String</b>, zum Rechnen muss man umwandeln (<code>Integer.parseInt</code>, <code>Double.parseDouble</code>).</li>
-<li>Passt der Text nicht (<code>"3,5"</code>, <code>"abc"</code>, <b>oder <code>null</code> nach Abbruch</b>), gibt es eine <code>NumberFormatException</code>.</li>
-<li><code>showConfirmDialog</code> liefert einen <code>int</code>: YES = 0, NO = 1, CANCEL = 2, Fenster geschlossen = −1. <code>showOptionDialog</code> liefert den <b>Index des Buttons</b> (bei Schließen −1).</li></ul>
+Scanner sc = new Scanner(System.in);          // import java.util.Scanner;
+System.out.print("Alter? ");
+int alter = sc.nextInt();                     // liest eine ganze Zahl
+double preis = sc.nextDouble();               // liest eine Kommazahl
+sc.nextLine();                                // Rest der Zeile (Zeilenumbruch) verwerfen
+String name = sc.nextLine();                  // ganze Zeile als Text
+char antwort = sc.nextLine().charAt(0);       // erstes Zeichen der Zeile
+System.out.println("Alter: " + alter);`)}
+<ul><li><code>nextInt()</code>, <code>nextDouble()</code> liefern direkt eine <b>Zahl</b>, <code>next()</code> das nächste <b>Wort</b>, <code>nextLine()</code> die <b>ganze Zeile</b> als <code>String</code>. Ein einzelnes Zeichen holt man mit <code>nextLine().charAt(0)</code>.</li>
+<li><b>Zeilenumbruch-Falle:</b> <code>nextInt()</code> liest nur die Zahl, der Zeilenumbruch bleibt im Puffer. Ein folgendes <code>nextLine()</code> liefert deshalb einen <b>leeren String</b>. Abhilfe: einmal <code>nextLine()</code> dazwischen aufrufen.</li>
+<li>Passt die Eingabe nicht (z. B. <code>abc</code> bei <code>nextInt()</code>), wirft der Scanner eine <code>InputMismatchException</code>. Vorher prüfen kann man mit <code>hasNextInt()</code>.</li>
+<li>Liest man mit <code>nextLine()</code> und wandelt selbst um (<code>Integer.parseInt(text)</code>, <code>Double.parseDouble(text)</code>), gibt es bei falschem Text eine <code>NumberFormatException</code>. <code>parseDouble</code> erwartet einen <b>Punkt</b> (<code>"3.5"</code>), <code>"3,5"</code> funktioniert nicht.</li>
+<li><code>nextDouble()</code> richtet sich nach dem <b>Gebietsschema</b> des Rechners: In einer deutschen Einstellung wird <code>3,5</code> erwartet, <code>3.5</code> löst eine <code>InputMismatchException</code> aus.</li>
+<li><code>charAt(0)</code> bei einer leeren Eingabe wirft eine <code>StringIndexOutOfBoundsException</code>.</li></ul>
 
 <div class="warn"><b>Typische Fehler in LS01:</b> <code>int / int</code> und dann Nachkommastellen erwarten · <code>string</code> klein geschrieben (Compilerfehler <i>cannot find symbol</i>) · <code>char c = "a";</code> oder <code>String s = 'a';</code> (Typen vertauscht) · Variable <b>zweimal deklariert</b> (<i>already defined</i>) · Variable <b>nicht initialisiert</b> benutzt (<i>might not have been initialized</i>) · Komma statt Punkt bei <code>parseDouble</code> · Semikolon vergessen.</div>
 `});
@@ -2155,13 +2155,15 @@ for (int zeile = 0; zeile < size; zeile++) {
 ${J(RAW`
 // Zahlenraten: Zufallszahl 0 bis 14 (Obergrenze exklusiv), Schleife bis zum Treffer
 Random zufall = new Random();
+Scanner sc = new Scanner(System.in);
 int gesucht = zufall.nextInt(15);
 int tipp = -1;
 while (tipp != gesucht) {
-    tipp = Integer.parseInt(JOptionPane.showInputDialog("Tipp?"));
+    System.out.print("Tipp? ");
+    tipp = sc.nextInt();
 }`)}
 <p><b>Geschachtelte Schleifen:</b> Außen R Runden, innen jedes Mal C Durchläufe: <b>R · C</b> Durchläufe insgesamt. Läuft die innere Schleife bis <code>i</code>, ergibt sich 1 + 2 + … + R = R · (R + 1) / 2.</p>
-<p><b>Verzweigung wiederholen:</b> Eine Verzweigung steht dazu <b>in</b> einer Schleife (z. B. Menü: <code>while (aktiv) { switch (auswahl) … }</code>). Bei <code>showOptionDialog</code> liefert das Schließen des Fensters <code>-1</code>, so kann man die Schleife beenden.</p>
+<p><b>Verzweigung wiederholen:</b> Eine Verzweigung steht dazu <b>in</b> einer Schleife (z. B. Menü: <code>while (aktiv) { switch (auswahl) … }</code>). Eine Eingabe wie <code>0</code> beendet das Menü: <code>while (auswahl != 0) { … }</code>.</p>
 
 <div class="warn"><b>Typische Fehler in LS03:</b>
 <ul><li><b>Endlosschleife:</b> Der Zähler wird nie verändert (<code>while (i &lt; 3) { … }</code> ohne <code>i++</code>) oder die Bedingung kann nie falsch werden.</li>
@@ -2169,7 +2171,7 @@ while (tipp != gesucht) {
 <li><b>Um eins daneben</b> (<i>off by one</i>): <code>&lt;</code> statt <code>&lt;=</code> oder umgekehrt.</li>
 <li><b>Primzahltest:</b> ohne Sonderfall würde <code>1</code> (und 0) als Primzahl gelten, weil die Schleife gar nicht läuft.</li>
 <li><b>Klammern vergessen:</b> ohne <code>{ }</code> gehört nur die erste Anweisung zur Schleife.</li>
-<li><code>showInputDialog</code> liefert bei Abbruch <code>null</code>, <code>Integer.parseInt(null)</code> wirft eine <code>NumberFormatException</code>.</li></ul></div>
+<li><b>Eingabe nicht passend:</b> <code>nextInt()</code> mit Text wirft eine <code>InputMismatchException</code>, und nach <code>nextInt()</code> liefert ein <code>nextLine()</code> zunächst den leeren Rest der Zeile.</li></ul></div>
 `});
 
 D.lern.sud.push({ id: 'ls04', title: '4 · LS04: Testen (Black-Box-Test, Zahnbürsten-Beispiel)', html: RAW`
@@ -2440,7 +2442,6 @@ String[] teile = "a,b,c".split(",");             // {"a", "b", "c"}`)}
 /* ======================= SUD – KORREKTUREN deiner Kontrollfragen ======================= */
 D.lern.sud.push({ id: 'korr', title: '7 · Korrekturen: Das stimmt in deinen Kontrollfragen nicht', html: RAW`
 <div class="warn"><b>Wichtig vor der Klausur:</b> Ich habe deine ausgefüllten Kontrollfragen und deinen Code mit Java gegengeprüft. An diesen Stellen steht etwas Falsches oder Ungenaues. Lerne die rechte Spalte. Wo euer Lehrer eigene Formulierungen verwendet, haben seine Folien Vorrang (markiert mit <span class="tag open">Lehrer fragen</span>).</div>
-
 <h4>LS01 · Variablen, Operatoren, Aufgabe 3</h4>
 <div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
 <tr><td>Welche drei Dinge passieren bei der Deklaration?</td><td>(nicht beantwortet)</td><td>Speicherplatz reservieren · Datentyp festlegen · Namen vergeben</td></tr>
@@ -2449,39 +2450,33 @@ D.lern.sud.push({ id: 'korr', title: '7 · Korrekturen: Das stimmt in deinen Kon
 <tr><td>Einerstelle von 2345 bestimmen</td><td>String, <code>str.endswith</code></td><td><b><code>zahl % 10</code></b> (= 5). <code>endswith</code> gibt es in Python, in Java heißt es <code>endsWith</code> und liefert nur <code>true</code>/<code>false</code>.</td></tr>
 <tr><td>Ändert sich die Division, wenn die <b>Ergebnisvariable</b> <code>double</code> ist?</td><td>ja</td><td><b>Nein.</b> <code>zahl1 / zahl2</code> bleibt eine <code>int</code>-Division, ergebnis ist dann 3.0 statt 3, aber der Wert bleibt 3.</td></tr>
 <tr><td>Ändert sich das Ergebnis bei <code>(double) zahl1 / zahl2</code>? Warum?</td><td>Nein, da das Ergebnis der Integer-Teilung zum double geparsed wird</td><td><b>Ja</b> (3.3333333333333335 statt 3.0). Durch den <b>Cast</b> ist ein Operand <code>double</code>, es wird als Kommazahl gerechnet. Deine Begründung beschreibt den Fall <b>ohne</b> Cast.</td></tr></tbody></table></div>
-
 <h4>LS02 · Verzweigungen</h4>
 <div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
 <tr><td>Strings vergleichen</td><td><code>str.isEqual(str)</code></td><td><b><code>str1.equals(str2)</code></b>. <code>isEqual</code> gibt es in Java nicht.</td></tr>
 <tr><td>Welche Datentypen im <code>switch</code>?</td><td>ALLE</td><td><b>Nicht alle:</b> <code>byte, short, char, int, String, enum</code>. <b>Nicht</b> <code>long, float, double, boolean</code>.</td></tr>
 <tr><td>10 Fälle ohne switch: wie viele if-else-Strukturen?</td><td>8 (erstes if, letztes else)</td><td>Eine Kette aus <b>1 × if, 8 × else if, 1 × else</b> = 10 Zweige. Nenne die Zusammensetzung, „8“ allein ist missverständlich. <span class="tag open">Lehrer fragen</span> wie gezählt wird.</td></tr></tbody></table></div>
-
 <h4>LS03 · Schleifen</h4>
 <div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
 <tr><td>Kopf- und fußgesteuerte Schleife</td><td>Kopf „feuert direkt“, Fuß „macht erst etwas, bevor die neue Iteration anfängt“</td><td><b>Kopfgesteuert:</b> Bedingung wird <b>vor</b> dem Durchlauf geprüft, der Rumpf kann <b>nie</b> laufen. <b>Fußgesteuert:</b> Bedingung <b>nach</b> dem Durchlauf, der Rumpf läuft <b>mindestens einmal</b> (<code>do-while</code>).</td></tr>
 <tr><td>Andere Begriffe für kopf-/fußgesteuert</td><td>bedingungs- / zählergesteuert</td><td><b>abweisende</b> Schleife (kopfgesteuert) und <b>nicht abweisende</b> Schleife (fußgesteuert). „Bedingungsgesteuert“ (<code>while</code>, <code>do-while</code>) und „zählergesteuert“ (<code>for</code>) ist eine <b>andere</b> Einteilung. <span class="tag open">Lehrer fragen</span></td></tr>
 <tr><td>Wofür geschweifte Klammern bei Schleifen?</td><td>zeigen, welcher Code zu welcher Funktion gehört, deklarieren Scopes</td><td>Sie fassen die Anweisungen des <b>Schleifenrumpfs</b> zu einem Block zusammen. <b>Ohne Klammern gehört nur die erste Anweisung zur Schleife.</b> (Der Gültigkeitsbereich ist eine Folge davon.)</td></tr>
 <tr><td>Ist die zählergesteuerte Schleife kopf- oder fußgesteuert?</td><td>fußgesteuert, weil sie das Hochzählen am Ende ausführt</td><td><b>Kopfgesteuert.</b> Die Bedingung (<code>i &lt; n</code>) wird vor jedem Durchlauf geprüft. Das Hochzählen am Ende ändert daran nichts.</td></tr></tbody></table></div>
-
 <h4>LS05 · Methoden und Überladung</h4>
 <div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
 <tr><td>Wozu dient eine Rückgabe?</td><td>Rekursion und Benutzen der Funktion im oberen Scope</td><td>Die Methode liefert ein <b>Ergebnis an den Aufrufer</b> zurück (und endet), das dieser speichern oder weiterverwenden kann. Rekursion ist nur ein Spezialfall.</td></tr>
 <tr><td>Signatur zu <code>char buchstabe = antwortEinlesen("Ja oder Nein: ");</code></td><td><code>public static string antwortEinlesen(string outText)</code></td><td><b><code>public static char antwortEinlesen(String outText)</code></b>: Rückgabetyp <code>char</code> (das Ergebnis geht in eine <code>char</code>-Variable) und <code>String</code> mit <b>großem S</b>.</td></tr>
 <tr><td>An welchen drei Kriterien unterscheidet der Rechner überladene Methoden?</td><td>Param, Klasse, Return</td><td><b>Anzahl, Datentypen und Reihenfolge der Parameter.</b> Nicht die Klasse und <b>nicht der Rückgabetyp</b>.</td></tr>
 <tr><td>Signaturen-Übung Nr. 14</td><td><code>boolean, …, string text</code></td><td><code>boolean istNurKleinbuchstaben(String text)</code>: <code>String</code> groß schreiben. Zeichen sind besser als <code>char</code> statt <code>String</code> typisiert (Nr. 9, 11), eine Höhe eher <code>int</code> (Nr. 6), Kilometer eher <code>double</code> (Nr. 2).</td></tr></tbody></table></div>
-
 <h4>Aus deinem Code</h4>
 <div class="scroll"><table class="tbl"><thead><tr><th>Stelle</th><th>Problem</th><th>Besser</th></tr></thead><tbody>
 <tr><td>LS05 <code>a3.fahrenheitToCelsius</code></td><td><code>f / 1.8</code>: der Versatz fehlt (212 °F ergäbe 117,8 statt 100)</td><td><code>(f - 32) / 1.8</code></td></tr>
-<tr><td>LS05 <code>a2.getInteger</code></td><td><code>text == ""</code> vergleicht Referenzen; der Parameter <code>text</code> wird nicht im Dialog verwendet</td><td><code>text == null || text.equals("")</code> bzw. <code>text.isEmpty()</code>, und <code>text</code> in <code>showInputDialog</code> einsetzen</td></tr>
+<tr><td>LS05 <code>a2.getInteger</code></td><td><code>text == ""</code> vergleicht Referenzen; der Parameter <code>text</code> wird nicht verwendet</td><td><code>text == null || text.equals("")</code> bzw. <code>text.isEmpty()</code>, und <code>text</code> als Aufforderung benutzen</td></tr>
 <tr><td>LS02 <code>numberToWholeString</code></td><td><code>number &gt; 10</code> lässt 10 durch, das Array hat nur Index 0 bis 9: <code>ArrayIndexOutOfBoundsException</code>; negative Zahlen werden nicht abgefangen</td><td><code>number &lt; 0 || number &gt; 9</code></td></tr>
 <tr><td>LS02 BMI</td><td><code>else if (bmi &gt; 40)</code>: genau 40 trifft keinen Zweig</td><td>letzter Zweig als <code>else</code> oder <code>&gt;= 40</code></td></tr>
 <tr><td>LS03 <code>prime</code></td><td>0 und 1 werden als Primzahl gemeldet (die Schleife läuft nie)</td><td>Sonderfall <code>number &lt; 2</code> vorab</td></tr>
-<tr><td>LS03 Eingabe</td><td><code>showInputDialog</code> liefert bei Abbruch <code>null</code>, <code>Integer.parseInt(null)</code> stürzt ab, bevor <code>checkIfJOPWasclosed</code> greift</td><td>erst auf <code>null</code> prüfen, dann umwandeln</td></tr>
 <tr><td>LS04 <code>testing</code></td><td><code>orderSize &gt; 500</code>, die Regel gilt <b>ab</b> 500</td><td><code>&gt;= 500</code>, <code>&gt;= 20000</code></td></tr>
 <tr><td>LS04 Protokoll Test 1</td><td>„250*0,01 = 247,5“: 250 · 0,01 ist 2,5</td><td>Rabatt 250 · 0,01 = 2,50 €, Preis 250 − 2,50 = 247,50 € (oder 250 · 0,99)</td></tr></tbody></table></div>
 `});
-
 /* ======================= SUD – ÜBERBLICK ======================= */
 D.lern.sud.forEach((s) => { s.open = false; });
 D.lern.sud.unshift({ id: 'ov', title: 'Überblick: Was kommt in der SUD-Klausur dran?', open: true, html: RAW`
@@ -2507,7 +2502,6 @@ D.lern.sud.unshift({ id: 'ov', title: 'Überblick: Was kommt in der SUD-Klausur 
 <div class="box"><b>Checkliste, wenn du Code von Hand schreibst:</b> Semikolon · Klammern paarweise · Typ passt zur Zuweisung · <code>String</code> groß · <code>equals</code> statt <code>==</code> · alle Variablen deklariert · <code>return</code> in jedem Zweig · Schleifenbedingung (<code>&lt;</code> oder <code>&lt;=</code>) · Index nie gleich <code>length</code> · bei Mittelwerten <code>double</code> verwenden.</div>
 <div class="warn"><b>Was ich nicht gesehen habe:</b> die <b>Folien und Erklärungen eures Lehrers</b> (im Ordner liegen nur Aufgaben, Kontrollfragen und dein Code), das Aufgabenblatt zu LS04 und jegliches Material zu <b>Arrays</b>. Arrays habe ich nach dem üblichen Java-Stoff geschrieben. Frage bei Unsicherheit, was genau im Test verlangt wird (Schreibweisen, ob Hilfsmethoden wie <code>Arrays.sort</code> erlaubt sind). <b>Alle Codebeispiele habe ich mit Java 21 geprüft</b>, ebenso die Lösungen der Code-Aufgaben im Trainer und im Probetest.</div>
 `});
-
 /* ======================= SUD – KARTEIKARTEN ======================= */
 D.cards.sud = [
 /* Variablen & Operatoren */
@@ -2531,8 +2525,8 @@ D.cards.sud = [
 { t: 'Variablen & Operatoren', q: 'Wie vergleicht man zwei Strings?', a: '<code>s1.equals(s2)</code> (Inhalt). <code>==</code> prüft nur, ob es dasselbe Objekt ist. <code>equalsIgnoreCase</code> ignoriert Groß-/Kleinschreibung. <code>isEqual</code> gibt es nicht.' },
 { t: 'Variablen & Operatoren', q: 'Wichtige Escape-Sequenzen?', a: '<code>\\n</code> Zeilenumbruch · <code>\\t</code> Tabulator · <code>\\"</code> Anführungszeichen · <code>\\\\</code> Backslash · <code>\\\'</code> Hochkomma.' },
 { t: 'Variablen & Operatoren', q: 'Namenskonventionen in Java?', a: '<b>camelCase</b> für Variablen und Methoden (<code>alterNachbar</code>), Klassen groß (<code>Main</code>), Konstanten <code>GROSS</code> mit <code>final</code>. Namen sollen <b>sprechend</b> sein.' },
-{ t: 'Variablen & Operatoren', q: 'Wie liest man mit JOptionPane eine Zahl ein?', a: '<code>JOptionPane.showInputDialog(…)</code> liefert einen <b>String</b> (<code>null</code> bei Abbruch). Dann <code>Integer.parseInt(text)</code> bzw. <code>Double.parseDouble(text)</code>. Dezimalpunkt statt Komma, sonst <code>NumberFormatException</code>.' },
-{ t: 'Variablen & Operatoren', q: 'Was liefern <code>showConfirmDialog</code> und <code>showOptionDialog</code>?', a: 'Je einen <code>int</code>. Confirm: YES = 0, NO = 1, CANCEL = 2, Fenster geschlossen = −1. Option: <b>Index des gewählten Buttons</b>, −1 bei Schließen.' },
+{ t: 'Variablen & Operatoren', q: 'Wie liest man mit dem Scanner eine Zahl, ein Wort und eine Zeile ein?', a: '<code>Scanner sc = new Scanner(System.in);</code> Dann <code>sc.nextInt()</code> (ganze Zahl), <code>sc.nextDouble()</code> (Kommazahl), <code>sc.next()</code> (ein Wort), <code>sc.nextLine()</code> (ganze Zeile). Import: <code>java.util.Scanner</code>.' },
+{ t: 'Variablen & Operatoren', q: 'Warum liefert <code>nextLine()</code> direkt nach <code>nextInt()</code> einen leeren String?', a: '<code>nextInt()</code> liest nur die Zahl, der <b>Zeilenumbruch</b> bleibt im Puffer. Das folgende <code>nextLine()</code> liest diesen Rest der Zeile (leer). Abhilfe: einmal <code>nextLine()</code> dazwischen aufrufen.' },
 /* Verzweigungen */
 { t: 'Verzweigungen', q: 'Warum sind Einrückungen wichtig?', a: 'Sie machen die Blockstruktur lesbar (Clean Code). Java braucht sie nicht (dort zählen die Klammern <code>{ }</code>), Python schon.' },
 { t: 'Verzweigungen', q: 'Welche Vergleichsoperatoren gibt es?', a: '<code>==  !=  &lt;  &lt;=  &gt;  &gt;=</code>, für Strings <code>equals</code>. Gleichheit ist <code>==</code>, ein einzelnes <code>=</code> ist die Zuweisung.' },
@@ -2561,7 +2555,7 @@ D.cards.sud = [
 { t: 'Schleifen', q: 'Wie prüft man, ob eine Zahl prim ist?', a: 'Teiler von 2 bis √n probieren (<code>i * i &lt;= n</code>); findet man einen, ist sie nicht prim. <b>0 und 1 sind keine Primzahlen</b>, das braucht einen Sonderfall.' },
 { t: 'Schleifen', q: 'Wie oft läuft der Rumpf bei geschachtelten Schleifen?', a: 'Außen R Runden, innen jedes Mal C: <b>R · C</b>. Läuft innen bis i: 1 + 2 + … + R = R · (R + 1) / 2.' },
 { t: 'Schleifen', q: 'Wann entsteht eine Endlosschleife?', a: 'Wenn die Bedingung nie falsch wird, z. B. der Zähler nicht verändert wird (<code>while (i &lt; 3) { … }</code> ohne <code>i++</code>).' },
-{ t: 'Schleifen', q: 'Wie wiederholt man eine Verzweigung?', a: 'Sie steht in einer Schleife (z. B. Menü: <code>while (aktiv) { switch … }</code>). Beim Schließen eines Dialogs liefert <code>showOptionDialog</code> −1.' },
+{ t: 'Schleifen', q: 'Wie wiederholt man eine Verzweigung?', a: 'Sie steht in einer Schleife (z. B. Menü: <code>while (auswahl != 0) { switch … }</code>). Eine Eingabe wie 0 beendet das Menü.' },
 /* Testen */
 { t: 'Testen', q: 'Was ist ein Black-Box-Test?', a: 'Das Programm wird als schwarze Kiste behandelt: Eingaben vorgeben, <b>tatsächliche</b> Ausgabe mit der <b>erwarteten</b> vergleichen. Der Quelltext ist egal.' },
 { t: 'Testen', q: 'Unterschied Black-Box und White-Box?', a: 'Black-Box: nur Ein- und Ausgabe. White-Box: der Quelltext ist bekannt, man prüft gezielt Zweige und Pfade.' },
@@ -2607,7 +2601,6 @@ D.cards.sud = [
 { t: 'Arrays', q: 'Wie wird ein Array an eine Methode übergeben?', a: 'Als Parameter <code>int[] werte</code>, Aufruf <code>summe(arr)</code>. Die Referenz wird kopiert, Elemente sind änderbar. Rückgabe ebenfalls als <code>int[]</code> möglich.' },
 { t: 'Arrays', q: 'Wie wandelt man einen String in ein Zeichen-Array um?', a: '<code>"Hallo".toCharArray()</code> ergibt ein <code>char[]</code> der Länge 5. Zurück: <code>String.valueOf(zeichen)</code>.' }
 ];
-
 /* ======================= SUD – QUIZ (Multiple Choice) ======================= */
 const mq = (t, q, ok, wrong, w) => ({ t, q, o: [ok].concat(wrong), a: 0, w });
 D.mc.sud = [
@@ -2630,7 +2623,7 @@ mq('Variablen & Operatoren', 'Wie bekommt man die letzte Ziffer von 2345?', '<co
 mq('Variablen & Operatoren', 'Welche drei Dinge passieren bei der Deklaration einer Variablen?', 'Speicher reservieren, Datentyp festlegen, Namen vergeben', ['Wert zuweisen, Speicher freigeben, Typ ändern', 'Namen löschen, Wert berechnen, Typ prüfen', 'Variable ausgeben, Wert kopieren, Namen ändern'], 'Bei <code>int alter;</code> wird Speicher reserviert, der Typ <code>int</code> festgelegt und der Name <code>alter</code> vergeben.'),
 tf('Variablen & Operatoren', 'Eine Variable muss einmal deklariert werden und kann danach beliebig oft verwendet werden.', true, 'Deklarieren: einmal pro Gültigkeitsbereich. Lesen und Überschreiben: beliebig oft.'),
 tf('Variablen & Operatoren', 'Der Datentyp <code>int</code> kann Nachkommastellen speichern.', false, '<code>int</code> speichert nur ganze Zahlen. Für Kommazahlen nimmt man <code>double</code>.'),
-mq('Variablen & Operatoren', 'Was liefert <code>JOptionPane.showInputDialog(…)</code>?', 'einen String (<code>null</code> bei Abbruch)', ['einen int', 'ein double', 'einen boolean'], 'Die Eingabe ist immer Text. Zum Rechnen muss man mit <code>Integer.parseInt</code> oder <code>Double.parseDouble</code> umwandeln.'),
+mq('Variablen & Operatoren', 'Was liefert <code>sc.nextLine()</code> direkt nach <code>sc.nextInt()</code>, wenn man <code>5</code> und Enter eingegeben hat?', 'einen leeren String (Rest der Zeile)', ['die Zahl 5', 'null', 'die nächste eingegebene Zeile'], '<code>nextInt()</code> lässt den Zeilenumbruch im Puffer, <code>nextLine()</code> liest diesen leeren Rest. Abhilfe: einmal <code>nextLine()</code> dazwischen aufrufen.'),
 mq('Variablen & Operatoren', 'Was passiert bei <code>Integer.parseInt("3,5")</code>?', 'NumberFormatException', ['Ergebnis 3', 'Ergebnis 3.5', 'Ergebnis 35'], 'Der Text ist keine gültige ganze Zahl. Auch Kommazahlen müssen mit <b>Punkt</b> geschrieben sein, und bei <code>int</code> sind sie gar nicht erlaubt.'),
 tf('Variablen & Operatoren', 'Jede positive ungerade Zahl ergibt bei <code>% 2</code> den Rest 1.', true, 'Gerade Zahlen ergeben 0, ungerade 1. So prüft man auf gerade: <code>n % 2 == 0</code>.'),
 mq('Variablen & Operatoren', 'Was gibt <code>System.out.println((double) (10 / 4));</code> aus?', '2.0', ['2.5', '2', '3.0'], 'Die Klammer wird zuerst berechnet: <code>10 / 4</code> ist eine <code>int</code>-Division = 2. Der Cast kommt zu spät, 2 wird zu 2.0.'),
@@ -2668,7 +2661,7 @@ tf('Schleifen', 'Die Zahl 1 ist eine Primzahl.', false, '1 ist keine Primzahl. E
 mq('Schleifen', `Was gibt das Programm aus?${J(`int n = 20;\nint steps = 0;\nwhile (n > 1) {\n    n = n / 2;\n    steps++;\n}\nSystem.out.println(steps);`, 'main')}`, '4', ['5', '3', '10'], 'n: 20 → 10 → 5 → 2 → 1, das sind 4 Schritte (jeweils ganzzahlig halbiert).'),
 mq('Schleifen', 'Was gehört zur Schleife, wenn man die geschweiften Klammern weglässt?', 'nur die erste Anweisung danach', ['alle folgenden Anweisungen', 'keine', 'die ganze Methode'], 'Ohne <code>{ }</code> endet der Rumpf nach der ersten Anweisung.'),
 mq('Schleifen', `Was gibt das Programm aus?${J(`int count = 0;\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 4; j++) {\n        count++;\n    }\n}\nSystem.out.println(count);`, 'main')}`, '12', ['7', '3', '4'], 'Außen 3 Runden, innen jedes Mal 4: 3 · 4 = 12.'),
-mq('Schleifen', 'Was liefert <code>showInputDialog</code>, wenn der Benutzer „Abbrechen“ klickt?', '<code>null</code>', ['einen leeren String', '0', '−1'], 'Bei <code>null</code> wirft <code>Integer.parseInt</code> eine <code>NumberFormatException</code>, deshalb zuerst auf <code>null</code> prüfen.'),
+mq('Schleifen', 'Was passiert bei <code>sc.nextInt()</code>, wenn der Benutzer <code>abc</code> eingibt?', 'InputMismatchException', ['NumberFormatException', 'der Wert 0', 'der Wert −1'], 'Der Scanner kann den Text nicht als <code>int</code> lesen. Mit <code>hasNextInt()</code> kann man vorher prüfen. <code>NumberFormatException</code> gäbe es bei <code>Integer.parseInt("abc")</code>.'),
 /* --- Testen --- */
 mq('Testen', 'Was ist ein Black-Box-Test?', 'Verhalten über Ein- und Ausgabe prüfen, ohne den Quelltext zu betrachten', ['Jede Zeile des Quelltexts einzeln lesen', 'Nur den Compiler laufen lassen', 'Das Programm ohne Eingabe starten'], 'Man vergleicht erwartete und tatsächliche Ausgabe. Wie das Programm innen arbeitet, spielt keine Rolle.'),
 mq('Testen', 'Bei „Rabatt ab 500 Stück“: Welche Mengen sind die wichtigsten Grenzwerte?', '499 und 500', ['100 und 200', '501 und 502', '0 und 1'], 'Fehler wie <code>&gt;</code> statt <code>&gt;=</code> zeigen sich nur an der Grenze (500).'),
@@ -2716,7 +2709,6 @@ mq('Arrays', 'Was passiert bei <code>int[] a; a[0] = 1;</code>?', 'Compilerfehle
 mq('Arrays', 'Welche Zeile ist als Array-Erzeugung gültig?', '<code>int[] a = {1, 2, 3};</code>', ['<code>int[] a = new int[3]{1, 2, 3};</code>', '<code>int a[] = new int[];</code>', '<code>int[3] a;</code>'], 'Entweder die Größe angeben (<code>new int[3]</code>) oder die Werte (<code>{1, 2, 3}</code>), nicht beides.'),
 mq('Arrays', 'Wie viele Elemente hat <code>"Hallo".toCharArray()</code>?', '5', ['4', '6', '1'], 'Für jedes Zeichen ein Element: H, a, l, l, o.')
 ];
-
 /* ======================= SUD – FREITEXTAUFGABEN (Selbstbewertung) ======================= */
 D.self.sud = [
 { t: 'Variablen & Operatoren', pts: 3, q: 'Erkläre den Unterschied zwischen <code>10 / 4</code> und <code>(double) 10 / 4</code> und nenne jeweils das Ergebnis.',
