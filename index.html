@@ -1401,6 +1401,161 @@ D.self.evp = [
   m: 'Datenmengen werden meist in Byte, Raten in Bit pro Sekunde angegeben; man kann nur gleiche Einheiten teilen. 250 MB · 8 = 2 000 Mbit, 2 000 Mbit ÷ 100 Mbit/s = <b>20 s</b>. <i>1 P. Begründung, 1 P. ·8, 1 P. Ergebnis.</i>' }
 ];
 
+/* ======================= EVP – CCNA MODUL 1: HEUTIGE NETZWERKE (Kann-Liste 2.01) ======================= */
+D.lern.evp.push({ id: 'ccna1', title: '5 · CCNA Modul 1: Heutige Netzwerke', open: false, html: `
+<div class="box"><b>Darum geht es:</b> Aus welchen Bausteinen ein Netzwerk besteht, wie man es zeichnet, welche Netzarten es gibt
+und was ein zuverlässiges, sicheres Netzwerk ausmacht. Grundlage ist die Kann-Liste 2.01 in Moodle (Abschluss am 17.11.).</div>
+
+<h4>1. Die drei Bausteine eines Netzwerks</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Baustein</th><th>Was ist das?</th><th>Beispiele</th></tr></thead><tbody>
+<tr><td><b>Endgeräte</b> (Hosts)</td><td>Quelle oder Ziel einer Nachricht. Jedes Endgerät hat eine Adresse.</td><td>PC, Laptop, Smartphone, Tablet, Drucker, VoIP-Telefon, Server, Überwachungskamera</td></tr>
+<tr><td><b>Zwischengeräte</b> (aktive Netzwerkkomponenten)</td><td>Verbinden Endgeräte miteinander und leiten Daten weiter.</td><td>Switch, Router, WLAN-Router/Access Point, Firewall</td></tr>
+<tr><td><b>Netzwerkmedien</b></td><td>Der Kanal, über den die Daten transportiert werden.</td><td>Kupferkabel, Glasfaser, Funk (WLAN)</td></tr>
+</tbody></table></div>
+
+<p><b>Client und Server:</b> Ein <b>Server</b> stellt Dienste bereit (z. B. Web-, Mail- oder Dateiserver), ein <b>Client</b> fragt sie an (z. B. der Browser).
+Ein Computer kann beides gleichzeitig sein.</p>
+<p><b>Peer-to-Peer:</b> Kleine Netze ohne eigenen Server, jeder Rechner ist Client und Server zugleich.
+Vorteile: einfach, billig, für einfache Aufgaben (Dateien teilen, Drucker freigeben). Nachteile: keine zentrale Verwaltung, schlecht skalierbar, weniger sicher, langsamer.</p>
+
+<h4>Was Zwischengeräte tun</h4>
+<ul>
+<li>Signale <b>regenerieren</b> und weitergeben</li>
+<li>Wissen, welche <b>Pfade</b> es durch das Netz gibt</li>
+<li>Andere Geräte über <b>Fehler</b> und Ausfälle informieren</li>
+<li>Bei einem Ausfall Daten über <b>alternative Pfade</b> leiten</li>
+<li>Nachrichten nach <b>Priorität</b> einordnen (QoS)</li>
+<li>Datenverkehr anhand von <b>Sicherheitsregeln</b> erlauben oder blockieren</li>
+</ul>
+
+<h4>Netzwerkmedien im Vergleich</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Medium</th><th>Signal</th><th>Typisch</th></tr></thead><tbody>
+<tr><td>Kupfer (Metalldraht)</td><td>elektrische Impulse</td><td>Netzwerkkabel im Büro (Twisted Pair)</td></tr>
+<tr><td>Glasfaser</td><td>Lichtimpulse</td><td>große Entfernungen, hohe Geschwindigkeit, unempfindlich gegen Störungen</td></tr>
+<tr><td>Drahtlos (Funk)</td><td>elektromagnetische Wellen</td><td>WLAN, Mobilfunk, Satellit</td></tr>
+</tbody></table></div>
+<p><b>Auswahlkriterien für ein Medium:</b> maximale Entfernung, Umgebung (Störquellen), benötigte Datenmenge und Geschwindigkeit, Kosten für Medium und Installation.</p>
+
+<h4>2. Netzwerke darstellen</h4>
+<ul>
+<li><b>NIC</b> (Netzwerkkarte): verbindet ein Gerät mit dem Netz</li>
+<li><b>Physischer Port:</b> Anschluss an einem Gerät, in den ein Kabel gesteckt wird</li>
+<li><b>Schnittstelle</b> (Interface): spezieller Port an einem Zwischengerät, der an ein Netz angeschlossen ist</li>
+</ul>
+<div class="scroll"><table class="tbl"><thead><tr><th>Physische Topologie</th><th>Logische Topologie</th></tr></thead><tbody>
+<tr><td>Zeigt, <b>wo</b> die Geräte stehen und wie die Kabel verlegt sind (Raum, Etage, Gebäude, Schrank).</td>
+<td>Zeigt die <b>Geräte, Ports und Adressen</b> (IP-Adressierung), also wie die Daten fließen.</td></tr>
+</tbody></table></div>
+<p class="muted">Packet Tracer: Physischer Modus = Räume, Racks, Kabel. Logischer Modus = Geräte und Verbindungen.</p>
+
+<h4>3. Arten von Netzwerken</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th></th><th>LAN (Local Area Network)</th><th>WAN (Wide Area Network)</th></tr></thead><tbody>
+<tr><th>Fläche</th><td>kleiner Bereich: Wohnung, Büro, Schule, Gebäude</td><td>große Fläche: Städte, Länder, Kontinente</td></tr>
+<tr><th>Verwaltung</th><td>eine Person oder eine Organisation</td><td>meist mehrere Dienstanbieter (ISPs)</td></tr>
+<tr><th>Geschwindigkeit</th><td>hohe Bandbreite</td><td>meist langsamer als im LAN</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Internet:</b> weltweiter Verbund vieler miteinander verbundener Netze. Es gehört niemandem. Organisationen wie IETF, ICANN und IAB entwickeln Standards und verwalten Adressen.</li>
+<li><b>Intranet:</b> privates Netz einer Organisation, nur für deren <b>eigene Mitglieder</b> (z. B. Mitarbeiterportal).</li>
+<li><b>Extranet:</b> geschützter Zugang für <b>externe Partner</b> (z. B. Lieferanten, Kunden). Beispiele: Lieferantenportal einer Firma, Buchungssystem eines Krankenhauses für Ärzte.</li>
+</ul>
+<p><b>Internetanschlüsse privat:</b> Kabel, DSL, Mobilfunk, Satellit, Einwahl (Modem).
+<b>Geschäftlich:</b> Standleitung (dedizierte Mietleitung), Metro Ethernet, Business DSL, Satellit.</p>
+
+<h4>4. Zuverlässige Netzwerke</h4>
+<div class="box"><b>Konvergentes Netzwerk:</b> Daten, Sprache (Telefonie) und Video laufen über <b>ein</b> gemeinsames Netz.
+Früher gab es dafür getrennte Netze (Telefonnetz, TV-Netz, Computernetz).</div>
+<div class="scroll"><table class="tbl"><thead><tr><th>Merkmal</th><th>Bedeutung</th></tr></thead><tbody>
+<tr><td><b>Fehlertoleranz</b></td><td>Bei einem Ausfall läuft das Netz weiter. Dafür braucht es <b>Redundanz</b>, also mehrere Wege. Paketvermittlung schickt Pakete über den jeweils besten Weg.</td></tr>
+<tr><td><b>Skalierbarkeit</b></td><td>Das Netz kann wachsen (neue Nutzer, Geräte, Standorte), ohne dass die vorhandenen Dienste schlechter werden.</td></tr>
+<tr><td><b>Dienstgüte (QoS)</b></td><td>Bei Überlastung bekommt wichtiger, zeitkritischer Verkehr Vorrang (Sprache, Video vor E-Mail oder Downloads).</td></tr>
+<tr><td><b>Sicherheit</b></td><td>Schutz der <b>Infrastruktur</b> (Geräte, Räume) und der <b>Informationen</b>.</td></tr>
+</tbody></table></div>
+<p><b>Die drei Sicherheitsziele</b> (Merkwort <b>CIA</b>):</p>
+<ul>
+<li><b>Vertraulichkeit</b> (Confidentiality): Nur Berechtigte dürfen die Daten lesen.</li>
+<li><b>Integrität</b> (Integrity): Daten werden auf dem Weg nicht verändert.</li>
+<li><b>Verfügbarkeit</b> (Availability): Berechtigte kommen jederzeit an Daten und Dienste.</li>
+</ul>
+
+<h4>5. Netzwerktrends</h4>
+<ul>
+<li><b>BYOD</b> (Bring Your Own Device): eigene Geräte im Firmen- oder Schulnetz</li>
+<li><b>Online-Zusammenarbeit:</b> gemeinsam an Dokumenten arbeiten, z. B. Teams oder Moodle</li>
+<li><b>Videokommunikation:</b> Videokonferenzen und -anrufe</li>
+<li><b>Cloud Computing:</b> Daten und Programme liegen im Rechenzentrum statt auf dem eigenen Gerät. Arten: öffentlich (Public), privat (Private), hybrid, Community-Cloud.</li>
+<li><b>Smart Home:</b> vernetzte Geräte im Haushalt (Heizung, Licht, Kühlschrank)</li>
+<li><b>Powerline:</b> Netzwerk über die Stromleitung</li>
+<li><b>Drahtloses Breitband:</b> Internet per Funk, z. B. über einen WISP (Wireless Internet Service Provider) oder Mobilfunk</li>
+</ul>
+
+<h4>6. Netzwerksicherheit</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Externe Bedrohungen</th><th>Interne Bedrohungen</th></tr></thead><tbody>
+<tr><td>Viren, Würmer, Trojaner · Spyware und Adware · Zero-Day-Angriffe (Lücke noch ohne Patch) · Angriffe durch Bedrohungsakteure (Hacker) · Denial of Service (DoS, Dienst lahmlegen) · Abfangen und Diebstahl von Daten · Identitätsdiebstahl</td>
+<td>verlorene oder gestohlene Geräte · versehentlicher Missbrauch durch Mitarbeitende · böswillige Mitarbeitende</td></tr>
+</tbody></table></div>
+<div class="scroll"><table class="tbl"><thead><tr><th>Heimnetz (Minimum)</th><th>Unternehmen (zusätzlich)</th></tr></thead><tbody>
+<tr><td>Antivirus und Antispyware · Firewall-Filterung (z. B. im Router)</td>
+<td>Dedizierte Firewall · Zugriffssteuerungslisten (ACL) · Intrusion Prevention System (IPS) · Virtuelle private Netze (VPN)</td></tr>
+</tbody></table></div>
+<p class="muted">Sicherheit funktioniert nur in <b>Schichten</b>: Eine einzelne Maßnahme reicht nie aus.</p>`
+});
+
+D.cards.evp = D.cards.evp.concat([
+{ t: 'Netzwerke', q: 'Was ist ein Endgerät (Host)? Nenne Beispiele.', a: 'Quelle oder Ziel einer Nachricht im Netz, mit eigener Adresse. Beispiele: PC, Laptop, Smartphone, Drucker, VoIP-Telefon, Server.' },
+{ t: 'Netzwerke', q: 'Was sind Zwischengeräte (aktive Netzwerkkomponenten)? Beispiele?', a: 'Geräte, die Endgeräte verbinden und Daten weiterleiten: Switch, Router, WLAN-Access-Point, Firewall.' },
+{ t: 'Netzwerke', q: 'Nenne vier Aufgaben von Zwischengeräten.', a: 'Signale regenerieren · Pfade kennen · Fehler melden · alternative Pfade nutzen · nach Priorität (QoS) weiterleiten · Verkehr nach Sicherheitsregeln erlauben/blockieren.' },
+{ t: 'Netzwerke', q: 'Welche drei Netzwerkmedien gibt es und welches Signal nutzen sie?', a: 'Kupfer: elektrische Impulse · Glasfaser: Lichtimpulse · Drahtlos: elektromagnetische Wellen.' },
+{ t: 'Netzwerke', q: 'Nach welchen Kriterien wählt man ein Netzwerkmedium?', a: 'Maximale Entfernung, Umgebung (Störungen), Datenmenge und Geschwindigkeit, Kosten für Medium und Installation.' },
+{ t: 'Netzwerke', q: 'Client, Server und Peer-to-Peer: Was ist der Unterschied?', a: 'Server stellt Dienste bereit, Client fragt sie an. Bei Peer-to-Peer ist jeder Rechner beides, es gibt keinen eigenen Server (einfach und billig, aber schlecht skalierbar und weniger sicher).' },
+{ t: 'Netzwerke', q: 'NIC, physischer Port, Schnittstelle: Was ist was?', a: 'NIC = Netzwerkkarte, verbindet ein Gerät mit dem Netz. Physischer Port = Anschluss für ein Kabel. Schnittstelle = Port eines Zwischengeräts, der mit einem Netz verbunden ist.' },
+{ t: 'Netzwerke', q: 'Physische vs. logische Topologie?', a: 'Physisch: wo Geräte stehen und wie Kabel verlegt sind. Logisch: Geräte, Ports und IP-Adressen, also wie die Daten fließen.' },
+{ t: 'Netzwerke', q: 'Unterschiede zwischen LAN und WAN?', a: 'LAN: kleiner Bereich, eine Organisation verwaltet es, hohe Bandbreite. WAN: große Fläche, meist von mehreren ISPs betrieben, meist langsamer.' },
+{ t: 'Netzwerke', q: 'Intranet vs. Extranet?', a: 'Intranet: privates Netz nur für Mitglieder der eigenen Organisation. Extranet: geschützter Zugang für externe Partner wie Lieferanten oder Kunden.' },
+{ t: 'Netzwerke', q: 'Was ist das Internet?', a: 'Ein weltweiter Verbund vieler miteinander verbundener Netze. Es gehört niemandem. IETF, ICANN und IAB kümmern sich um Standards und Adressen.' },
+{ t: 'Netzwerke', q: 'Was ist ein konvergentes Netzwerk?', a: 'Ein Netz, über das Daten, Sprache und Video gemeinsam laufen. Früher gab es dafür getrennte Netze.' },
+{ t: 'Netzwerke', q: 'Welche vier Merkmale hat eine zuverlässige Netzwerkarchitektur?', a: 'Fehlertoleranz, Skalierbarkeit, Dienstgüte (QoS), Sicherheit.' },
+{ t: 'Netzwerke', q: 'Was bedeutet Fehlertoleranz?', a: 'Das Netz läuft bei einem Ausfall weiter, weil es redundante Wege gibt. Paketvermittlung leitet Pakete um.' },
+{ t: 'Netzwerke', q: 'Was bedeutet QoS (Dienstgüte)?', a: 'Bei Überlastung bekommt zeitkritischer Verkehr wie Sprache und Video Vorrang vor E-Mail oder Downloads.' },
+{ t: 'Netzwerke', q: 'Welche drei Sicherheitsziele gibt es?', a: 'Vertraulichkeit, Integrität, Verfügbarkeit (CIA).' },
+{ t: 'Netzwerke', q: 'Nenne vier aktuelle Netzwerktrends.', a: 'BYOD, Online-Zusammenarbeit, Videokommunikation, Cloud Computing (dazu Smart Home, Powerline, drahtloses Breitband).' },
+{ t: 'Netzwerke', q: 'Welche Arten von Cloud gibt es?', a: 'Öffentliche (Public), private, hybride und Community-Cloud.' },
+{ t: 'Netzwerke', q: 'Nenne vier externe Bedrohungen für ein Netzwerk.', a: 'Viren/Würmer/Trojaner, Spyware/Adware, Zero-Day-Angriffe, Hacker-Angriffe, DoS, Datendiebstahl, Identitätsdiebstahl.' },
+{ t: 'Netzwerke', q: 'Welche Sicherheitslösungen braucht ein Unternehmen zusätzlich zum Heimnetz?', a: 'Dedizierte Firewall, Zugriffssteuerungslisten (ACL), Intrusion Prevention System (IPS), VPN. Heimnetz: Antivirus/Antispyware und Firewall-Filterung.' }
+]);
+
+D.mc.evp = D.mc.evp.concat([
+{ t: 'Netzwerke', q: 'Welches Gerät ist ein Zwischengerät?', o: ['Switch', 'Drucker', 'Smartphone', 'Webserver'], a: 0, w: 'Switches verbinden Endgeräte und leiten Daten weiter. Drucker, Smartphone und Server sind Endgeräte.' },
+{ t: 'Netzwerke', q: 'Welches Medium überträgt Daten mit Lichtimpulsen?', o: ['Glasfaser', 'Kupferkabel', 'WLAN', 'Powerline'], a: 0, w: 'Glasfaser nutzt Licht, Kupfer elektrische Impulse, WLAN elektromagnetische Wellen.' },
+{ t: 'Netzwerke', q: 'Was zeigt ein logisches Topologiediagramm?', o: ['Geräte, Ports und IP-Adressen', 'Den Verlauf der Kabel im Gebäude', 'Die Raumnummern der Geräte', 'Die Kosten der Verkabelung'], a: 0, w: 'Kabelverlauf und Standorte gehören zur physischen Topologie.' },
+{ t: 'Netzwerke', q: 'Eine Firma gibt ihren Lieferanten geschützten Zugriff auf das Bestellsystem. Was ist das?', o: ['Extranet', 'Intranet', 'LAN', 'Peer-to-Peer-Netz'], a: 0, w: 'Zugang für externe Partner = Extranet. Ein Intranet ist nur für die eigenen Mitarbeitenden.' },
+{ t: 'Netzwerke', q: 'Welche Aussage über ein WAN stimmt?', o: ['Es verbindet LANs über große Entfernungen und wird meist von Dienstanbietern betrieben.', 'Es wird immer von einer einzigen Person verwaltet.', 'Es ist immer schneller als ein LAN.', 'Es ist auf ein Gebäude begrenzt.'], a: 0, w: 'Große Fläche, mehrere ISPs, meist geringere Bandbreite als im LAN.' },
+{ t: 'Netzwerke', q: 'Welches Merkmal sorgt dafür, dass ein Netz bei einem Kabelbruch weiterläuft?', o: ['Fehlertoleranz', 'Skalierbarkeit', 'QoS', 'Vertraulichkeit'], a: 0, w: 'Fehlertoleranz durch redundante Wege.' },
+{ t: 'Netzwerke', q: 'Bei Überlastung soll ein Videoanruf Vorrang vor einem Download haben. Welches Merkmal ist das?', o: ['Quality of Service (QoS)', 'Skalierbarkeit', 'Fehlertoleranz', 'Integrität'], a: 0, w: 'QoS priorisiert zeitkritischen Verkehr.' },
+{ t: 'Netzwerke', q: 'Welches Sicherheitsziel ist verletzt, wenn Daten unterwegs verändert werden?', o: ['Integrität', 'Vertraulichkeit', 'Verfügbarkeit', 'Skalierbarkeit'], a: 0, w: 'Integrität = Daten bleiben unverändert.' },
+{ t: 'Netzwerke', q: 'Was ist ein konvergentes Netzwerk?', o: ['Ein Netz für Daten, Sprache und Video gemeinsam', 'Ein Netz nur für Telefonie', 'Ein Netz ohne Router', 'Ein reines Funknetz'], a: 0, w: 'Konvergent = alle Dienste über ein gemeinsames Netz.' },
+{ t: 'Netzwerke', q: 'Was bedeutet BYOD?', o: ['Mitarbeitende nutzen eigene Geräte im Firmennetz', 'Die Firma stellt alle Geräte', 'Daten werden in der Cloud gespeichert', 'Netzwerk über die Stromleitung'], a: 0, w: 'Bring Your Own Device.' },
+{ t: 'Netzwerke', q: 'Was ist ein Zero-Day-Angriff?', o: ['Ein Angriff auf eine Lücke, für die es noch keinen Patch gibt', 'Ein Angriff, der genau einen Tag dauert', 'Ein Angriff, der den Dienst lahmlegt', 'Ein Angriff durch einen Mitarbeiter'], a: 0, w: 'Dienst lahmlegen = DoS. Zero-Day = Lücke noch unbekannt bzw. ungepatcht.' },
+{ t: 'Netzwerke', q: 'Welche Lösung gehört typischerweise NICHT zum Mindestschutz eines Heimnetzes, sondern zum Unternehmensnetz?', o: ['Intrusion Prevention System (IPS)', 'Antivirus-Software', 'Firewall-Filterung im Router', 'Antispyware'], a: 0, w: 'IPS, ACL, VPN und dedizierte Firewalls sind zusätzliche Unternehmenslösungen.' }
+]);
+
+D.self.evp = D.self.evp.concat([
+{ t: 'Netzwerke', pts: 3, q: 'Nenne die drei Bausteine eines Netzwerks und gib zu jedem ein Beispiel.',
+  m: 'Endgeräte (z. B. PC, Smartphone, Drucker), Zwischengeräte bzw. aktive Netzwerkkomponenten (z. B. Switch, Router), Netzwerkmedien (z. B. Kupferkabel, Glasfaser, Funk). <i>Je 1 P. pro Baustein mit Beispiel.</i>' },
+{ t: 'Netzwerke', pts: 2, q: 'Erkläre den Unterschied zwischen einer physischen und einer logischen Topologie.',
+  m: 'Physisch: Standort der Geräte und Verlauf der Kabel (Raum, Gebäude, Rack). Logisch: Geräte, Ports und Adressierung, also wie die Daten fließen. <i>Je 1 P.</i>' },
+{ t: 'Netzwerke', pts: 3, q: 'Vergleiche LAN und WAN anhand von drei Merkmalen.',
+  m: 'Fläche: LAN klein (Gebäude), WAN groß (Städte/Länder). Verwaltung: LAN eine Organisation, WAN meist mehrere ISPs. Geschwindigkeit: LAN hohe Bandbreite, WAN meist langsamer. <i>Je 1 P.</i>' },
+{ t: 'Netzwerke', pts: 2, q: 'Erkläre Intranet und Extranet und gib zu beidem ein Beispiel.',
+  m: 'Intranet: privates Netz nur für Mitglieder der Organisation, z. B. Mitarbeiterportal. Extranet: geschützter Zugang für externe Partner, z. B. Lieferantenportal. <i>Je 1 P.</i>' },
+{ t: 'Netzwerke', pts: 4, q: 'Nenne und erläutere die vier Merkmale einer zuverlässigen Netzwerkarchitektur.',
+  m: 'Fehlertoleranz (weiterlaufen bei Ausfall durch Redundanz), Skalierbarkeit (wachsen ohne Leistungsverlust), QoS (Vorrang für zeitkritischen Verkehr), Sicherheit (Schutz von Infrastruktur und Informationen). <i>Je 1 P.</i>' },
+{ t: 'Netzwerke', pts: 3, q: 'Nenne die drei Sicherheitsziele und erkläre sie kurz.',
+  m: 'Vertraulichkeit: nur Berechtigte lesen die Daten. Integrität: Daten werden nicht verändert. Verfügbarkeit: Daten und Dienste sind für Berechtigte erreichbar. <i>Je 1 P.</i>' },
+{ t: 'Netzwerke', pts: 2, q: 'Was versteht man unter einem konvergenten Netzwerk? Nenne ein Beispiel.',
+  m: 'Ein gemeinsames Netz für Daten, Sprache und Video statt getrennter Netze. Beispiel: VoIP-Telefon, Videokonferenz und E-Mail laufen über dasselbe Firmennetz. <i>1 P. Definition, 1 P. Beispiel.</i>' }
+]);
+
 'use strict';
 D.lern.wub = [];
 
@@ -3215,7 +3370,7 @@ D.self.deu = [
   };
 
   const FACH = {
-    evp: { label: 'EVP-Test', sub: 'Zahlensysteme · Bits & Bytes · Codes · Zweierkomplement', gens: EVP },
+    evp: { label: 'EVP-Test', sub: 'Zahlensysteme · Bits & Bytes · Codes · Zweierkomplement · Netzwerke (CCNA 1)', gens: EVP },
     wub: { label: 'WUB-Klausur', sub: 'Kündigung · Lohnabrechnung & Steuern · Soziale Sicherung', gens: WUB },
     sud: { label: 'SUD-Klausur', sub: 'Java: Variablen · Verzweigungen · Schleifen · Methoden · Arrays', gens: SUD },
     deu: { label: 'Deutsch-Test', sub: 'Kommunikation: Watzlawick · Eisberg · Schulz von Thun · inneres Team', gens: DEU }
@@ -3224,7 +3379,7 @@ D.self.deu = [
   const PLAN = {
     evp: {
       kurz: { name: 'Kurztest', min: 25, gens: ['dez2bin', 'bin2hex', 'hex2dez', 'bitsNeeded', 'prefix', 'transfer', 'parity', 'image', 'zkDez2Bin', 'zkSub'], mc: 4, self: 2 },
-      voll: { name: 'Vollständiger Test', min: 60, gens: ['dez2bin', 'bin2dez', 'bin2hex', 'hex2bin', 'dez2hex', 'hex2dez', 'bitsNeeded', 'prefix', 'transfer', 'transfer', 'ascii', 'parity', 'parity', 'protocol', 'image', 'zkDez2Bin', 'zkMin', 'zkBin2Dez', 'zkSub', 'zkRange'], mc: 8, self: 5 }
+      voll: { name: 'Vollständiger Test', min: 60, gens: ['dez2bin', 'bin2dez', 'bin2hex', 'hex2bin', 'dez2hex', 'hex2dez', 'bitsNeeded', 'prefix', 'transfer', 'transfer', 'ascii', 'parity', 'parity', 'protocol', 'image', 'zkDez2Bin', 'zkMin', 'zkBin2Dez', 'zkSub', 'zkRange'], mc: 10, self: 6 }
     },
     wub: {
       kurz: { name: 'Kurztest', min: 30, gens: ['kuendFrist', 'sozialauswahl', 'netto'], mc: 9, self: 3 },
