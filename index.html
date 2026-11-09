@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lernhilfe: EVP, WUB und SUD</title>
+<title>Lernhilfe: EVP, WUB, SUD und Deutsch</title>
 <style>
 :root {
   --bg: #f4f6f9; --surface: #ffffff; --text: #1c2430; --muted: #5a6778; --line: #dde3ea;
@@ -44,7 +44,7 @@ header.top p { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
 .btn.good { background: var(--good); border-color: var(--good); color: #fff; }
 .btn.bad { background: transparent; border-color: var(--bad); color: var(--bad); }
 .btn:focus-visible, .chip:focus-visible, .opt:focus-visible, .fach:focus-visible, .tabs button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible, .bit:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-.faches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+.faches { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 12px; }
 .fach { text-align: left; border: 2px solid var(--line); background: var(--surface); color: var(--text); border-radius: 14px; padding: 12px 14px; cursor: pointer; font: inherit; }
 .fach b { display: block; font-size: 1.05rem; }
 .fach span { color: var(--muted); font-size: .84rem; }
@@ -138,13 +138,13 @@ table.calc { border-collapse: collapse; width: 100%; max-width: 560px; margin: 8
 .choice .btnc b { display: block; margin-bottom: 3px; }
 .choice .btnc span { color: var(--muted); font-size: .9rem; }
 .rlist label.opt { display: flex; gap: 10px; align-items: flex-start; }
+.q2 { background: var(--code-bg); border-left: 4px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin: 8px 0 4px; }
 pre.code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin: 10px 0; overflow-x: auto; font: .86rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; tab-size: 4; }
 pre.code code { background: none; padding: 0; font: inherit; }
 pre.code.bad { border-left: 4px solid var(--bad); }
 .q pre.code { margin: 8px 0 4px; }
 .arrcell { min-width: 54px; }
 footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-align: center; }
-@media (max-width: 720px) { .fach { padding: 10px 8px; } .fach b { font-size: .92rem; } .fach span { display: none; } }
 @media (max-width: 520px) { .wrap { padding: 10px 10px 50px; } }
 @media print { header.top .btn, .tabs, .faches, .row .btn { display: none; } details.sec > .body { display: block; } }
 
@@ -153,13 +153,13 @@ footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-ali
 <body>
 <div class="wrap" id="app">
   <header class="top">
-    <div><h1>Lernhilfe</h1><p>Stand 5. November 2026 · EVP, WUB und SUD: Lernhilfen, Abfragen und Probetests</p></div>
+    <div><h1>Lernhilfe</h1><p>Stand 9. November 2026 · EVP, WUB, SUD und Deutsch: Lernhilfen, Abfragen und Probetests</p></div>
     <button class="btn ghost small" data-act="theme" aria-label="Hell oder dunkel umschalten">Hell / Dunkel</button>
   </header>
   <div class="faches" id="faches"></div>
   <div class="tabs" id="tabs"></div>
   <main id="view"></main>
-  <footer class="foot">Alle Zahlen zur Sozialversicherung und Steuer: Stand 2026, online geprüft. Java-Beispiele und -Aufgaben (SUD): mit Java 21 ausgeführt und geprüft. Das Material deiner Lehrkraft hat im Zweifel Vorrang.</footer>
+  <footer class="foot">Alle Zahlen zur Sozialversicherung und Steuer: Stand 2026, online geprüft. Java-Beispiele und -Aufgaben (SUD): mit Java 21 ausgeführt und geprüft. Deutsch: Inhalte aus der Unterrichtsbesprechung vom 9. November 2026 (automatische Zusammenfassung, bitte mit den Folien abgleichen). Das Material deiner Lehrkraft hat im Zweifel Vorrang.</footer>
 </div>
 <script>
 'use strict';
@@ -1004,8 +1004,175 @@ SUD.zahnbuerste = { label: 'Black-Box-Test: Erwartungswert berechnen', topic: 'T
 } };
 
 
+/* ===== Deutsch-Generatoren (Kommunikation) ===== */
+const DEU = {};
+const dnorm = (s) => String(s).toLowerCase().replace(/[^a-zäöüß]/g, '');
+const dEsc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const SEITEN = { sachebene: 'Sachebene', appell: 'Appell', selbstoffenbarung: 'Selbstoffenbarung', beziehungsebene: 'Beziehungsebene' };
+const seiteOf = (s) => { const n = dnorm(s), hit = []; if (/sach/.test(n)) hit.push('sachebene'); if (/appell/.test(n)) hit.push('appell'); if (/selbst|offenbar/.test(n)) hit.push('selbstoffenbarung'); if (/beziehung/.test(n)) hit.push('beziehungsebene'); return hit.length === 1 ? hit[0] : null; };
+const SEITEN_MERKE = '<b>Merkfragen:</b> Sachebene = Worüber informiere ich? · Selbstoffenbarung = Wie empfinde ich das, was gebe ich von mir preis? · Beziehungsebene = Wie stehen wir zueinander (Rollen)? · Appell = Was soll der andere tun?';
+
+const SEITEN_BANK = [
+  { msg: 'Das ist aber kein guter Service für diesen Preis.', src: 'Beispiel aus der Stunde', items: [
+    ['sachebene', 'Das Preis-Leistungs-Verhältnis stimmt nicht.'],
+    ['selbstoffenbarung', 'Ich bin mit der Leistung unzufrieden.'],
+    ['appell', 'Verbessert den Service oder senkt den Preis!'],
+    ['beziehungsebene', 'Ich bin der Kunde, ich habe eine Erwartung an guten Service und darf mich beschweren.']] },
+  { msg: 'Ich hätte gerne, dass Sie dieses Mal die Aufgabe übernehmen.', src: 'Beispiel aus der Stunde (Eisbergmodell)', items: [
+    ['sachebene', 'Der Mitarbeiter soll die Aufgabe übernehmen.'],
+    ['appell', 'Übernehmen Sie die Aufgabe!'],
+    ['selbstoffenbarung', 'Der Projektleiter wünscht sich, dass diesmal jemand anderes die Aufgabe macht.'],
+    ['beziehungsebene', 'Der Projektleiter ist der Vorgesetzte und verteilt die Aufgaben.']] },
+  { msg: 'Du, da vorne ist grün!', src: 'Klassiker von Schulz von Thun (nicht aus der Stunde)', items: [
+    ['sachebene', 'Die Ampel ist grün.'],
+    ['selbstoffenbarung', 'Ich habe es eilig.'],
+    ['beziehungsebene', 'Du brauchst meine Hilfe beim Fahren.'],
+    ['appell', 'Gib Gas, fahr los!']] },
+  { msg: 'Ihre Präsentation enthält viele Rechtschreibfehler.', src: 'Übungsbeispiel (nicht aus der Stunde)', items: [
+    ['sachebene', 'In der Präsentation stehen mehrere Rechtschreibfehler.'],
+    ['selbstoffenbarung', 'Mir ist Sorgfalt wichtig, und ich bin damit nicht zufrieden.'],
+    ['beziehungsebene', 'Ich bin der Vorgesetzte und beurteile Ihre Arbeit.'],
+    ['appell', 'Prüfen Sie Ihre Texte künftig besser auf Rechtschreibung!']] }
+];
+DEU.seite = { label: 'Vier Seiten einer Nachricht zuordnen', topic: 'Schulz von Thun', fn(r) {
+  const b = r.pick(SEITEN_BANK), it = r.pick(b.items), key = it[0];
+  return { pts: 1, ph: 'Sachebene, Appell, Selbstoffenbarung oder Beziehungsebene',
+    prompt: `Nachricht: <b>„${dEsc(b.msg)}“</b> (${b.src})<br>Zu welcher der vier Seiten nach Schulz von Thun gehört dieser Teil der Nachricht?<div class="q2">„${dEsc(it[1])}“</div>`,
+    check: (s) => seiteOf(s) === key, ans: SEITEN[key],
+    solution: `<b>${SEITEN[key]}</b><br>${SEITEN_MERKE}<br><small>Nur die vier Fachbegriffe verwenden, nicht „Gefühlsebene“ oder „Höherebene“.</small>` };
+} };
+
+const EBENEN_TERME = [['verbal', true], ['nonverbal', true], ['paraverbal', true], ['konverbal', false], ['subverbal', false]];
+const EBENEN_BEISPIELE = [
+  ['Ein Schulterzucken', 'nonverbal'], ['Ein Stirnrunzeln (Mimik)', 'nonverbal'], ['Mit dem Finger zeigen (Gestik)', 'nonverbal'], ['Verschränkte Arme (Körpersprache)', 'nonverbal'],
+  ['Ein Satz in einer WhatsApp-Nachricht (schriftlich)', 'verbal'], ['Ein gesprochener Satz', 'verbal'], ['Ein Brief', 'verbal'],
+  ['Laut oder leise sprechen', 'paraverbal'], ['Ein ironischer Tonfall', 'paraverbal']
+];
+const ebeneOf = (s) => { const n = dnorm(s); if (/para/.test(n)) return 'paraverbal'; if (/^non|nicht/.test(n)) return 'nonverbal'; if (n === 'verbal') return 'verbal'; return null; };
+DEU.ebene = { label: 'Kommunikationsebenen (verbal, nonverbal, paraverbal)', topic: 'Grundlagen', fn(r) {
+  if (r.next() < 0.45) {
+    const t = r.pick(EBENEN_TERME), ok = t[1];
+    return { pts: 1, ph: 'ja oder nein', ans: ok ? 'ja' : 'nein',
+      prompt: `Gehört der Begriff <b>„${t[0]}“</b> zu den Ebenen der menschlichen Kommunikation? (ja/nein)`,
+      check: (s) => { const n = dnorm(s); return ok ? /^(ja|j|richtig|wahr)$/.test(n) : /^(nein|n|falsch)$/.test(n); },
+      solution: `<b>${ok ? 'ja' : 'nein'}</b><br>Gültige Ebenen: <b>verbal</b> (Worte, auch schriftlich), <b>nonverbal</b> (Sprache ohne Worte: Mimik, Gestik, Körpersprache) und <b>paraverbal</b> (wie etwas gesagt wird: Lautstärke, Tonfall). ${ok ? '' : `<b>${t[0]}</b> gibt es in diesem Zusammenhang nicht (die Lehrkraft nannte „konverbal“ und „subverbal“ als Ausschlusskriterium).`}` };
+  }
+  const b = r.pick(EBENEN_BEISPIELE);
+  return { pts: 1, ph: 'verbal, nonverbal oder paraverbal', ans: b[1],
+    prompt: `Welche Kommunikationsebene ist <b>${b[0]}</b>?`,
+    check: (s) => ebeneOf(s) === b[1],
+    solution: `<b>${b[1]}</b><br><b>verbal</b> = alles, was mit Worten mitgeteilt wird, auch schriftlich. <b>nonverbal</b> = Sprache ohne Worte (Mimik, Gestik, Körpersprache). <b>paraverbal</b> = wie etwas gesagt wird (laut, leise, Tonfall).` };
+} };
+
+const WF_BANK = [
+  ['Wenn Menschen kommunizieren, werden sie zum Sender beziehungsweise Empfänger.', true, 'Beim Kommunizieren gibt es immer die Rollen Sender und Empfänger.'],
+  ['Körpersprache wird überschätzt: Man muss nicht sympathisch wirken, nur die Fakten zählen, um den Empfänger zu überzeugen.', false, 'Falsch. Mit Körpersprache und dem „Wie“ kann man sehr viel zeigen, Fakten allein reichen oft nicht.'],
+  ['Mit Hilfe von Körpersprache kann man sein Gegenüber manipulieren.', true, 'Richtig, Körpersprache ist ein entscheidender Faktor, um das Gegenüber zu überzeugen oder zu manipulieren.'],
+  ['Man kann nicht nicht kommunizieren.', true, 'Das ist Watzlawicks Grundsatz: Wir senden durchgehend Signale, die interpretiert werden können.'],
+  ['Wer schweigt, kommuniziert nach Watzlawick nicht.', false, 'Falsch. Auch Schweigen oder Nicht-Antworten sendet ein Signal.'],
+  ['Verbale Kommunikation umfasst auch schriftliche Aussagen.', true, 'Verbal = alles, was mit Worten mitgeteilt wird, auch schriftlich.'],
+  ['Nach Watzlawick entspricht die digitale Kommunikation der nonverbalen Ebene.', false, 'Falsch. Digital = verbal (Worte), analog = nonverbal (Mimik, Gestik).'],
+  ['Bei symmetrischer Kommunikation unterhalten sich die Partner auf Augenhöhe.', true, 'Symmetrisch heißt gleich: gleiche Rolle, Kommunikation auf Augenhöhe.'],
+  ['Bei komplementärer Kommunikation haben beide Partner dieselbe Rolle.', false, 'Falsch. Komplementär heißt ergänzend: Die Rollen sind unterschiedlich (z. B. Chef und Mitarbeiter), einer ist übergeordnet, einer untergeordnet. Gleiche Rollen sind symmetrisch.'],
+  ['„Gefühlsebene“ gehört zu den vier Seiten einer Nachricht nach Schulz von Thun.', false, 'Falsch. Die vier Fachbegriffe sind Sachebene, Appell, Selbstoffenbarung und Beziehungsebene.'],
+  ['Beim Eisbergmodell liegt der größere Teil der Kommunikation unter der Wasseroberfläche und ist unsichtbar.', true, 'Richtig: sichtbare Sachebene oben, wesentlich größere unsichtbare Beziehungsebene unten.'],
+  ['„Konverbal“ ist eine Ebene der menschlichen Kommunikation.', false, 'Falsch. Konverbal (und subverbal) gibt es nicht.'],
+  ['Das innere Team sind die verschiedenen Stimmen im Kopf, die bei einer Entscheidung mitwirken.', true, 'Richtig: Personifizierung emotionaler, logischer und fachlicher Stimmen.'],
+  ['Die Aussage eines Projektleiters „Ich hätte gerne, dass Sie die Aufgabe übernehmen“ hat auf der unsichtbaren Ebene nur eine mögliche Deutung.', false, 'Falsch. Es gibt mindestens zwei Interpretationen (z. B. Bestrafung oder Wertschätzung).'],
+  ['Nonverbale Kommunikation ist Sprache ohne Worte.', true, 'Richtig, zum Beispiel Mimik, Gestik, Körpersprache.'],
+  ['Wer sich vor einer Entscheidung mit seinem inneren Team auseinandersetzt, kommuniziert meist klarer und überlegter.', true, 'Richtig: Man reagiert weniger impulsiv und emotional und kann Pro und Kontra abwägen.']
+];
+DEU.wahrFalsch = { label: 'Wahr oder falsch?', topic: 'Grundlagen', fn(r) {
+  const it = r.pick(WF_BANK);
+  return { pts: 1, ph: 'wahr oder falsch', ans: it[1] ? 'wahr' : 'falsch',
+    prompt: `Wahr oder falsch?<div class="q2">„${dEsc(it[0])}“</div>`,
+    check: (s) => { const n = dnorm(s); return it[1] ? /^(wahr|w|ja|j|richtig|stimmt|true)$/.test(n) : /^(falsch|f|nein|n|false|stimmtnicht)$/.test(n); },
+    solution: `<b>${it[1] ? 'wahr' : 'falsch'}</b><br>${it[2]}` };
+} };
+
+const WATZ_BANK = [
+  ['Worte (gesprochen oder geschrieben)', 'digital'], ['Ein geschriebener Text', 'digital'], ['Das, was man mit Worten sagt', 'digital'],
+  ['Mimik', 'analog'], ['Gestik', 'analog'], ['Körpersprache', 'analog']
+];
+DEU.watzlawick = { label: 'Digital oder analog (Watzlawick)', topic: 'Watzlawick', fn(r) {
+  const it = r.pick(WATZ_BANK);
+  return { pts: 1, ph: 'digital oder analog', ans: it[1],
+    prompt: `Nach Watzlawick: Ist <b>${it[0]}</b> digitale oder analoge Kommunikation?`,
+    check: (s) => dnorm(s) === it[1],
+    solution: `<b>${it[1]}</b><br>Bei Watzlawick ist <b>digital = verbal</b> (Worte) und <b>analog = nonverbal</b> (Mimik, Gestik). Wichtig: Es geht hier um die Begriffe <i>nach Watzlawick</i>.` };
+} };
+
+const KOMP_BANK = [
+  ['Zwei gleichrangige Kollegen planen gemeinsam eine Besprechung.', 'symmetrisch', 'Gleiche Rollen, Gespräch auf Augenhöhe.'],
+  ['Eine Chefin gibt ihrem Mitarbeiter eine Anweisung, er führt sie aus.', 'komplementär', 'Unterschiedliche Rollen: eine Seite leitet (übergeordnet), die andere folgt (untergeordnet).'],
+  ['Eine Lehrerin erklärt der Klasse den Stoff.', 'komplementär', 'Unterschiedliche, sich ergänzende Rollen (Lehrende und Lernende).'],
+  ['Zwei Freunde entscheiden gemeinsam, welchen Film sie schauen.', 'symmetrisch', 'Gleichberechtigt, auf Augenhöhe.'],
+  ['Ein Elternteil gibt einem Kleinkind Anweisungen.', 'komplementär', 'Unterschiedliche Rollen, ein Partner ist übergeordnet.'],
+  ['Zwei Azubis aus demselben Lehrjahr tauschen ihre Lernzettel.', 'symmetrisch', 'Gleiche Rollen, Austausch auf Augenhöhe.'],
+  ['Eine Ausbilderin zeigt einer neuen Auszubildenden Schritt für Schritt die Aufgabe.', 'komplementär', 'Die Rollen sind verschieden (Anleitende und Lernende) und ergänzen sich.'],
+  ['Zwei Geschwister verhandeln gleichberechtigt, wer zuerst ins Bad darf.', 'symmetrisch', 'Beide haben die gleiche Rolle.']
+];
+DEU.kommArt = { label: 'Symmetrisch oder komplementär?', topic: 'Watzlawick', fn(r) {
+  const it = r.pick(KOMP_BANK);
+  return { pts: 1, ph: 'symmetrisch oder komplementär', ans: it[1],
+    prompt: `Ist diese Kommunikation <b>symmetrisch</b> oder <b>komplementär</b>?<div class="q2">${dEsc(it[0])}</div>`,
+    check: (s) => { const n = dnorm(s); return it[1] === 'symmetrisch' ? /symm|gleich/.test(n) && !/kompl/.test(n) : /kompl|erg(ä|a)nz/.test(n) && !/symm/.test(n); },
+    solution: `<b>${it[1]}</b><br>${it[2]}<br><small><b>symmetrisch</b> = gleich: gleiche Rolle, Augenhöhe. <b>komplementär</b> = ergänzend: unterschiedliche Rollen (einer über-, einer untergeordnet). Das Wort „komplementär“ fiel im Transkript nicht, steht aber auf der Themenliste.</small>` };
+} };
+
+const SIGNAL_BANK = [
+  ['Du legst im Bus deine Tasche auf den freien Nachbarsitz.', 'Ich möchte lieber allein sitzen.', ['Hier darf sich gern jemand dazusetzen.', 'Meine Tasche hat keine Bedeutung, es wird nichts mitgeteilt.']],
+  ['Du betrittst einen Raum, in dem schon jemand sitzt, und setzt dich ans andere Ende.', 'Ich möchte Abstand halten.', ['Ich möchte unbedingt neben dir sitzen.', 'Ich teile damit nichts mit.']],
+  ['Du antwortest nicht auf die WhatsApp-Nachricht eines Freundes.', 'Ich will gerade nicht mit dir kommunizieren (oder habe kein Interesse).', ['Es wurde nichts mitgeteilt, also auch nichts kommuniziert.', 'Ich stimme dir ausdrücklich zu.']],
+  ['Eine Lehrkraft stellt der Klasse eine Frage, und niemand antwortet.', 'Das Schweigen kann Desinteresse oder Unsicherheit ausdrücken.', ['Es wurde nichts kommuniziert.', 'Alle sind ausdrücklich einverstanden.']],
+  ['Eine Kollegin verschränkt in der Besprechung die Arme und schaut aus dem Fenster.', 'Sie kann damit Ablehnung oder Desinteresse signalisieren.', ['Das hat keinerlei Aussage, weil sie nichts sagt.', 'Sie zeigt damit große Begeisterung für das Thema.']]
+];
+DEU.signal = { label: 'Man kann nicht nicht kommunizieren', topic: 'Watzlawick', fn(r) {
+  const it = r.pick(SIGNAL_BANK), opts = r.shuffle([[it[1], true], [it[2][0], false], [it[2][1], false]]), L = ['a', 'b', 'c'];
+  const k = opts.findIndex((o) => o[1]);
+  return { pts: 2, ph: 'a, b oder c', ans: L[k],
+    prompt: `Situation: <b>${dEsc(it[0])}</b><br>Welche Aussage passt zu Watzlawicks „Man kann nicht nicht kommunizieren“?<div class="q2">${opts.map((o, i) => `<b>${L[i]})</b> ${dEsc(o[0])}`).join('<br>')}</div>`,
+    check: (s) => dnorm(s).charAt(0) === L[k] && dnorm(s).length <= 2,
+    solution: `<b>${L[k]}) ${dEsc(it[1])}</b><br>Wir senden durchgehend Signale (auch durch Schweigen, Nicht-Antworten, Haltung, Sitzplatz), und sie werden vom Gegenüber interpretiert. „Nichts mitteilen“ gibt es nicht.` };
+} };
+
+const EIS_BANK = [
+  ['Der Mitarbeiter soll die Aufgabe übernehmen.', 'sichtbar', 'Das ist der reine Fakt, die Sachebene (Spitze des Eisbergs).'],
+  ['Der Projektleiter bittet darum, dass die Aufgabe dieses Mal erledigt wird.', 'sichtbar', 'Das steht direkt im Satz, es ist die Sachebene.'],
+  ['Der Projektleiter will den Mitarbeiter bestrafen, weil er bisher wenig gemacht hat.', 'unsichtbar', 'Das wird nicht gesagt, sondern hineininterpretiert (Beziehungsebene).'],
+  ['Der Projektleiter schätzt den Mitarbeiter, weil er sehr gute Arbeit leistet.', 'unsichtbar', 'Eine mögliche Interpretation, die zwischen den Zeilen steht (Beziehungsebene).'],
+  ['Der Projektleiter hat selbst keine Lust auf die Aufgabe und schiebt sie ab.', 'unsichtbar', 'Eine mögliche Interpretation unter der Wasseroberfläche.'],
+  ['Der Auszubildende soll die Aufgabe als Übung für die IHK-Prüfung machen.', 'unsichtbar', 'Eine mögliche Absicht, die nicht im Satz steht (Beziehungsebene).']
+];
+DEU.eisberg = { label: 'Eisbergmodell: sichtbar oder unsichtbar?', topic: 'Eisbergmodell', fn(r) {
+  const it = r.pick(EIS_BANK);
+  return { pts: 1, ph: 'sichtbar oder unsichtbar', ans: it[1],
+    prompt: `Aussage des Projektleiters: <b>„Ich hätte gerne, dass Sie dieses Mal die Aufgabe übernehmen.“</b><br>Liegt dieser Teil über oder unter der Wasseroberfläche des Eisbergs?<div class="q2">${dEsc(it[0])}</div>`,
+    check: (s) => { const n = dnorm(s); const un = /^un|beziehung|unter|versteckt/.test(n), vis = /sicht|sach|ober|über/.test(n); return it[1] === 'unsichtbar' ? un : vis && !un; },
+    solution: `<b>${it[1]}</b><br>${it[2]}<br><small>Sichtbar = Sachebene (Fakten). Unsichtbar = Beziehungsebene, die wesentlich größere Ebene, die immer mitschwingt und interpretiert wird.</small>` };
+} };
+
+const BEGRIFF_BANK = [
+  ['Austausch von Informationen zwischen mindestens zwei Personen durch verbale oder nonverbale Zeichen', /kommunikation/, 'Kommunikation'],
+  ['Sprache ohne Worte (Mimik, Gestik, Körpersprache)', /nonverbal/, 'nonverbal'],
+  ['Wie etwas gesagt wird (laut, leise, Tonfall)', /paraverbal/, 'paraverbal'],
+  ['Gleichberechtigte Kommunikation auf Augenhöhe mit gleicher Rolle', /symmetr/, 'symmetrische Kommunikation'],
+  ['Das Modell mit einer sichtbaren und einer wesentlich größeren unsichtbaren Ebene', /eisberg/, 'Eisbergmodell'],
+  ['Die Personifizierung verschiedener Stimmen im Kopf bei einer Entscheidung', /innere(s)?team/, 'inneres Team'],
+  ['Nach Watzlawick die Bezeichnung für verbale Kommunikation (Worte)', /^digital/, 'digital'],
+  ['Die Seite einer Nachricht, die ausdrückt, was der Sender von sich preisgibt (z. B. Unzufriedenheit)', /selbst|offenbar/, 'Selbstoffenbarung']
+];
+DEU.begriff = { label: 'Fachbegriff zur Definition nennen', topic: 'Grundlagen', fn(r) {
+  const it = r.pick(BEGRIFF_BANK);
+  return { pts: 1, ph: 'Fachbegriff', ans: it[2],
+    prompt: `Welcher Fachbegriff ist gemeint?<div class="q2">${dEsc(it[0])}</div>`,
+    check: (s) => it[1].test(dnorm(s)),
+    solution: `<b>${it[2]}</b><br>Fachbegriffe genau verwenden: Sachebene, Appell, Selbstoffenbarung, Beziehungsebene · verbal, nonverbal, paraverbal · digital (verbal) und analog (nonverbal) nach Watzlawick.` };
+} };
+
+
 if (typeof module !== 'undefined') {
-  module.exports = { SATZ, sozialPunkte, satzText, makeRng, bin, hexs, grp, cleanBits, twos, fromTwos, invert, parseNum, near, EVP, WUB, nettoCalc, genTask, schulnote, SV, eur, SUD, zbCalc };
+  module.exports = { SATZ, sozialPunkte, satzText, makeRng, bin, hexs, grp, cleanBits, twos, fromTwos, invert, parseNum, near, EVP, WUB, nettoCalc, genTask, schulnote, SV, eur, SUD, zbCalc, DEU };
 }
 
 'use strict';
@@ -2749,6 +2916,290 @@ D.self.sud = [
 
 
 'use strict';
+/* ======================= DEUTSCH – LERNHILFE (Kommunikation) ======================= */
+const NEU = '<span class="tag open">nicht aus der Stunde</span>';
+D.lern.deu = [];
+
+D.lern.deu.push({ id: 'grund', title: '1 · Grundlagen: Kommunikation, Ebenen, Sender und Empfänger, Körpersprache', html: RAW`
+<div class="box"><b>Definition mit Fachbegriffen (voraussichtlich 5 Punkte):</b> Kommunikation ist der <b>Austausch von Informationen</b> zwischen <b>mindestens zwei Personen</b> (Sender und Empfänger) durch <b>Zeichen</b>, entweder <b>verbal</b> (alles, was mit Worten mitgeteilt wird, auch schriftlich) oder <b>nonverbal</b> (Mimik, Gestik, Körpersprache).</div>
+<p>Ein Schüler formulierte es in der Stunde so: ein Austausch zwischen Personen durch Zeichen, jegliche Zeichen, ob verbal oder nonverbal. Die Lehrkraft bestätigte das und fasste zusammen: „Austausch von Informationen zwischen mindestens zwei Personen, entweder verbal oder nonverbal.“ Wer die Fachbegriffe <b>Austausch, Informationen, Personen, Zeichen, verbal, nonverbal</b> nennt, deckt die Definition ab.</p>
+
+<h4>Welche Ebenen gibt es?</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Ebene</th><th>Bedeutung</th><th>Beispiele</th></tr></thead><tbody>
+<tr><td><b>verbal</b></td><td>alles, was mit <b>Worten</b> mitgeteilt wird, auch <b>schriftlich</b></td><td>gesprochener Satz, WhatsApp-Nachricht, Brief</td></tr>
+<tr><td><b>nonverbal</b></td><td><b>Sprache ohne Worte</b></td><td>Mimik, Gestik, Körpersprache</td></tr>
+<tr><td><b>paraverbal</b></td><td><b>wie</b> etwas gesagt wird</td><td>laut, leise, Tonfall, Ironie</td></tr></tbody></table></div>
+<div class="warn"><b>Ausschlussfrage:</b> Die Begriffe <b>konverbal</b> und <b>subverbal</b> gibt es in diesem Zusammenhang <b>nicht</b>. Gefragt war: „Welche Ebene gehört nicht dazu?“ Gültig sind verbal, nonverbal und paraverbal.</div>
+<p class="muted">Im Transkript wurde das dritte Wort von der Spracherkennung falsch geschrieben („Fahrenbahn“). Gemeint ist <b>paraverbal</b> (laut, leise, Kontext).</p>
+
+<h4>Sender und Empfänger</h4>
+<p>Beim Kommunizieren nehmen Menschen <b>immer</b> die Rollen von Sender beziehungsweise Empfänger ein. Die Aussage „Wenn Menschen kommunizieren, werden sie zum Sender beziehungsweise Empfänger“ ist <b>wahr</b>.</p>
+
+<h4>Einfluss und Macht der Körpersprache</h4>
+<ul><li><b>Körpersprache ist ein entscheidender Faktor.</b> Fakten allein überzeugen oft nicht. Die Aussage „Körpersprache wird überschätzt, man muss nicht sympathisch wirken, nur die Fakten zählen“ ist <b>falsch</b>.</li>
+<li>Man kann mit Körpersprache sein Gegenüber <b>überzeugen</b>, aber auch <b>manipulieren</b>. Die Frage „Mit Hilfe von Körpersprache kann man sein Gegenüber manipulieren“ ist mit <b>ja</b> zu beantworten.</li>
+<li>Aus der Stunde: Wer etwas sagt, dabei aber nicht überzeugend wirkt (Haltung, Mimik, Gestik), überzeugt niemanden. Als Beispiel fiel der Satz „Du bist großartig“. Meine Einordnung dazu: Er wirkt je nach Mimik und Tonfall ehrlich oder spöttisch.</li>
+<li><b>Nonverbale Kommunikation ist „Sprache ohne Worte“</b> (nicht „das Gesagte ohne Inhalt“ und nicht „Worte ohne Sprache“). Merke: Körpersprache, Mimik, Gestik.</li></ul>
+<div class="box"><b>Muster für eine Antwort (Einfluss der Körpersprache):</b> Körpersprache beeinflusst stark, wie eine Aussage ankommt. Mit Mimik, Gestik und Haltung kann der Sender sein Gegenüber überzeugen oder sogar manipulieren, deshalb reichen reine Fakten oft nicht aus.</div>
+`});
+
+D.lern.deu.push({ id: 'watz', title: '2 · Watzlawick: nicht nicht kommunizieren, digital und analog, symmetrisch und komplementär', html: RAW`
+<h4>Man kann nicht nicht kommunizieren</h4>
+<div class="box"><b>Bedeutung:</b> Der Mensch sendet <b>durchgehend Signale</b> aus, die vom Umfeld <b>interpretiert</b> werden können (ob richtig oder falsch, ist eine andere Sache). Man wird nicht unsichtbar, deshalb ist es unmöglich, <b>gar nichts</b> mitzuteilen. Auch Schweigen oder Nicht-Antworten ist eine Mitteilung.</div>
+<p><b>Aufgaben dazu sind zweigeteilt:</b> Erst <b>erläutern</b>, was die Aussage bedeutet, danach ein kurzes <b>konkretes Beispiel</b> nennen.</p>
+<div class="scroll"><table class="tbl"><thead><tr><th>Beispiel aus der Stunde</th><th>Welches Signal wird gesendet?</th></tr></thead><tbody>
+<tr><td>Du antwortest nicht auf die WhatsApp-Nachricht eines Freundes</td><td>„Ich will gerade nicht mit dir kommunizieren.“</td></tr>
+<tr><td>Du legst im Bus die Tasche auf den freien Nachbarsitz</td><td>„Eigentlich möchte ich allein sitzen.“</td></tr>
+<tr><td>Du betrittst einen Raum, in dem schon jemand sitzt, und setzt dich ans andere Ende</td><td>Abstand, kein Interesse an Nähe</td></tr>
+<tr><td>Jemand stellt der Gruppe eine Frage, keiner antwortet</td><td>Schweigen ist auch eine Aussage (z. B. Desinteresse, Unsicherheit)</td></tr></tbody></table></div>
+<div class="warn"><b>Passendes und unpassendes Beispiel:</b> „Daumen hoch oder Daumen runter“ als Antwort auf eine Frage war laut Lehrkraft <b>nicht passend</b>, weil es dort eine konkrete Frage und eine konkrete Antwort gibt. Gesucht ist ein Beispiel, bei dem man <b>gar nichts sagt oder tut</b> und trotzdem etwas mitteilt.</div>
+<div class="box"><b>Muster für eine Antwort:</b> Watzlawick meint, dass man immer kommuniziert, weil man ständig Signale aussendet, die vom Gegenüber gedeutet werden, und selbst Schweigen etwas aussagt. Beispiel: Wenn ich im Bus meine Tasche auf den Nachbarsitz lege, teile ich mit, dass ich allein sitzen möchte, obwohl ich kein Wort sage.</div>
+
+<h4>Digital und analog nach Watzlawick</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Begriff nach Watzlawick</th><th>entspricht</th><th>Beispiele</th></tr></thead><tbody>
+<tr><td><b>digital</b></td><td>der <b>verbalen</b> Sprache, <b>Worte</b></td><td>gesprochener oder geschriebener Satz</td></tr>
+<tr><td><b>analog</b></td><td>der <b>nonverbalen</b> Ebene</td><td>Mimik, Gestik, Körpersprache</td></tr></tbody></table></div>
+<p>Watzlawick hat „einfach andere Begriffe“ genutzt: <b>digital = verbal, analog = nonverbal</b>. In der Aufgabe kommt es auf die Begriffe nach Watzlawick an. Merkhilfe: <b>Digital = Worte</b> (wie Zeichen in einem Code), <b>analog = Körper</b>.</p>
+
+<h4>Symmetrische und komplementäre Kommunikation</h4>
+<div class="box"><b>Symmetrisch</b> heißt <b>gleich</b>: Die Partner haben die <b>gleiche Rolle</b> und unterhalten sich <b>auf Augenhöhe</b> (metaphorisch gemeint, nicht körperlich). Bei einer symmetrischen Kommunikation achten die Gesprächspartner darauf, dass die Interaktion gleichberechtigt auf Augenhöhe stattfindet.</div>
+<div class="box"><b>Komplementär</b> heißt <b>ergänzend</b>: Die Rollen sind <b>unterschiedlich</b>, ein Partner ist übergeordnet, der andere untergeordnet, zum Beispiel Chef und Mitarbeiter, Lehrkraft und Klasse, Eltern und Kleinkind. ${NEU} Das Wort fiel im Transkript nicht, es steht aber auf der Themenliste deiner Lehrerin. Es entspricht dem, was Watzlawick in seinen Axiomen beschreibt.</div>
+<div class="warn"><b>Verwechslungsgefahr:</b> Symmetrisch hat nichts mit „direktem Austausch“ oder „Telefonat“ zu tun. Das war ein falscher Beitrag in der Stunde („ein anderer Fachbegriff verwechselt“).</div>
+<p class="muted">Die Aussagen „man kann nicht nicht kommunizieren“, „digital und analog“ und „symmetrisch/komplementär“ gehören zu den <b>Axiomen</b> von Watzlawick (das 1., 4. und 5. von fünf). ${NEU}</p>
+`});
+
+D.lern.deu.push({ id: 'eis', title: '3 · Das Eisbergmodell', html: RAW`
+<svg viewBox="0 0 600 330" role="img" aria-label="Eisberg: oben die sichtbare Sachebene, unter Wasser die größere unsichtbare Beziehungsebene" style="width:100%;max-width:560px;height:auto;display:block;margin:8px auto">
+  <rect x="0" y="95" width="600" height="235" rx="10" style="fill:var(--accent-soft)"/>
+  <polygon points="250,95 300,20 350,95" style="fill:var(--surface);stroke:var(--accent);stroke-width:3"/>
+  <polygon points="150,95 450,95 520,190 430,300 250,320 110,200" style="fill:var(--box-bg);stroke:var(--accent);stroke-width:3;stroke-dasharray:8 5"/>
+  <line x1="0" y1="95" x2="600" y2="95" style="stroke:var(--accent);stroke-width:2"/>
+  <text x="300" y="75" text-anchor="middle" style="fill:var(--text);font:700 20px sans-serif">Sachebene</text>
+  <text x="12" y="88" style="fill:var(--muted);font:15px sans-serif">sichtbar</text>
+  <text x="12" y="118" style="fill:var(--muted);font:15px sans-serif">unsichtbar</text>
+  <text x="300" y="165" text-anchor="middle" style="fill:var(--text);font:700 22px sans-serif">Beziehungsebene</text>
+  <text x="300" y="200" text-anchor="middle" style="fill:var(--text);font:17px sans-serif">Gefühle, Rollen, Absichten,</text>
+  <text x="300" y="225" text-anchor="middle" style="fill:var(--text);font:17px sans-serif">Interpretationen</text>
+  <text x="300" y="268" text-anchor="middle" style="fill:var(--muted);font:15px sans-serif">schwingt immer mit</text>
+</svg>
+<div class="box"><b>Aufbau:</b> Das Eisbergmodell teilt Kommunikation in <b>zwei Ebenen</b>: eine <b>sichtbare Sachebene</b> (über Wasser, reine Fakten) und eine <b>wesentlich größere, unsichtbare Beziehungsebene</b> (unter Wasser), die <b>immer mitschwingt</b>. Ein Schüler sprach von etwa 20 % sichtbar und 80 % unsichtbar, das ist ein Bild, keine genaue Zahl.</div>
+
+<h4>Die Aufgabe aus der Stunde (Anwendung an einer Aussage)</h4>
+<p>Der Projektleiter sagt zum Mitarbeiter: <b>„Ich hätte gerne, dass Sie dieses Mal die Aufgabe übernehmen.“</b> Erläutere das Eisbergmodell an dieser Aussage. Die Lehrkraft verlangt <b>drei Sätze</b>:</p>
+<ol><li><b>Sachebene</b> (der reine Fakt): Der Mitarbeiter soll die Aufgabe übernehmen.</li>
+<li><b>Erste Interpretation</b> (unsichtbare Ebene): Es ist eine Art Bestrafung, weil er bisher wenig gemacht hat.</li>
+<li><b>Zweite Interpretation</b>: Der Mitarbeiter macht seine Arbeit sehr gut, und der Projektleiter schätzt ihn und fördert ihn.</li></ol>
+<p><b>Weitere mögliche Interpretationen</b> (alle in der Stunde genannt): Der Chef hat selbst keine Lust und schiebt die Aufgabe ab. Der Azubi soll üben, weil er die IHK-Prüfung hat, er soll unterstützt werden. Wichtig ist: Die Sachebene steht ganz klar als Fakt da, danach folgen <b>mindestens zwei</b> Interpretationsmöglichkeiten.</p>
+<div class="box"><b>Muster für drei Sätze:</b> Auf der Sachebene soll der Mitarbeiter die Aufgabe übernehmen. Auf der unsichtbaren Beziehungsebene könnte der Mitarbeiter das als Bestrafung verstehen, weil er bisher wenig geleistet hat. Er könnte es aber auch als Wertschätzung und Förderung verstehen, weil der Projektleiter ihm die Aufgabe zutraut.</div>
+<p class="muted">Der Fachbegriff für die unsichtbare Ebene ist <b>Beziehungsebene</b>. Das Modell sagt: Die Interpretation (Beziehungsebene) ist viel größer als der sichtbare Inhalt.</p>
+`});
+
+D.lern.deu.push({ id: 'svt', title: '4 · Schulz von Thun: die vier Seiten einer Nachricht', html: RAW`
+<div class="box"><b>Das Kommunikationsquadrat</b> von Schulz von Thun hat <b>immer diese vier Seiten</b> (exakt diese Fachbegriffe): <b>Sachebene, Appell, Selbstoffenbarung, Beziehungsebene</b>. Die Lehrkraft warnt ausdrücklich: <b>Nicht</b> „Gefühlsebene“ oder „Höherebene“ schreiben, sondern bei den Fachbegriffen bleiben. Im Transkript stehen zunächst „Tabellenebene“ und „Selbstordnung“, das sind Fehler der Spracherkennung oder Versprecher und keine Fachbegriffe.</div>
+<div class="scroll"><table class="tbl"><thead><tr><th>Seite</th><th>Merkfrage</th><th>Beispiel: „Das ist aber kein guter Service für diesen Preis.“</th></tr></thead><tbody>
+<tr><td><b>Sachebene</b></td><td>Worüber informiere ich? (reine Fakten)</td><td>Das Preis-Leistungs-Verhältnis stimmt nicht.</td></tr>
+<tr><td><b>Selbstoffenbarung</b></td><td>Wie empfinde ich das? Was gebe ich von mir preis?</td><td>Ich bin mit der Leistung unzufrieden.</td></tr>
+<tr><td><b>Appell</b></td><td>Was soll der andere tun?</td><td>Verbessert den Service oder senkt den Preis!</td></tr>
+<tr><td><b>Beziehungsebene</b></td><td>Wie stehen wir zueinander? Welche Rollen haben wir?</td><td>Rollenverhältnis Kunde und Verkäufer: Der Kunde hat eine Erwartung an guten Service und darf sich beschweren.</td></tr></tbody></table></div>
+<ul><li><b>Appell:</b> „Service-Qualität hoch oder Preis runter.“</li>
+<li><b>Beziehungsebene:</b> Erwartet wird ein guter Service, zurückgekommen ist kein guter Service. Der Kunde denkt, er habe ein Recht darauf („der Kunde ist König“). Es reicht, die <b>Rollen</b> (Kunde, Verkäufer) und die <b>Erwartungshaltung</b> zu nennen.</li>
+<li><b>Aus der Praxis (Berufsalltag):</b> Mitarbeiter müssen sich <b>unhöfliche Kunden nicht gefallen lassen</b>. Der Chef muss hinter ihnen stehen, und sie dürfen das Gespräch beenden (z. B. am Telefon auflegen) mit der klaren Ansage: „So reden wir nicht.“</li></ul>
+<p><b>Aufgabentyp:</b> Gegeben ist eine Aussage, du erläuterst die vier Seiten an ihr. Beschreibe zu jeder Seite kurz, was sie in dieser Aussage bedeutet.</p>
+<div class="box"><b>Muster (Aussage: „Das ist aber kein guter Service für diesen Preis.“):</b> <b>Sachebene:</b> Das Preis-Leistungs-Verhältnis stimmt nicht. <b>Selbstoffenbarung:</b> Der Kunde ist mit der Leistung unzufrieden. <b>Appell:</b> Der Service soll besser oder der Preis niedriger werden. <b>Beziehungsebene:</b> Der Kunde sieht sich in der Rolle, in der er einen guten Service erwarten und sich beschweren darf.</div>
+<p class="muted">${NEU} Das Modell heißt auch <b>Vier-Ohren-Modell</b>: Der Sender „sendet“ auf vier Seiten, der Empfänger kann mit vier „Ohren“ hören und deshalb jede Seite unterschiedlich verstehen. Die Lehrerin sprach im Transkript durchgehend vom <b>Kommunikationsquadrat</b> und den vier Seiten.</p>
+`});
+
+D.lern.deu.push({ id: 'team', title: '5 · Das innere Team und sein Einfluss auf Kommunikation', html: RAW`
+<div class="box"><b>Das innere Team</b> ist die <b>Personifizierung</b> der verschiedenen <b>logischen, emotionalen und fachlichen Stimmen</b>, die man bei einer Entscheidung im Kopf hat. Man stellt sich diese Stimmen wie Personen vor: Logik ist eine Person, Emotion ist eine Person, Fachwissen ist eine Person und so weiter.</div>
+<p><b>Aufgaben dazu sind wieder zweigeteilt:</b> Erst <b>erläutern</b>, was das innere Team ist, dann an einer Aussage <b>anwenden</b>.</p>
+<h4>Anwendung: „Ich sollte die Ausbildung verkürzen.“</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th>Stimme im Kopf</th><th>Gedanke</th></tr></thead><tbody>
+<tr><td>die zweifelnde Stimme</td><td>„Schaffe ich das? Das ist so viel Lernstoff, ich muss viel allein lernen.“</td></tr>
+<tr><td>die rechnende Stimme</td><td>„Lohnt sich das? Ja, ich bekomme früher mehr Geld.“</td></tr></tbody></table></div>
+<p>Die Lehrkraft wollte <b>zwei bis drei Beispiele</b> für solche Gedanken. Aus der Stunde: <b>„Schaffe ich das?“</b> und <b>„Lohnt sich das?“</b> auf der einen Seite, auf der anderen Seite <b>„es lohnt sich, ich bekomme direkt mehr Geld“</b>.</p>
+<div class="box"><b>Muster für die Anwendung:</b> Beim Gedanken, die Ausbildung zu verkürzen, meldet sich eine zweifelnde Stimme („Schaffe ich das, es ist so viel zu lernen?“). Eine andere Stimme sagt: „Es lohnt sich, ich verdiene früher Geld.“</div>
+
+<h4>Einfluss auf die Kommunikation (nur zwei Sätze verlangt)</h4>
+<ul><li>Spontane Antworten sind oft <b>emotional gesteuert</b> („auf jeden Fall“ oder „auf keinen Fall“).</li>
+<li>Wer sich vorher mit seinem inneren Team <b>auseinandersetzt</b> (vorher nachdenkt, „eine Nacht drüber schläft“), kann <b>Pro und Kontra abwägen</b> und seine Argumente sammeln.</li>
+<li>Dadurch wird die Kommunikation <b>klarer, eindeutiger und reflektierter</b>, man kann sich deutlich äußern.</li></ul>
+<div class="box"><b>Muster für zwei Sätze:</b> Wer sein inneres Team befragt, reagiert nicht impulsiv und emotional, sondern kann Pro und Kontra abwägen. Dadurch kommuniziert er klarer, eindeutiger und überlegter.</div>
+<p class="muted">Das innere Team gehört (wie die vier Seiten einer Nachricht) zu Schulz von Thun. ${NEU} Die Lehrkraft verlangt dazu im Test nur die Erklärung, die Anwendung auf die Aussage und diese zwei Sätze zum Einfluss.</p>
+`});
+
+D.lern.deu.push({ id: 'muster', title: '6 · Musterantworten zum Auswendiglernen (Themenliste der Lehrerin)', html: RAW`
+<p>Zu jedem Punkt der Themenliste ein kurzer Satz, den du auf Papier schreiben kannst. Formuliere beim Test mit eigenen Worten, aber mit diesen <b>Fachbegriffen</b>.</p>
+<ol>
+<li><b>Definition von Kommunikation:</b> Kommunikation ist der Austausch von Informationen zwischen mindestens zwei Personen (Sender und Empfänger) durch Zeichen, verbal (Worte, auch schriftlich) oder nonverbal (Mimik, Gestik, Körpersprache).</li>
+<li><b>Ebenen von Kommunikation:</b> verbal (Worte, auch schriftlich), nonverbal (Sprache ohne Worte) und paraverbal (wie etwas gesagt wird, z. B. laut oder leise). Konverbal und subverbal gibt es nicht.</li>
+<li><b>Symmetrisch und komplementär:</b> Symmetrisch heißt gleich: Die Partner haben die gleiche Rolle und kommunizieren auf Augenhöhe. Komplementär heißt ergänzend: Die Rollen sind unterschiedlich, einer ist übergeordnet, der andere untergeordnet (z. B. Chef und Mitarbeiter).</li>
+<li><b>Einfluss der Körpersprache:</b> Körpersprache entscheidet mit darüber, wie eine Aussage ankommt. Man kann das Gegenüber damit überzeugen oder manipulieren, reine Fakten reichen oft nicht.</li>
+<li><b>Man kann nicht nicht kommunizieren:</b> Der Mensch sendet durchgehend Signale, die interpretiert werden, deshalb ist auch Schweigen eine Mitteilung. Beispiel: Die Tasche auf dem Nachbarsitz im Bus sagt „ich möchte allein sitzen“.</li>
+<li><b>Digital und analog nach Watzlawick:</b> Digital ist die verbale Kommunikation (Worte), analog ist die nonverbale Kommunikation (Mimik, Gestik).</li>
+<li><b>Eisbergmodell:</b> Nur die Sachebene ist sichtbar (Spitze), die wesentlich größere Beziehungsebene liegt unsichtbar darunter und schwingt immer mit. Beispiel: „Ich hätte gerne, dass Sie dieses Mal die Aufgabe übernehmen“ ist sachlich eine Bitte, kann aber als Bestrafung oder als Wertschätzung verstanden werden.</li>
+<li><b>Fachbegriffe von Schulz von Thun:</b> Sachebene, Appell, Selbstoffenbarung, Beziehungsebene (Kommunikationsquadrat, die vier Seiten einer Nachricht).</li>
+<li><b>Vier Seiten an einer Aussage:</b> Immer alle vier benennen und kurz auf die Aussage beziehen (Sachebene = Fakt, Selbstoffenbarung = was der Sender von sich preisgibt, Appell = was der Empfänger tun soll, Beziehungsebene = Rollen und Verhältnis).</li>
+<li><b>Inneres Team:</b> Die Personifizierung verschiedener logischer, emotionaler und fachlicher Stimmen im Kopf bei einer Entscheidung. Beispiel Ausbildung verkürzen: „Schaffe ich das?“ gegen „Es lohnt sich, ich bekomme früher Geld.“</li>
+<li><b>Einfluss des inneren Teams auf die Kommunikation:</b> Wer sein inneres Team befragt, reagiert nicht impulsiv, sondern wägt Pro und Kontra ab und kommuniziert klarer, eindeutiger und reflektierter.</li></ol>
+`});
+
+D.lern.deu.forEach((s) => { s.open = false; });
+D.lern.deu.unshift({ id: 'ov', title: 'Überblick: Was kommt im Deutsch-Test dran?', open: true, html: RAW`
+<div class="box"><b>Der Test:</b> <b>15 Fragen</b>, überwiegend <b>Freitext</b> (etwas mehr Freitext als Multiple Choice), <b>analog auf Papier mit Stift</b>, in der Woche nach der Besprechung vom 9. November 2026. Die Lehrkraft rät, mitzuschreiben, weil sich <b>besprochene Fragen im Test wiederholen</b> können. Der Test ist so aufgebaut, dass sich manche Fragen gegenseitig bestätigen (z. B. symmetrisch).</div>
+<div class="scroll"><table class="tbl"><thead><tr><th>Thema (Liste deiner Lehrerin)</th><th>Abschnitt</th><th>Quelle</th></tr></thead><tbody>
+<tr><td>Definition von Kommunikation mit Fachbegriffen</td><td>1, 6</td><td>Stunde (voraussichtlich 5 Punkte)</td></tr>
+<tr><td>Ebenen von Kommunikation</td><td>1, 6</td><td>Stunde</td></tr>
+<tr><td>Symmetrische und komplementäre Kommunikation</td><td>2, 6</td><td>symmetrisch: Stunde · komplementär: Allgemeinwissen</td></tr>
+<tr><td>Einfluss und Macht von Körpersprache</td><td>1, 6</td><td>Stunde</td></tr>
+<tr><td>Man kann nicht nicht kommunizieren (Bedeutung und Beispiel)</td><td>2, 6</td><td>Stunde</td></tr>
+<tr><td>Analog und digital nach Watzlawick</td><td>2, 6</td><td>Stunde</td></tr>
+<tr><td>Eisbergmodell beschreiben und an einer Aussage erläutern</td><td>3, 6</td><td>Stunde</td></tr>
+<tr><td>Fachbegriffe von Schulz von Thun</td><td>4, 6</td><td>Stunde</td></tr>
+<tr><td>Vier Seiten einer Nachricht an einer Aussage erläutern</td><td>4, 6</td><td>Stunde</td></tr>
+<tr><td>Inneres Team an einer Aussage erläutern</td><td>5, 6</td><td>Stunde</td></tr>
+<tr><td>Einfluss des inneren Teams auf die Kommunikation</td><td>5, 6</td><td>Stunde (zwei Sätze)</td></tr></tbody></table></div>
+<div class="box"><b>So sind die Aufgaben aufgebaut:</b>
+<ul><li><b>Zweigeteilt:</b> erst <b>erläutern</b> (Theorie mit Fachbegriffen), dann <b>anwenden</b> (Beispiel oder vorgegebene Aussage). Das verlangt die Lehrkraft beim Eisbergmodell und beim inneren Team ausdrücklich.</li>
+<li><b>Satzzahl beachten:</b> Eisbergmodell: <b>drei Sätze</b> (Sachebene plus zwei Interpretationen). Einfluss des inneren Teams: <b>zwei Sätze</b>. Auch wenn mehr Zeilen frei sind, will die Lehrkraft nicht mehr.</li>
+<li><b>Fachbegriffe exakt:</b> Sachebene, Appell, Selbstoffenbarung, Beziehungsebene. Keine „Gefühlsebene“, keine „Höherebene“.</li>
+<li><b>Beispiele:</b> konkret und kurz, aus dem Alltag (Bus, WhatsApp, Service, Ausbildung).</li></ul></div>
+<div class="box"><b>Empfohlener Lernweg:</b> 1. Abschnitte 1 bis 5 lesen · 2. <b>Abschnitt 6</b> (Musterantworten) abschreiben und laut sagen · 3. Karteikarten bis alles „gewusst“ ist · 4. Quiz und Trainer · 5. Freitextaufgaben <b>auf Papier</b> schreiben, wie im Test, und mit den Mustern vergleichen · 6. Probetest „Wie der echte Test“ (15 Aufgaben).</div>
+<div class="warn"><b>Wichtig zur Quelle:</b> Das Material stammt aus einer <b>automatisch erstellten Zusammenfassung und dem Rohtranskript</b> der Besprechung (der Hinweis auf dem Dokument lautet „Bitte vor der Verwendung überprüfen“). Die Spracherkennung macht Fehler, z. B. wurde „Preis-Leistungs-Verhältnis“ als „Praxisleistungsverhältnis“ und „Selbstoffenbarung“ als „Selbstordnung“ geschrieben. Aussagen, die nicht im Transkript stehen (komplementär, Axiome, Vier-Ohren-Modell, die Beispiele „Du, da vorne ist grün“ und „Rechtschreibfehler“), sind als <span class="tag open">nicht aus der Stunde</span> markiert. Bei Abweichungen gelten <b>die Folien und die Begriffe deiner Lehrerin</b>.</div>
+`});
+
+'use strict';
+/* ======================= DEUTSCH – KARTEIKARTEN ======================= */
+D.cards.deu = [
+/* Grundlagen */
+{ t: 'Grundlagen', q: 'Definiere Kommunikation unter Verwendung von Fachbegriffen.', a: 'Austausch von <b>Informationen</b> zwischen <b>mindestens zwei Personen</b> (Sender und Empfänger) durch <b>Zeichen</b>, <b>verbal</b> (Worte, auch schriftlich) oder <b>nonverbal</b> (Mimik, Gestik, Körpersprache).' },
+{ t: 'Grundlagen', q: 'Was bedeutet verbale Kommunikation?', a: 'Alles, was mit <b>Worten</b> mitgeteilt wird, auch <b>schriftlich</b> (gesprochener Satz, WhatsApp-Nachricht, Brief).' },
+{ t: 'Grundlagen', q: 'Was bedeutet nonverbale Kommunikation?', a: '<b>Sprache ohne Worte</b>: Mimik, Gestik, Körpersprache. (Nicht „Worte ohne Sprache“, nicht „das Gesagte ohne Inhalt“.)' },
+{ t: 'Grundlagen', q: 'Was bedeutet paraverbale Kommunikation?', a: '<b>Wie</b> etwas gesagt wird: laut, leise, Tonfall, Ironie.' },
+{ t: 'Grundlagen', q: 'Welche Ebenen der Kommunikation gibt es, welche nicht?', a: 'Es gibt <b>verbal, nonverbal, paraverbal</b>. <b>Konverbal</b> und <b>subverbal</b> gibt es in diesem Zusammenhang nicht.' },
+{ t: 'Grundlagen', q: 'Welche Rollen nehmen Menschen beim Kommunizieren ein?', a: 'Immer die Rollen <b>Sender</b> und <b>Empfänger</b>.' },
+{ t: 'Grundlagen', q: 'Wie groß ist der Einfluss der Körpersprache?', a: 'Entscheidend. Man kann das Gegenüber damit <b>überzeugen</b> oder <b>manipulieren</b>, reine Fakten reichen oft nicht. „Körpersprache wird überschätzt, nur Fakten zählen“ ist <b>falsch</b>.' },
+{ t: 'Grundlagen', q: 'Kann man mit Körpersprache sein Gegenüber manipulieren?', a: '<b>Ja.</b> Körpersprache und das „Wie“ einer Aussage beeinflussen, wie sie ankommt.' },
+{ t: 'Grundlagen', q: 'Was bedeutet symmetrische Kommunikation?', a: 'Symmetrisch heißt <b>gleich</b>: gleiche Rolle, Kommunikation <b>auf Augenhöhe</b> (gleichberechtigt, metaphorisch gemeint).' },
+{ t: 'Grundlagen', q: 'Was bedeutet komplementäre Kommunikation?', a: 'Komplementär heißt <b>ergänzend</b>: <b>unterschiedliche Rollen</b>, einer ist übergeordnet, der andere untergeordnet (z. B. Chef und Mitarbeiter). <i>Nicht aus der Stunde, steht aber auf der Themenliste.</i>' },
+{ t: 'Grundlagen', q: 'Beispiel für Kommunikation, die nicht symmetrisch ist?', a: 'Chef gibt dem Mitarbeiter eine Anweisung, Lehrkraft erklärt der Klasse den Stoff: unterschiedliche Rollen, also <b>komplementär</b>.' },
+/* Watzlawick */
+{ t: 'Watzlawick', q: 'Was bedeutet „Man kann nicht nicht kommunizieren“?', a: 'Der Mensch sendet <b>durchgehend Signale</b>, die vom Umfeld <b>interpretiert</b> werden. Man kann nicht <b>nichts</b> mitteilen, auch Schweigen ist eine Mitteilung.' },
+{ t: 'Watzlawick', q: 'Nenne ein Beispiel für „Man kann nicht nicht kommunizieren“.', a: 'Tasche im Bus auf den Nachbarsitz legen („ich möchte allein sitzen“) · eine WhatsApp-Nachricht nicht beantworten („ich will gerade nicht kommunizieren“) · sich im Raum ans andere Ende setzen · auf eine Frage nicht antworten.' },
+{ t: 'Watzlawick', q: 'Wie sind Aufgaben zu „nicht nicht kommunizieren“ aufgebaut?', a: '<b>Zweigeteilt</b>: erst <b>erläutern</b>, was die Aussage bedeutet, dann ein <b>kurzes konkretes Beispiel</b> nennen.' },
+{ t: 'Watzlawick', q: 'Warum passt „Daumen hoch auf eine Frage“ nicht als Beispiel?', a: 'Weil es dort eine <b>konkrete Frage und eine konkrete Antwort</b> gibt. Gesucht ist eine Situation, in der man ohne Worte oder Handlung etwas mitteilt.' },
+{ t: 'Watzlawick', q: 'Was bedeutet „digital“ nach Watzlawick?', a: '<b>Verbale</b> Kommunikation: <b>Worte</b>.' },
+{ t: 'Watzlawick', q: 'Was bedeutet „analog“ nach Watzlawick?', a: '<b>Nonverbale</b> Kommunikation: <b>Mimik, Gestik</b>, Körpersprache.' },
+{ t: 'Watzlawick', q: 'Digital und analog: Worauf kommt es in der Aufgabe an?', a: 'Auf die <b>Begriffe nach Watzlawick</b>: Er nutzt „digital“ und „analog“ statt „verbal“ und „nonverbal“.' },
+{ t: 'Watzlawick', q: 'Worauf achten Gesprächspartner bei symmetrischer Kommunikation?', a: 'Dass die Interaktion <b>gleichberechtigt auf Augenhöhe</b> stattfindet.' },
+/* Eisbergmodell */
+{ t: 'Eisbergmodell', q: 'Wie ist das Eisbergmodell aufgebaut?', a: '<b>Sichtbare Sachebene</b> (über Wasser, Fakten) und <b>wesentlich größere unsichtbare Beziehungsebene</b> (unter Wasser), die immer mitschwingt.' },
+{ t: 'Eisbergmodell', q: 'Was gehört zur Sachebene im Eisberg?', a: 'Der <b>reine Fakt</b>, das, was direkt gesagt wird.' },
+{ t: 'Eisbergmodell', q: 'Was gehört zur unsichtbaren Ebene im Eisberg?', a: 'Alles, was <b>nicht direkt gesagt</b> wird, sondern zwischen den Zeilen steht: Interpretation, Gefühle, Absichten, Rollen (<b>Beziehungsebene</b>).' },
+{ t: 'Eisbergmodell', q: 'Wie viele Sätze verlangt die Eisbergaufgabe?', a: '<b>Drei Sätze</b>: ein Satz zur Sachebene, dann <b>mindestens zwei</b> Interpretationen der unsichtbaren Ebene.' },
+{ t: 'Eisbergmodell', q: 'Aussage: „Ich hätte gerne, dass Sie dieses Mal die Aufgabe übernehmen.“ Sachebene?', a: 'Der Mitarbeiter soll die Aufgabe übernehmen (reiner Fakt).' },
+{ t: 'Eisbergmodell', q: 'Zwei Interpretationen der unsichtbaren Ebene zur Aussage des Projektleiters?', a: '(1) Bestrafung, weil er bisher wenig gemacht hat. (2) Wertschätzung und Förderung, weil er gute Arbeit macht. Weitere: Chef hat keine Lust und schiebt ab · Azubi soll für die IHK-Prüfung üben.' },
+/* Schulz von Thun */
+{ t: 'Schulz von Thun', q: 'Nenne die Fachbegriffe der vier Seiten einer Nachricht.', a: '<b>Sachebene, Appell, Selbstoffenbarung, Beziehungsebene</b> (Kommunikationsquadrat). Nicht „Gefühlsebene“ oder „Höherebene“.' },
+{ t: 'Schulz von Thun', q: 'Merkfrage zur Sachebene?', a: 'Worüber informiere ich? Der reine Fakt.' },
+{ t: 'Schulz von Thun', q: 'Merkfrage zur Selbstoffenbarung?', a: 'Wie empfinde ich das? Was gebe ich von mir preis?' },
+{ t: 'Schulz von Thun', q: 'Merkfrage zum Appell?', a: 'Was soll der andere tun?' },
+{ t: 'Schulz von Thun', q: 'Merkfrage zur Beziehungsebene?', a: 'Wie stehen wir zueinander? Welche Rollen haben wir?' },
+{ t: 'Schulz von Thun', q: '„Das ist aber kein guter Service für diesen Preis.“ Sachebene und Selbstoffenbarung?', a: 'Sachebene: Das <b>Preis-Leistungs-Verhältnis</b> stimmt nicht. Selbstoffenbarung: Der Kunde ist mit der Leistung <b>unzufrieden</b>.' },
+{ t: 'Schulz von Thun', q: 'Dieselbe Aussage: Appell und Beziehungsebene?', a: 'Appell: <b>Service verbessern oder Preis senken.</b> Beziehungsebene: <b>Rollen Kunde und Verkäufer</b>, der Kunde hat eine Erwartung und darf sich beschweren.' },
+{ t: 'Schulz von Thun', q: 'Wie verhalten sich Mitarbeiter bei unhöflichen Kunden?', a: 'Sie müssen sich das <b>nicht gefallen lassen</b>, haben Rückendeckung des Chefs und dürfen das Gespräch beenden („So reden wir nicht.“).' },
+{ t: 'Schulz von Thun', q: 'Wie heißt das Modell von Schulz von Thun in der Stunde?', a: '<b>Kommunikationsquadrat</b> mit den vier Seiten einer Nachricht. <i>(Auch bekannt als Vier-Ohren-Modell, nicht aus der Stunde.)</i>' },
+/* Inneres Team */
+{ t: 'Inneres Team', q: 'Was ist das innere Team?', a: 'Die <b>Personifizierung</b> verschiedener <b>logischer, emotionaler und fachlicher Stimmen</b> im Kopf bei einer Entscheidung (Logik, Emotion, Fachwissen als „Personen“).' },
+{ t: 'Inneres Team', q: 'Wie sind Aufgaben zum inneren Team aufgebaut?', a: 'Erst <b>erläutern</b>, was das innere Team ist, dann <b>anwenden</b> auf die vorgegebene Aussage (2 bis 3 Gedanken nennen).' },
+{ t: 'Inneres Team', q: '„Ich sollte die Ausbildung verkürzen.“ Welche Stimmen melden sich?', a: 'Zweifel: <b>„Schaffe ich das? So viel Lernstoff.“</b> Dagegen: <b>„Lohnt sich das? Ja, ich bekomme früher Geld.“</b>' },
+{ t: 'Inneres Team', q: 'Welchen Einfluss hat das innere Team auf die Kommunikation?', a: 'Wer es vorher befragt, reagiert nicht impulsiv, sondern wägt <b>Pro und Kontra</b> ab. Die Kommunikation wird <b>klarer, eindeutiger und reflektierter</b>.' },
+{ t: 'Inneres Team', q: 'Warum sind spontane Antworten oft problematisch?', a: 'Sie sind oft <b>emotional gesteuert</b> („auf jeden Fall“ oder „auf keinen Fall“). Wer vorher nachdenkt („eine Nacht drüber schlafen“), sammelt Argumente.' },
+{ t: 'Inneres Team', q: 'Wie viele Sätze verlangt die Lehrkraft zum Einfluss des inneren Teams?', a: 'Nur <b>zwei Sätze</b> (auch wenn mehr Zeilen frei sind).' }
+];
+
+/* ======================= DEUTSCH – QUIZ ======================= */
+const dq = (t, q, ok, wrong, w) => ({ t, q, o: [ok].concat(wrong), a: 0, w });
+D.mc.deu = [
+/* Grundlagen */
+dq('Grundlagen', 'Wie lautet die beste Definition von Kommunikation?', 'Austausch von Informationen zwischen mindestens zwei Personen durch verbale oder nonverbale Zeichen', ['Das Senden einer Nachricht von einer Person an sich selbst', 'Das Sprechen mit Worten in einer Besprechung', 'Die Übertragung von Daten zwischen zwei Geräten'], 'Dazu gehören mindestens zwei Personen (Sender und Empfänger), der Austausch von Informationen und Zeichen (verbal oder nonverbal).'),
+dq('Grundlagen', 'Welche Ebene gehört <b>nicht</b> zu den Ebenen der menschlichen Kommunikation?', 'konverbal', ['verbal', 'nonverbal', 'paraverbal'], 'Gültig sind verbal, nonverbal und paraverbal. Konverbal (und subverbal) gibt es in diesem Zusammenhang nicht.'),
+dq('Grundlagen', 'Welcher dieser Begriffe ist <b>keine</b> Ebene der Kommunikation?', 'subverbal', ['paraverbal', 'verbal', 'nonverbal'], 'Subverbal und konverbal gibt es nicht.'),
+dq('Grundlagen', 'Nonverbale Kommunikation ist …', 'Sprache ohne Worte', ['das Gesagte ohne Inhalt', 'Worte ohne Sprache', 'der Inhalt vom Gesagten'], 'Nonverbal = ohne Worte: Mimik, Gestik, Körpersprache.'),
+dq('Grundlagen', 'Welche Aussage über verbale Kommunikation stimmt?', 'Sie umfasst alles, was mit Worten mitgeteilt wird, auch schriftlich', ['Sie umfasst nur gesprochene Sprache', 'Sie umfasst Mimik und Gestik', 'Sie umfasst nur Gespräche von Angesicht zu Angesicht'], 'Auch eine WhatsApp-Nachricht oder ein Brief ist verbale Kommunikation.'),
+dq('Grundlagen', 'Was ist paraverbale Kommunikation?', 'Wie etwas gesagt wird (laut, leise, Tonfall)', ['Was gesagt wird (der Inhalt in Worten)', 'Nur Gestik und Mimik', 'Die schriftliche Form von Aussagen'], 'Paraverbal betrifft die Art des Sprechens, nicht den Inhalt der Worte.'),
+tf('Grundlagen', 'Wenn Menschen kommunizieren, werden sie zum Sender beziehungsweise Empfänger.', true, 'Beim Kommunizieren gibt es immer die Rollen Sender und Empfänger.'),
+tf('Grundlagen', 'Körpersprache wird überschätzt: Man muss nicht sympathisch wirken, nur die Fakten zählen, um den Empfänger zu überzeugen.', false, 'Mit Körpersprache und dem „Wie“ kann man sehr viel zeigen. Fakten allein reichen oft nicht.'),
+tf('Grundlagen', 'Mit Hilfe von Körpersprache kann man sein Gegenüber manipulieren.', true, 'Körpersprache ist ein entscheidender Faktor, um zu überzeugen, aber auch um zu manipulieren.'),
+dq('Grundlagen', 'Was bedeutet symmetrische Kommunikation?', 'Die Partner kommunizieren gleichberechtigt auf Augenhöhe', ['Die Partner kommunizieren per Telefon', 'Einer redet, der andere hört nur zu', 'Beide sagen immer dasselbe'], 'Symmetrisch heißt gleich: gleiche Rolle, Augenhöhe.'),
+dq('Grundlagen', 'Bei komplementärer Kommunikation …', 'sind die Rollen unterschiedlich und ergänzen sich (z. B. Chef und Mitarbeiter)', ['haben beide die gleiche Rolle', 'wird nur nonverbal kommuniziert', 'gibt es keinen Sender'], 'Komplementär heißt ergänzend. Das Wort fiel in der Stunde nicht, steht aber auf der Themenliste.'),
+dq('Grundlagen', 'Wie sind Aufgaben im Test oft aufgebaut?', 'Zweigeteilt: erst erläutern, dann ein Beispiel oder eine Anwendung nennen', ['Nur ein Beispiel ohne Erklärung', 'Nur Multiple Choice', 'Nur Auswendiglernen von Definitionen ohne Anwendung'], 'Das verlangt die Lehrkraft u. a. bei „nicht nicht kommunizieren“, Eisbergmodell und innerem Team.'),
+/* Watzlawick */
+dq('Watzlawick', 'Was bedeutet „Man kann nicht nicht kommunizieren“?', 'Der Mensch sendet durchgehend Signale, die interpretiert werden können', ['Man darf nie schweigen', 'Man muss immer sprechen', 'Kommunikation findet nur mit Worten statt'], 'Auch Schweigen oder Nicht-Antworten ist eine Mitteilung.'),
+dq('Watzlawick', 'Welches Beispiel passt zu „nicht nicht kommunizieren“?', 'Die Tasche im Bus auf den Nachbarsitz legen', ['Daumen hoch als Antwort auf eine Frage', 'Eine Rechenaufgabe laut lösen', 'Ein Formular ausfüllen'], 'Ohne ein Wort wird mitgeteilt: „Ich möchte allein sitzen.“ Daumen hoch auf eine Frage ist eine konkrete Antwort und passt nicht.'),
+dq('Watzlawick', 'Was teilt man mit, wenn man eine WhatsApp-Nachricht nicht beantwortet?', 'Z. B. „Ich will gerade nicht mit dir kommunizieren“', ['Nichts, denn es wurde nichts geschrieben', 'Eine ausdrückliche Zustimmung', 'Eine Frage'], 'Nicht-Antworten ist ein Signal, das interpretiert werden kann.'),
+tf('Watzlawick', 'Wer schweigt, kommuniziert nach Watzlawick nicht.', false, 'Auch Schweigen sendet ein Signal. Man kann nicht nicht kommunizieren.'),
+dq('Watzlawick', 'Was bedeutet „digital“ nach Watzlawick?', 'verbale Kommunikation (Worte)', ['nonverbale Kommunikation (Mimik, Gestik)', 'Kommunikation über das Internet', 'Kommunikation mit Computern'], 'Nach Watzlawick: digital = verbal, analog = nonverbal.'),
+dq('Watzlawick', 'Was bedeutet „analog“ nach Watzlawick?', 'nonverbale Kommunikation (Mimik, Gestik)', ['verbale Kommunikation (Worte)', 'Kommunikation auf Papier', 'Kommunikation ohne Technik'], 'Analog = nonverbal, also Mimik, Gestik, Körpersprache.'),
+dq('Watzlawick', 'Bei einer symmetrischen Kommunikation achten die Gesprächspartner darauf, dass …', 'die Interaktion gleichberechtigt auf Augenhöhe stattfindet', ['einer dem anderen Anweisungen gibt', 'nur einer redet', 'nur nonverbal kommuniziert wird'], 'Symmetrisch heißt gleich.'),
+tf('Watzlawick', 'Nach Watzlawick entspricht digitale Kommunikation der nonverbalen Ebene.', false, 'Digital = verbal (Worte). Analog = nonverbal.'),
+/* Eisbergmodell */
+dq('Eisbergmodell', 'Wie ist das Eisbergmodell aufgebaut?', 'sichtbare Sachebene oben, wesentlich größere unsichtbare Beziehungsebene unten', ['sichtbare Beziehungsebene oben, kleinere Sachebene unten', 'drei gleich große Ebenen', 'vier Seiten in einem Quadrat'], 'Der größere Teil liegt unter der Wasseroberfläche und schwingt immer mit.'),
+dq('Eisbergmodell', '„Ich hätte gerne, dass Sie dieses Mal die Aufgabe übernehmen.“ Was ist die Sachebene?', 'Der Mitarbeiter soll die Aufgabe übernehmen', ['Der Mitarbeiter wird bestraft', 'Der Projektleiter schätzt den Mitarbeiter', 'Der Projektleiter hat keine Lust'], 'Die Sachebene ist der reine Fakt. Die anderen drei Antworten sind Interpretationen der unsichtbaren Ebene.'),
+dq('Eisbergmodell', 'Welche Aussage ist eine Interpretation der <b>unsichtbaren</b> Ebene?', 'Der Mitarbeiter soll dafür bestraft werden, dass er bisher wenig getan hat', ['Der Mitarbeiter soll die Aufgabe übernehmen', 'Die Aufgabe soll dieses Mal erledigt werden', 'Der Projektleiter bittet um etwas'], 'Die Absicht „Bestrafung“ steht nicht im Satz, sie wird hineininterpretiert.'),
+dq('Eisbergmodell', 'Wie viele Sätze verlangt die Lehrkraft in der Eisbergaufgabe?', 'drei (Sachebene und zwei Interpretationen)', ['einen', 'fünf', 'zehn'], 'Ein Satz zum Fakt, dazu mindestens zwei mögliche Deutungen der unsichtbaren Ebene.'),
+tf('Eisbergmodell', 'Die Aussage des Projektleiters hat auf der unsichtbaren Ebene nur eine mögliche Deutung.', false, 'Es gibt mindestens zwei, z. B. Bestrafung oder Wertschätzung und Förderung.'),
+dq('Eisbergmodell', 'Wie heißt die unsichtbare Ebene im Eisbergmodell?', 'Beziehungsebene', ['Appellebene', 'Gefühlsebene', 'Höherebene'], 'Fachbegriff ist die Beziehungsebene. „Gefühlsebene“ und „Höherebene“ sind laut Lehrkraft falsch.'),
+/* Schulz von Thun */
+dq('Schulz von Thun', 'Welche vier Seiten hat die Nachricht nach Schulz von Thun?', 'Sachebene, Appell, Selbstoffenbarung, Beziehungsebene', ['Sachebene, Gefühlsebene, Höherebene, Appell', 'Verbal, nonverbal, paraverbal, digital', 'Sender, Empfänger, Kanal, Botschaft'], 'Nur diese vier Fachbegriffe verwenden.'),
+dq('Schulz von Thun', 'Welcher Begriff gehört <b>nicht</b> zu den vier Seiten einer Nachricht?', 'Gefühlsebene', ['Sachebene', 'Appell', 'Selbstoffenbarung'], 'Die Lehrkraft warnt ausdrücklich vor „Gefühlsebene“ und „Höherebene“.'),
+dq('Schulz von Thun', '„Das ist aber kein guter Service für diesen Preis.“ Was ist die Sachebene?', 'Das Preis-Leistungs-Verhältnis stimmt nicht', ['Ich bin unzufrieden', 'Verbessert den Service oder senkt den Preis', 'Der Kunde darf sich beschweren'], 'Sachebene = der reine Fakt.'),
+dq('Schulz von Thun', 'Dieselbe Aussage: Was ist die Selbstoffenbarung?', 'Der Kunde ist mit der Leistung unzufrieden', ['Das Preis-Leistungs-Verhältnis stimmt nicht', 'Der Service soll besser werden', 'Kunde und Verkäufer haben bestimmte Rollen'], 'Selbstoffenbarung = wie empfinde ich das, was gebe ich von mir preis.'),
+dq('Schulz von Thun', 'Dieselbe Aussage: Was ist der Appell?', 'Verbessert den Service oder senkt den Preis', ['Ich bin unzufrieden', 'Das Preis-Leistungs-Verhältnis stimmt nicht', 'Der Kunde hat eine Erwartung'], 'Appell = was soll der andere tun.'),
+dq('Schulz von Thun', 'Dieselbe Aussage: Was ist die Beziehungsebene?', 'Die Rollen von Kunde und Verkäufer: Der Kunde hat eine Erwartung und darf sich beschweren', ['Das Preis-Leistungs-Verhältnis stimmt nicht', 'Der Service soll besser werden', 'Der Kunde ist unzufrieden'], 'Beziehungsebene = wie stehen wir zueinander, welche Rollen haben wir.'),
+dq('Schulz von Thun', 'Ein Kunde wird am Telefon unhöflich. Was ist laut Besprechung richtig?', 'Der Mitarbeiter muss das nicht hinnehmen und darf mit Rückendeckung des Chefs das Gespräch beenden', ['Der Kunde ist König, der Mitarbeiter muss alles aushalten', 'Der Mitarbeiter schreit zurück', 'Der Mitarbeiter ignoriert den Kunden dauerhaft'], 'Mitarbeiter müssen sich unhöfliche Kunden nicht gefallen lassen und dürfen mit Rückendeckung beenden („So reden wir nicht“).'),
+dq('Schulz von Thun', 'Wie heißt das Modell von Schulz von Thun mit den vier Seiten?', 'Kommunikationsquadrat', ['Eisbergmodell', 'Axiom', 'Inneres Team'], 'Kommunikationsquadrat = die vier Seiten einer Nachricht. Das Eisbergmodell hat zwei Ebenen, das innere Team ist ein weiteres Modell von Schulz von Thun.'),
+/* Inneres Team */
+dq('Inneres Team', 'Was ist das innere Team?', 'Die Personifizierung verschiedener logischer, emotionaler und fachlicher Stimmen bei einer Entscheidung', ['Die Gruppe der Kollegen in der Abteilung', 'Ein Team aus Sender und Empfänger', 'Die vier Seiten einer Nachricht'], 'Man stellt sich die Stimmen im Kopf wie Personen vor.'),
+dq('Inneres Team', 'Welcher Gedanke passt zum inneren Team bei „Ich sollte die Ausbildung verkürzen“?', 'Schaffe ich das, es ist so viel zu lernen? Aber es lohnt sich, ich bekomme früher Geld.', ['Der Kunde ist König.', 'Man kann nicht nicht kommunizieren.', 'Digital ist verbal.'], 'Es sind widersprüchliche Stimmen: Zweifel und Argumente für die Verkürzung.'),
+dq('Inneres Team', 'Welchen Einfluss hat das innere Team auf die Kommunikation?', 'Wer es befragt, kommuniziert klarer, eindeutiger und reflektierter', ['Es macht Antworten immer kürzer', 'Es verhindert jede Kommunikation', 'Es hat keinen Einfluss'], 'Man reagiert nicht impulsiv, sondern wägt Pro und Kontra ab.'),
+tf('Inneres Team', 'Spontane Antworten sind oft emotional gesteuert („auf jeden Fall“ oder „auf keinen Fall“).', true, 'Wer vorher nachdenkt, kann Argumente sammeln.'),
+dq('Inneres Team', 'Wie viele Sätze verlangt die Lehrkraft zum Einfluss des inneren Teams?', 'zwei zusammenfassende Sätze', ['zwanzig Sätze', 'einen Absatz mit mindestens zehn Sätzen', 'keinen, nur ein Stichwort'], 'Auch wenn mehr Zeilen frei sind, reichen zwei Sätze.')
+];
+
+/* ======================= DEUTSCH – FREITEXT (Selbstbewertung) ======================= */
+D.self.deu = [
+{ t: 'Grundlagen', pts: 5, q: 'Definiere den Begriff „Kommunikation“ unter Verwendung von Fachbegriffen.',
+  m: 'Kommunikation ist der <b>Austausch von Informationen</b> zwischen <b>mindestens zwei Personen</b> (Sender und Empfänger) durch <b>Zeichen</b>. Das kann <b>verbal</b> geschehen (alles, was mit Worten mitgeteilt wird, auch schriftlich) oder <b>nonverbal</b> (Mimik, Gestik, Körpersprache). <i>1 P. Austausch von Informationen, 1 P. mindestens zwei Personen (Sender, Empfänger), 1 P. Zeichen, 1 P. verbal erklärt, 1 P. nonverbal erklärt.</i>' },
+{ t: 'Grundlagen', pts: 3, q: 'Welche Ebenen der menschlichen Kommunikation gibt es? Erkläre sie kurz und nenne einen Begriff, der <b>nicht</b> dazugehört.',
+  m: '<b>Verbal</b>: alles, was mit Worten mitgeteilt wird, auch schriftlich. <b>Nonverbal</b>: Sprache ohne Worte (Mimik, Gestik, Körpersprache). <b>Paraverbal</b>: wie etwas gesagt wird (laut, leise, Tonfall). <b>Konverbal</b> und <b>subverbal</b> gibt es nicht. <i>1 P. verbal und nonverbal richtig erklärt, 1 P. paraverbal erklärt, 1 P. ein falscher Begriff (konverbal oder subverbal).</i>' },
+{ t: 'Watzlawick', pts: 4, q: 'Was bedeutet symmetrische und komplementäre Kommunikation? Nenne zu jeder ein Beispiel.',
+  m: '<b>Symmetrisch</b> heißt gleich: Die Partner haben die gleiche Rolle und kommunizieren auf Augenhöhe, z. B. zwei gleichrangige Kollegen, die eine Besprechung planen. <b>Komplementär</b> heißt ergänzend: Die Rollen sind unterschiedlich, einer ist übergeordnet, einer untergeordnet, z. B. ein Chef, der seinem Mitarbeiter eine Anweisung gibt. <i>Hinweis: „komplementär“ kam in der Stunde nicht vor, steht aber auf der Themenliste. 1 P. symmetrisch erklärt, 1 P. Beispiel symmetrisch, 1 P. komplementär erklärt, 1 P. Beispiel komplementär.</i>' },
+{ t: 'Grundlagen', pts: 3, q: 'Welchen Einfluss hat die Körpersprache auf die Kommunikation? Erläutere und gib ein Beispiel.',
+  m: 'Körpersprache ist ein entscheidender Faktor: Mit Mimik, Gestik und Haltung kann man sein Gegenüber <b>überzeugen</b> oder sogar <b>manipulieren</b>, deshalb reichen reine Fakten oft nicht aus. Beispiel: Der Satz „Du bist großartig“ wirkt mit einem Lächeln ehrlich, mit verdrehten Augen spöttisch. <i>1 P. Körpersprache beeinflusst, wie eine Aussage ankommt, 1 P. überzeugen oder manipulieren, 1 P. passendes Beispiel.</i>' },
+{ t: 'Watzlawick', pts: 4, q: 'Watzlawick sagt: „Man kann nicht nicht kommunizieren.“ Erläutere diese Aussage und beschreibe kurz eine konkrete Beispielsituation.',
+  m: '<b>Erläuterung:</b> Der Mensch sendet durchgehend Signale aus, die vom Umfeld interpretiert werden können. Man kann deshalb nicht „nichts“ mitteilen, auch Schweigen oder Nicht-Antworten ist eine Mitteilung. <b>Beispiel:</b> Wenn ich im Bus meine Tasche auf den Nachbarsitz lege, signalisiere ich, dass ich allein sitzen möchte, ohne ein Wort zu sagen. (Auch passend: eine WhatsApp-Nachricht nicht beantworten, sich im Raum ans andere Ende setzen.) <i>1 P. durchgehend Signale, 1 P. werden interpretiert (auch Schweigen), 1 P. konkretes Beispiel, 1 P. Beispiel erklärt die Botschaft.</i>' },
+{ t: 'Watzlawick', pts: 3, q: 'Definiere die Begriffe „analog“ und „digital“ nach Watzlawick.',
+  m: 'Nach Watzlawick ist <b>digital</b> die <b>verbale</b> Kommunikation, also Worte. <b>Analog</b> ist die <b>nonverbale</b> Kommunikation, also Mimik, Gestik und Körpersprache. Watzlawick nutzt diese Begriffe statt „verbal“ und „nonverbal“. <i>1 P. digital = verbal (Worte), 1 P. analog = nonverbal (Mimik, Gestik), 1 P. Begriffe nicht vertauscht und Beispiele genannt.</i>' },
+{ t: 'Eisbergmodell', pts: 4, q: 'Der Projektleiter sagt zum Mitarbeiter: „Ich hätte gerne, dass Sie dieses Mal die Aufgabe übernehmen.“ Beschreibe das Eisbergmodell und erläutere es an dieser Aussage (drei Sätze).',
+  m: 'Das Eisbergmodell teilt Kommunikation in eine <b>sichtbare Sachebene</b> und eine wesentlich größere <b>unsichtbare Beziehungsebene</b>, die immer mitschwingt. <b>Sachebene:</b> Der Mitarbeiter soll die Aufgabe übernehmen. <b>Interpretation 1:</b> Er könnte es als Bestrafung verstehen, weil er bisher wenig geleistet hat. <b>Interpretation 2:</b> Er könnte es als Wertschätzung und Förderung verstehen, weil der Projektleiter ihm die Aufgabe zutraut. <i>1 P. zwei Ebenen (sichtbar, größere unsichtbar), 1 P. Sachebene als Fakt, 2 P. zwei verschiedene Interpretationen.</i>' },
+{ t: 'Schulz von Thun', pts: 2, q: 'Nenne die vier Seiten einer Nachricht nach Schulz von Thun mit den Fachbegriffen.',
+  m: '<b>Sachebene, Appell, Selbstoffenbarung, Beziehungsebene</b> (Kommunikationsquadrat). <i>1 P. alle vier Begriffe richtig, 1 P. keine falschen Begriffe wie „Gefühlsebene“ oder „Höherebene“.</i>' },
+{ t: 'Schulz von Thun', pts: 4, q: 'Wende die vier Seiten einer Nachricht auf die Aussage an: „Das ist aber kein guter Service für diesen Preis.“',
+  m: '<b>Sachebene:</b> Das Preis-Leistungs-Verhältnis stimmt nicht. <b>Selbstoffenbarung:</b> Der Kunde ist mit der Leistung unzufrieden. <b>Appell:</b> Der Service soll besser oder der Preis niedriger werden. <b>Beziehungsebene:</b> Es geht um das Rollenverhältnis von Kunde und Verkäufer: Der Kunde hat eine Erwartungshaltung und sieht sich im Recht, sich zu beschweren. <i>Je 1 P. pro richtig zugeordneter Seite.</i>' },
+{ t: 'Schulz von Thun', pts: 4, q: 'Übungsaufgabe (nicht aus der Stunde): Wende die vier Seiten auf die Aussage einer Vorgesetzten an: „Ihre Präsentation enthält viele Rechtschreibfehler.“',
+  m: '<b>Sachebene:</b> In der Präsentation stehen mehrere Rechtschreibfehler. <b>Selbstoffenbarung:</b> Der Vorgesetzten ist Sorgfalt wichtig, und sie ist mit dem Ergebnis nicht zufrieden. <b>Appell:</b> Der Mitarbeiter soll seine Texte künftig besser auf Rechtschreibung prüfen. <b>Beziehungsebene:</b> Die Vorgesetzte beurteilt als Chefin die Arbeit des Mitarbeiters (Rollenverhältnis Vorgesetzte und Mitarbeiter). <i>Je 1 P. pro richtig zugeordneter Seite.</i>' },
+{ t: 'Schulz von Thun', pts: 2, q: 'Ein Kunde beschimpft dich am Telefon. Wie darfst du dich im Berufsalltag verhalten? Begründe kurz.',
+  m: 'Mitarbeiter müssen sich <b>unhöfliche Kunden nicht gefallen lassen</b>. Mit der <b>Rückendeckung des Vorgesetzten</b> darf man das Gespräch beenden (z. B. auflegen) und vorher klar sagen: „So reden wir nicht.“ Der Satz „Der Kunde ist König“ gilt nicht für unhöfliches Verhalten. <i>1 P. Gespräch beenden ist erlaubt, 1 P. Begründung (Rückendeckung des Chefs, Kunde darf nicht unhöflich sein).</i>' },
+{ t: 'Inneres Team', pts: 4, q: 'Erläutere das „innere Team“ und wende es auf die Aussage an: „Ich sollte die Ausbildung verkürzen.“',
+  m: 'Das innere Team ist die <b>Personifizierung</b> der verschiedenen logischen, emotionalen und fachlichen Stimmen im Kopf bei einer Entscheidung. <b>Anwendung:</b> Eine zweifelnde Stimme sagt: „Schaffe ich das? Es ist so viel zu lernen.“ Eine andere Stimme sagt: „Es lohnt sich, ich bekomme früher Geld.“ <i>2 P. Erklärung (Personifizierung, verschiedene Stimmen/Entscheidung), 2 P. zwei passende Gedanken aus unterschiedlichen Stimmen.</i>' },
+{ t: 'Inneres Team', pts: 2, q: 'Welchen Einfluss hat das innere Team auf die Kommunikation? (zwei Sätze)',
+  m: 'Wer sein inneres Team vorher befragt, reagiert nicht impulsiv und emotional, sondern kann Pro und Kontra abwägen. Dadurch kommuniziert er klarer, eindeutiger und reflektierter. <i>1 P. nicht impulsiv, sondern Pro und Kontra abwägen, 1 P. klarer, eindeutiger, reflektierter.</i>' },
+{ t: 'Grundlagen', pts: 3, q: 'Beschreibe zu der Situation „Du sitzt in einem Raum und schweigst während einer Besprechung“ zwei mögliche Botschaften und erkläre mit Watzlawick, warum es Kommunikation ist.',
+  m: 'Das Schweigen kann Desinteresse, Unsicherheit, Zustimmung oder Ablehnung signalisieren. Nach Watzlawick kann man nicht nicht kommunizieren, weil auch ohne Worte durchgehend Signale gesendet und vom Gegenüber interpretiert werden. <i>1 P. erste mögliche Botschaft, 1 P. zweite mögliche Botschaft, 1 P. Erklärung nach Watzlawick (man sendet immer Signale).</i>' }
+];
+
+
+'use strict';
 (function () {
   const $ = (s, el) => (el || document).querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -2766,7 +3217,8 @@ D.self.sud = [
   const FACH = {
     evp: { label: 'EVP-Test', sub: 'Zahlensysteme · Bits & Bytes · Codes · Zweierkomplement', gens: EVP },
     wub: { label: 'WUB-Klausur', sub: 'Kündigung · Lohnabrechnung & Steuern · Soziale Sicherung', gens: WUB },
-    sud: { label: 'SUD-Klausur', sub: 'Java: Variablen · Verzweigungen · Schleifen · Methoden · Arrays', gens: SUD }
+    sud: { label: 'SUD-Klausur', sub: 'Java: Variablen · Verzweigungen · Schleifen · Methoden · Arrays', gens: SUD },
+    deu: { label: 'Deutsch-Test', sub: 'Kommunikation: Watzlawick · Eisberg · Schulz von Thun · inneres Team', gens: DEU }
   };
   const TABS = [['lern', 'Lernhilfe'], ['kk', 'Karteikarten'], ['qz', 'Quiz'], ['tr', 'Rechentrainer'], ['pt', 'Probetest']];
   const PLAN = {
@@ -2781,23 +3233,27 @@ D.self.sud = [
     sud: {
       kurz: { name: 'Kurztest', min: 30, gens: ['intDiv', 'typeMix', 'incDec', 'forCount', 'switchFall', 'arrLoop', 'callByValue', 'overload'], mc: 8, self: 3 },
       voll: { name: 'Vollständiger Test', min: 75, gens: ['intDiv', 'typeMix', 'incDec', 'strConcat', 'castRound', 'forCount', 'whileTrace', 'digitSum', 'switchFall', 'arrLoop', 'arrMaxIdx', 'arr2d', 'callByValue', 'overload', 'zahnbuerste'], mc: 14, self: 6 }
+    },
+    deu: {
+      kurz: { name: 'Kurztest', min: 20, gens: ['wahrFalsch', 'ebene', 'kommArt'], mc: 3, self: 2 },
+      voll: { name: 'Wie der echte Test (15 Fragen)', min: 45, gens: ['begriff', 'wahrFalsch', 'signal', 'seite'], mc: 4, self: 7 }
     }
   };
   const state = { fach: 'evp', tab: 'lern' };
-  const S = { evp: {}, wub: {}, sud: {} };
+  const S = { evp: {}, wub: {}, sud: {}, deu: {} };
   const view = () => $('#view');
 
   /* ---------- Rahmen ---------- */
   function drawFrame() {
     $('#faches').innerHTML = Object.keys(FACH).map((k) =>
       `<button class="fach ${state.fach === k ? 'on' : ''}" data-act="fach" data-v="${k}"><b>${FACH[k].label}</b><span>${FACH[k].sub}</span></button>`).join('');
-    $('#tabs').innerHTML = TABS.map(([k, n]) => `<button class="${state.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${k === 'tr' && state.fach === 'sud' ? 'Code-Trainer' : n}</button>`).join('');
+    $('#tabs').innerHTML = TABS.map(([k, n]) => `<button class="${state.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${k === 'tr' && state.fach === 'sud' ? 'Code-Trainer' : k === 'tr' && state.fach === 'deu' ? 'Übungstrainer' : n}</button>`).join('');
   }
   function render() {
     drawFrame();
     const v = view();
     ({ lern: viewLern, kk: viewKK, qz: viewQZ, tr: viewTR, pt: viewPT })[state.tab](v);
-    if (state.tab === 'lern') { if (state.fach === 'evp') initBitplay(); else if (state.fach === 'wub') initNettoCalc(); else initSudPlay(); }
+    if (state.tab === 'lern') { if (state.fach === 'evp') initBitplay(); else if (state.fach === 'wub') initNettoCalc(); else if (state.fach === 'sud') initSudPlay(); }
     if (state.tab === 'tr') { const i = $('#tin'); if (i && !S[state.fach].tr.checked) i.focus(); }
   }
 
@@ -3058,7 +3514,7 @@ D.self.sud = [
         <div class="row"><label class="inl">Test-Nr. (optional, gleiche Nr. = gleicher Test) <input type="number" id="ptseed" placeholder="z. B. 123456" min="1" style="width:170px"></label></div></div>`;
       return;
     }
-    const parts = [['input', f === 'sud' ? 'Teil A · Programme lesen: Was wird ausgegeben?' : 'Teil A · Rechen- und Codierungsaufgaben'], ['mc', 'Teil B · Multiple Choice'], ['self', 'Teil C · Freitext']];
+    const parts = [['input', f === 'sud' ? 'Teil A · Programme lesen: Was wird ausgegeben?' : f === 'deu' ? 'Teil A · Kurzaufgaben: zuordnen, wahr oder falsch' : 'Teil A · Rechen- und Codierungsaufgaben'], ['mc', 'Teil B · Multiple Choice'], ['self', 'Teil C · Freitext']];
     const body = parts.map(([k, name]) => { const ts = pt.tasks.filter((t) => t.kind === k); if (!ts.length) return ''; return `<h3 class="part">${name} (${ts.reduce((a, t) => a + t.pts, 0)} P.)</h3>` + ts.map((t) => taskHTML(t, pt.phase === 'done')).join(''); }).join('');
     if (pt.phase === 'run') {
       v.innerHTML = `<div class="card"><div class="row" style="margin-top:0;justify-content:space-between"><div><b>${pt.name}</b> · Test-Nr. ${pt.seed} · ${pt.total} Punkte</div><span class="timer" id="timer">Noch ${fmtT(pt.limit * 60)}</span></div></div>${body}
