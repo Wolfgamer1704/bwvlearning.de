@@ -144,6 +144,12 @@ pre.code code { background: none; padding: 0; font: inherit; }
 pre.code.bad { border-left: 4px solid var(--bad); }
 .q pre.code { margin: 8px 0 4px; }
 .arrcell { min-width: 54px; }
+.bit.cmp { border-color: var(--warn-line); background: var(--warn-bg); }
+.bit.sw { border-color: var(--bad); background: var(--bad-bg); }
+.bit.piv, .bit.tmp { border-color: var(--accent); background: var(--accent-soft); }
+.bit.tmp { border-style: dashed; }
+.bit.done { border-color: var(--good); background: var(--good-bg); }
+div.bit { cursor: default; }
 footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-align: center; }
 @media (max-width: 520px) { .wrap { padding: 10px 10px 50px; } }
 @media print { header.top .btn, .tabs, .faches, .row .btn { display: none; } details.sec > .body { display: block; } }
@@ -153,7 +159,7 @@ footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-ali
 <body>
 <div class="wrap" id="app">
   <header class="top">
-    <div><h1>Lernhilfe</h1><p>Stand 9. November 2026 · EVP, WUB, SUD und Deutsch: Lernhilfen, Abfragen und Probetests</p></div>
+    <div><h1>Lernhilfe</h1><p>Stand 10. November 2026 · EVP, WUB, SUD und Deutsch: Lernhilfen, Abfragen und Probetests</p></div>
     <button class="btn ghost small" data-act="theme" aria-label="Hell oder dunkel umschalten">Hell / Dunkel</button>
   </header>
   <div class="faches" id="faches"></div>
@@ -1004,6 +1010,198 @@ SUD.zahnbuerste = { label: 'Black-Box-Test: Erwartungswert berechnen', topic: 'T
 } };
 
 
+/* ===== SUD-Generatoren: Sortieren, Rekursion, Quicksort (LS07) ===== */
+// Schreibweise wie auf den Folien des Lehrers: Bubblesort vergleicht arr[i - 1] mit arr[i],
+// Selectionsort mit Einfügeposition i und minPos, Insertionsort mit temp und j,
+// Quicksort mit pivot = letztes Element, i von links, j ab dem vorletzten Element.
+const SORT_START = [43, 2, 47, 17, 4, 8, 15];
+const swapA = (a, x, y) => { const t = a[x]; a[x] = a[y]; a[y] = t; };
+const spaced = (a) => a.join(' ');
+
+function bubbleTrace(src, variante) { // 'klassisch' | 'einfach' | 'zweifach'
+  const a = src.slice(), n = a.length, passes = []; let cmp = 0, swaps = 0;
+  for (let j = 1; j < n; j++) {
+    let getauscht = false, sw = 0; const end = variante === 'zweifach' ? n - j : n - 1;
+    for (let i = 1; i <= end; i++) { cmp++; if (a[i - 1] > a[i]) { swapA(a, i - 1, i); swaps++; sw++; getauscht = true; } }
+    passes.push({ arr: a.slice(), sw, bis: end });
+    if (!getauscht && variante !== 'klassisch') break;
+  }
+  return { passes, cmp, swaps, result: a };
+}
+function selectionTrace(src) {
+  const a = src.slice(), n = a.length, passes = []; let cmp = 0;
+  for (let i = 0; i < n - 1; i++) {
+    let minPos = i;
+    for (let j = i + 1; j < n; j++) { cmp++; if (a[j] < a[minPos]) minPos = j; }
+    const tausch = [a[i], a[minPos]];
+    swapA(a, i, minPos);
+    passes.push({ arr: a.slice(), i, minPos, tausch });
+  }
+  return { passes, cmp, result: a };
+}
+function insertionTrace(src) {
+  const a = src.slice(), n = a.length, passes = []; let shifts = 0;
+  for (let i = 1; i < n; i++) {
+    const temp = a[i]; let j = i;
+    while (j !== 0 && temp < a[j - 1]) { a[j] = a[j - 1]; j--; shifts++; }
+    a[j] = temp;
+    passes.push({ arr: a.slice(), i, temp, ziel: j, verschoben: i - j });
+  }
+  return { passes, shifts, result: a };
+}
+function teileJS(a, links, rechts, log) {
+  const pivot = a[rechts]; let i = links, j = rechts - 1;
+  while (i <= j) {
+    while (i <= j && a[i] <= pivot) i++;
+    while (j >= i && a[j] > pivot) j--;
+    if (i < j) { if (log) log.push(`tausche feld[${i}] = ${a[i]} mit feld[${j}] = ${a[j]}`); swapA(a, i, j); }
+  }
+  if (log) log.push(`i = ${i} &gt; j = ${j}: Pivot ${pivot} mit feld[${i}] = ${a[i]} tauschen`);
+  swapA(a, i, rechts);
+  return i;
+}
+function quickTrace(src) {
+  const a = src.slice(), calls = [];
+  const qs = (l, r, tiefe) => {
+    if (l < r) {
+      const vor = a.slice(l, r + 1), log = [], p = teileJS(a, l, r, log);
+      calls.push({ l, r, tiefe, vor, pivot: a[p], p, nach: a.slice(), log });
+      qs(l, p - 1, tiefe + 1); qs(p + 1, r, tiefe + 1);
+    }
+  };
+  qs(0, a.length - 1, 1);
+  return { calls, result: a, tiefe: calls.reduce((m, c) => Math.max(m, c.tiefe), 0) };
+}
+/* Tabellen für Lernhilfe und Lösungen */
+function passTable(start, rows, head, cells) {
+  return `<div class="scroll"><table class="tbl"><thead><tr><th>${head}</th><th>Array danach</th><th>Was ist passiert?</th></tr></thead><tbody>
+    <tr><td>Start</td><td><code>${jlist(start)}</code></td><td></td></tr>${rows.map((p, k) => `<tr><td>${k + 1}</td><td><code>${jlist(p.arr)}</code></td><td>${cells(p, k)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+const bubbleTable = (src, v) => passTable(src, bubbleTrace(src, v).passes, 'Durchlauf j', (p, k) => `Vergleiche bis i = ${p.bis}, ${p.sw} Vertauschung${p.sw === 1 ? '' : 'en'}${p.sw === 0 ? ' → <b>kein Tausch, fertig</b>' : ''}`);
+const selectionTable = (src) => passTable(src, selectionTrace(src).passes, 'Durchlauf', (p) => `i = ${p.i}, minPos = ${p.minPos}: ${p.i === p.minPos ? `${p.tausch[0]} ist schon das Minimum (tauscht mit sich selbst)` : `tausche ${p.tausch[0]} und ${p.tausch[1]}`}`);
+const insertionTable = (src) => passTable(src, insertionTrace(src).passes, 'Durchlauf', (p) => `i = ${p.i}, temp = ${p.temp}: ${p.verschoben === 0 ? 'bleibt stehen (größer gleich dem linken Nachbarn)' : `${p.verschoben} Element${p.verschoben === 1 ? '' : 'e'} nach rechts geschoben, temp an Index ${p.ziel}`}`);
+function quickTable(src) {
+  const t = quickTrace(src);
+  return `<div class="scroll"><table class="tbl"><thead><tr><th>Aufruf</th><th>Tiefe</th><th>Teilfolge vorher</th><th>Pivot</th><th>Ablauf</th><th>Array danach</th></tr></thead><tbody>${t.calls.map((c, k) =>
+    `<tr><td>quickSort(feld, ${c.l}, ${c.r})</td><td>${c.tiefe}</td><td><code>${jlist(c.vor)}</code></td><td>${c.pivot} → Index ${c.p}</td><td>${c.log.join('<br>')}</td><td><code>${jlist(c.nach)}</code></td></tr>`).join('')}</tbody></table></div>
+    <p class="muted">Ergebnis: <code>${jlist(t.result)}</code> · Aufruftiefe ${t.tiefe}. Teilfolgen mit weniger als 2 Elementen werden nicht mehr bearbeitet (<code>links &lt; rechts</code> ist falsch).</p>`;
+}
+const SORT_CODE = {
+  bubble: (k) => `for (int j = 1; j <= ${k}; j++) {            // nur ${k} Durchl${k === 1 ? 'auf' : 'äufe'}\n    for (int i = 1; i <= a.length - j; i++) {\n        if (a[i - 1] > a[i]) {\n            int temp = a[i - 1];\n            a[i - 1] = a[i];\n            a[i] = temp;\n        }\n    }\n}`,
+  selection: (k) => `for (int i = 0; i < ${k}; i++) {             // nur ${k} Durchl${k === 1 ? 'auf' : 'äufe'}\n    int minPos = i;\n    for (int j = i + 1; j < a.length; j++) {\n        if (a[j] < a[minPos]) {\n            minPos = j;\n        }\n    }\n    int temp = a[i];\n    a[i] = a[minPos];\n    a[minPos] = temp;\n}`,
+  insertion: (k) => `for (int i = 1; i <= ${k}; i++) {            // nur ${k} Durchl${k === 1 ? 'auf' : 'äufe'}\n    int temp = a[i];\n    int j = i;\n    while (j != 0 && temp < a[j - 1]) {\n        a[j] = a[j - 1];\n        j--;\n    }\n    a[j] = temp;\n}`
+};
+const PRINT_ARR = 'for (int v : a) {\n    System.out.print(v + " ");\n}';
+function sortRunGen(alg, name) {
+  return function (r) {
+    const a = uniqInts(r, r.int(6, 7), 1, 60), k = r.int(1, 2);
+    const tr = alg === 'bubble' ? bubbleTrace(a, 'zweifach') : alg === 'selection' ? selectionTrace(a) : insertionTrace(a);
+    const res = tr.passes[Math.min(k, tr.passes.length) - 1].arr;
+    const code = `int[] a = ${jlist(a)};\n${SORT_CODE[alg](k)}\n${PRINT_ARR}`;
+    const table = alg === 'bubble' ? bubbleTable(a, 'zweifach') : alg === 'selection' ? selectionTable(a) : insertionTable(a);
+    const why = alg === 'bubble' ? `Pro Durchlauf werden benachbarte Elemente verglichen und getauscht, wenn der Vorgänger größer ist. Das größte Element „blubbert“ dabei ganz nach rechts.`
+      : alg === 'selection' ? `Pro Durchlauf wird das kleinste Element des unsortierten Rests gesucht (minPos) und mit der Einfügeposition i getauscht.`
+      : `Pro Durchlauf wird a[i] in temp gemerkt, größere Elemente links davon werden nach rechts geschoben und temp in die Lücke gesetzt.`;
+    return { pts: 3, ph: 'Zahlen mit Leerzeichen, z. B. 2 4 8', code, wrap: 'main', expect: spaced(res), ans: spaced(res),
+      prompt: `Was gibt das Programm aus? (${name}, nur ${k} Durchl${k === 1 ? 'auf' : 'äufe'})${jpre(code)}`,
+      check: (s) => sameInts(s, res),
+      solution: `<b>${spaced(res)}</b><br>${why} Die Tabelle zeigt alle Durchläufe, gefragt war Zeile ${k}:${table}` };
+  };
+}
+SUD.bubbleRun = { label: 'Bubblesort: Zwischenstand', topic: 'Sortieren', fn: sortRunGen('bubble', 'Bubblesort') };
+SUD.selectionRun = { label: 'Selectionsort: Zwischenstand', topic: 'Sortieren', fn: sortRunGen('selection', 'Selectionsort') };
+SUD.insertionRun = { label: 'Insertionsort: Zwischenstand', topic: 'Sortieren', fn: sortRunGen('insertion', 'Insertionsort') };
+
+const ALG_NAMES = { bubble: 'Bubblesort', selection: 'Selectionsort', insertion: 'Insertionsort' };
+const algOf = (s) => { const n = String(s).toLowerCase().replace(/[^a-z]/g, ''); const hit = []; if (/bubb|blase/.test(n)) hit.push('bubble'); if (/sel|auswahl|minim/.test(n)) hit.push('selection'); if (/ins|einf|karte/.test(n)) hit.push('insertion'); return hit.length === 1 ? hit[0] : null; };
+SUD.sortWhich = { label: 'Welcher Sortieralgorithmus war das?', topic: 'Sortieren', fn(r) {
+  let a, k, res, alg, tries = 0;
+  do {
+    a = uniqInts(r, 6, 1, 60); k = r.int(1, 2);
+    res = { bubble: bubbleTrace(a, 'zweifach').passes, selection: selectionTrace(a).passes, insertion: insertionTrace(a).passes };
+    for (const x in res) res[x] = (res[x][k - 1] || res[x][res[x].length - 1]).arr.join(',');
+    tries++;
+  } while ((res.bubble === res.selection || res.bubble === res.insertion || res.selection === res.insertion) && tries < 200);
+  alg = r.pick(['bubble', 'selection', 'insertion']);
+  const st = res[alg].split(',').map(Number);
+  return { pts: 2, ph: 'Bubblesort, Selectionsort oder Insertionsort', ans: ALG_NAMES[alg],
+    prompt: `Ein Array wird aufsteigend sortiert. Nach dem <b>${k}. Durchlauf</b> sieht es so aus. Welcher Algorithmus wurde verwendet?<div class="q2">Start: <code>${jlist(a)}</code><br>Nach ${k} Durchl${k === 1 ? 'auf' : 'äufen'}: <code>${jlist(st)}</code></div>`,
+    check: (s) => algOf(s) === alg,
+    solution: `<b>${ALG_NAMES[alg]}</b><br>Nach ${k} Durchl${k === 1 ? 'auf' : 'äufen'} ergäbe Bubblesort <code>{${res.bubble.replace(/,/g, ', ')}}</code>, Selectionsort <code>{${res.selection.replace(/,/g, ', ')}}</code> und Insertionsort <code>{${res.insertion.replace(/,/g, ', ')}}</code>.<br><small>Erkennungszeichen: <b>Bubblesort</b> hat das <b>größte</b> Element ganz rechts. <b>Selectionsort</b> hat das <b>kleinste</b> Element ganz links, sonst wurde nur ein Paar getauscht. <b>Insertionsort</b> hat nur die <b>ersten k + 1 Elemente</b> umsortiert, der Rest ist unverändert.</small>` };
+} };
+
+SUD.sortCount = { label: 'Sortieren: Vergleiche, Tausche, Durchläufe zählen', topic: 'Sortieren', fn(r) {
+  const form = r.int(0, 3), n = r.int(5, 7), a = uniqInts(r, n, 1, 60);
+  let code, v, why;
+  if (form === 0) {
+    const t = bubbleTrace(a, 'zweifach'); v = t.swaps;
+    code = `int[] a = ${jlist(a)};\nint tausche = 0;\nfor (int j = 1; j < a.length; j++) {\n    for (int i = 1; i <= a.length - j; i++) {\n        if (a[i - 1] > a[i]) {\n            int temp = a[i - 1];\n            a[i - 1] = a[i];\n            a[i] = temp;\n            tausche++;\n        }\n    }\n}\nSystem.out.println(tausche);`;
+    why = `Durchläufe einzeln abzählen: ${t.passes.map((p, k) => `${k + 1}. Durchlauf ${p.sw}`).join(', ')}. Summe ${v}.<br><small>Trick: Bubblesort tauscht genau so oft, wie es „falsch herum“ stehende Paare gibt (ein größeres Element steht links von einem kleineren).</small>`;
+  } else if (form === 1) {
+    const t = bubbleTrace(a, 'einfach'); v = t.passes.length;
+    code = `int[] a = ${jlist(a)};\nint durchlaeufe = 0;\nboolean getauscht = true;\nfor (int j = 1; j < a.length && getauscht; j++) {\n    getauscht = false;\n    durchlaeufe++;\n    for (int i = 1; i < a.length; i++) {\n        if (a[i - 1] > a[i]) {\n            int temp = a[i - 1];\n            a[i - 1] = a[i];\n            a[i] = temp;\n            getauscht = true;\n        }\n    }\n}\nSystem.out.println(durchlaeufe);`;
+    why = `Optimierter Bubblesort: Er bricht ab, sobald ein Durchlauf <b>ohne Tausch</b> war. Dieser letzte Prüfdurchlauf zählt mit. Mehr als N − 1 = ${n - 1} Durchläufe gibt es nie (Bedingung <code>j &lt; a.length</code>).${bubbleTable(a, 'einfach')}`;
+  } else if (form === 2) {
+    v = (n - 1) * (n - 1);
+    code = `int[] a = ${jlist(a)};\nint vergleiche = 0;\nfor (int j = 1; j < a.length; j++) {\n    for (int i = 1; i < a.length; i++) {\n        vergleiche++;\n        if (a[i - 1] > a[i]) {\n            int temp = a[i - 1];\n            a[i - 1] = a[i];\n            a[i] = temp;\n        }\n    }\n}\nSystem.out.println(vergleiche);`;
+    why = `Klassischer Bubblesort: N − 1 = ${n - 1} Durchläufe mit je N − 1 = ${n - 1} Vergleichen, unabhängig von den Werten: ${n - 1} · ${n - 1} = ${v}.`;
+  } else {
+    v = n * (n - 1) / 2;
+    code = `int[] a = ${jlist(a)};\nint vergleiche = 0;\nfor (int i = 0; i < a.length - 1; i++) {\n    int minPos = i;\n    for (int j = i + 1; j < a.length; j++) {\n        vergleiche++;\n        if (a[j] < a[minPos]) {\n            minPos = j;\n        }\n    }\n    int temp = a[i];\n    a[i] = a[minPos];\n    a[minPos] = temp;\n}\nSystem.out.println(vergleiche);`;
+    why = `Selectionsort vergleicht im 1. Durchlauf ${n - 1}-mal, im 2. ${n - 2}-mal … zuletzt 1-mal: ${Array.from({ length: n - 1 }, (_, k) => n - 1 - k).join(' + ')} = ${v} (= N · (N − 1) / 2). Die Werte spielen keine Rolle.`;
+  }
+  return { pts: 3, ph: 'Zahl', code, wrap: 'main', expect: String(v), ans: String(v),
+    prompt: `Was gibt das Programm aus?${jpre(code)}`,
+    check: (s) => jnear(s, v),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+const TEILE_CODE = `static int teile(int[] feld, int links, int rechts) {\n    int pivot = feld[rechts];\n    int i = links;\n    int j = rechts - 1;\n    while (i <= j) {\n        while (i <= j && feld[i] <= pivot) {\n            i++;\n        }\n        while (j >= i && feld[j] > pivot) {\n            j--;\n        }\n        if (i < j) {\n            int temp = feld[i];\n            feld[i] = feld[j];\n            feld[j] = temp;\n        }\n    }\n    int temp = feld[i];\n    feld[i] = feld[rechts];\n    feld[rechts] = temp;\n    return i;\n}`;
+SUD.quickPart = { label: 'Quicksort: erster Teilungsschritt', topic: 'Rekursion & Quicksort', fn(r) {
+  const n = r.int(6, 8), a = uniqInts(r, n, 1, 60), askIdx = r.next() < 0.4;
+  const b = a.slice(), log = [], p = teileJS(b, 0, n - 1, log);
+  const v = askIdx ? String(p) : spaced(b);
+  const code = `${TEILE_CODE}\n\npublic static void main(String[] args) {\n    int[] feld = ${jlist(a)};\n    int p = teile(feld, 0, feld.length - 1);\n${askIdx ? '    System.out.println(p);' : '    for (int v : feld) {\n        System.out.print(v + " ");\n    }'}\n}`;
+  return { pts: 4, ph: askIdx ? 'Index' : 'Zahlen mit Leerzeichen', code, wrap: 'class', expect: v, ans: v,
+    prompt: `Was gibt <code>main</code> aus? (${askIdx ? 'Index, an dem das Pivotelement landet' : 'Array nach dem ersten Teilungsschritt'})${jpre(code)}`,
+    check: (s) => askIdx ? jnear(s, p) : sameInts(s, b),
+    solution: `<b>${v}</b><br>Pivot ist das letzte Element (${a[n - 1]}). i sucht von links ein Element <b>größer</b> als das Pivot, j sucht von rechts (ab dem vorletzten) ein Element <b>kleiner oder gleich</b>. Ablauf:<br>${log.join('<br>')}<br>Danach: <code>${jlist(b)}</code>. Links von Index ${p} ist alles kleiner, rechts alles größer als ${a[n - 1]}.` };
+} };
+
+SUD.recursion = { label: 'Rekursion auswerten', topic: 'Rekursion & Quicksort', fn(r) {
+  const form = r.int(0, 5);
+  let code, v, why, ph = 'Zahl';
+  if (form === 0) {
+    const z = r.int(1000, 99999), d = String(z).split('').map(Number);
+    v = String(d.reduce((x, y) => x + y, 0));
+    code = `static int qsum(int zahl) {\n    int erg = 0;\n    if (zahl < 10) {\n        erg = zahl;\n    } else {\n        erg = (zahl % 10) + qsum(zahl / 10);\n    }\n    return erg;\n}\n\npublic static void main(String[] args) {\n    System.out.println(qsum(${z}));\n}`;
+    why = `Quersumme (Beispiel von den Folien): jeder Aufruf nimmt die letzte Ziffer (<code>% 10</code>) und ruft sich mit dem Rest (<code>/ 10</code>) auf, bis eine einstellige Zahl übrig ist: ${d.slice().reverse().join(' + ')} = ${v}.`;
+  } else if (form === 1) {
+    const z = r.int(100, 999999), k = String(z).length; v = String(k);
+    code = `static int zaehler = 0;\n\nstatic int qsum(int zahl) {\n    zaehler++;\n    if (zahl < 10) {\n        return zahl;\n    }\n    return (zahl % 10) + qsum(zahl / 10);\n}\n\npublic static void main(String[] args) {\n    qsum(${z});\n    System.out.println(zaehler);\n}`;
+    why = `Jeder Aufruf entfernt eine Ziffer, der letzte Aufruf (Abbruchbedingung <code>zahl &lt; 10</code>) hat noch eine Ziffer. ${z} hat ${k} Ziffern, also ${k} Aufrufe (Aufruftiefe ${k}).`;
+  } else if (form === 2) {
+    const n = r.int(3, 7); let f = 1; for (let i = 2; i <= n; i++) f *= i; v = String(f);
+    code = `static int fak(int n) {\n    if (n <= 1) {\n        return 1;\n    }\n    return n * fak(n - 1);\n}\n\npublic static void main(String[] args) {\n    System.out.println(fak(${n}));\n}`;
+    why = `fak(${n}) = ${Array.from({ length: n }, (_, k) => n - k).join(' · ')} = ${f}. Abbruch bei n ≤ 1, danach werden die Ergebnisse rückwärts zusammengesetzt.`;
+  } else if (form === 3 || form === 4) {
+    const n = r.int(3, 6), vor = form === 3, seq = Array.from({ length: n }, (_, k) => n - k);
+    const out = vor ? seq : seq.slice().reverse(); v = spaced(out); ph = 'Zahlen mit Leerzeichen';
+    code = `static void zaehle(int n) {\n    if (n > 0) {\n${vor ? '        System.out.print(n + " ");\n        zaehle(n - 1);' : '        zaehle(n - 1);\n        System.out.print(n + " ");'}\n    }\n}\n\npublic static void main(String[] args) {\n    zaehle(${n});\n}`;
+    why = vor ? `Die Ausgabe steht <b>vor</b> dem rekursiven Aufruf: Jeder Aufruf gibt zuerst seine Zahl aus und ruft dann den nächsten auf: ${v}.`
+      : `Die Ausgabe steht <b>nach</b> dem rekursiven Aufruf: Zuerst wird bis n = 0 hinabgestiegen, ausgegeben wird erst auf dem Rückweg (Last in, first out): ${v}.`;
+  } else {
+    const b = r.int(2, 4), e = r.int(2, 5); v = String(Math.pow(b, e));
+    code = `static int potenz(int basis, int exp) {\n    if (exp == 0) {\n        return 1;\n    }\n    return basis * potenz(basis, exp - 1);\n}\n\npublic static void main(String[] args) {\n    System.out.println(potenz(${b}, ${e}));\n}`;
+    why = `potenz(${b}, ${e}) = ${Array(e).fill(b).join(' · ')} · 1 = ${v}. Abbruch bei exp == 0 (liefert 1).`;
+  }
+  return { pts: 3, ph, code, wrap: 'class', expect: v, ans: v,
+    prompt: `Was gibt <code>main</code> aus?${jpre(code)}`,
+    check: (s) => ph === 'Zahl' ? jnear(s, Number(v)) : sameInts(s, v.split(' ').map(Number)),
+    solution: `<b>${v}</b><br>${why}` };
+} };
+
+
 /* ===== Deutsch-Generatoren (Kommunikation) ===== */
 const DEU = {};
 const dnorm = (s) => String(s).toLowerCase().replace(/[^a-zäöüß]/g, '');
@@ -1172,7 +1370,7 @@ DEU.begriff = { label: 'Fachbegriff zur Definition nennen', topic: 'Grundlagen',
 
 
 if (typeof module !== 'undefined') {
-  module.exports = { SATZ, sozialPunkte, satzText, makeRng, bin, hexs, grp, cleanBits, twos, fromTwos, invert, parseNum, near, EVP, WUB, nettoCalc, genTask, schulnote, SV, eur, SUD, zbCalc, DEU };
+  module.exports = { SATZ, sozialPunkte, satzText, makeRng, bin, hexs, grp, cleanBits, twos, fromTwos, invert, parseNum, near, EVP, WUB, nettoCalc, genTask, schulnote, SV, eur, SUD, zbCalc, DEU, bubbleTrace, selectionTrace, insertionTrace, quickTrace, teileJS };
 }
 
 'use strict';
@@ -2760,9 +2958,289 @@ String[] teile = "a,b,c".split(",");             // {"a", "b", "c"}`)}
 <li>Mittelwert mit <code>int</code>-Division: <code>(2 + 3) / 2</code> ergibt 2, nicht 2.5.</li></ul></div>
 `});
 
+/* ======================= SUD – LS07 SORTIEREN ======================= */
+D.lern.sud.push({ id: 'sort', title: '7 · LS07: Elementare Sortieralgorithmen (Bubblesort, Selectionsort, Insertionsort)', html: RAW`
+<div class="box"><b>Quelle:</b> Folien „LS07 T SORT1 Elementare Sortieralgorithmen“ aus Moodle. Die Schreibweise im Code (Variablennamen, <code>arr[i - 1] &gt; arr[i]</code>, <code>minPos</code>, <code>temp</code>, <code>j</code>) folgt den Folien. Alle Beispiele sortieren <b>aufsteigend</b> und nutzen das Folien-Array <code>{43, 2, 47, 17, 4, 8, 15}</code>.</div>
+<h4>Grundbaustein: zwei Elemente tauschen</h4>
+${J(RAW`
+int[] arr = {43, 2, 47};
+int temp = arr[0];       // 1. einen Wert sichern
+arr[0] = arr[1];         // 2. überschreiben
+arr[1] = temp;           // 3. gesicherten Wert einsetzen → {2, 43, 47}`)}
+<p>Ohne <code>temp</code> geht ein Wert verloren: Nach <code>arr[0] = arr[1]; arr[1] = arr[0];</code> stehen zweimal 2 im Array.</p>
+
+<h4>Ausprobieren: Schritt für Schritt</h4>
+<div id="sortplay"></div>
+
+<h4>1. Bubblesort: „leichte Blasen steigen nach oben“</h4>
+<div class="box"><b>Prinzip:</b> Man vergleicht jeweils <b>zwei benachbarte</b> Elemente. Ist der <b>Vorgänger größer</b> als der Nachfolger, wird getauscht. Dann geht man einen Schritt weiter, bis das Arrayende erreicht ist. Nach jedem Durchlauf steht das größte noch unsortierte Element ganz rechts an seinem endgültigen Platz.</div>
+${bubbleTable(SORT_START, 'zweifach')}
+<p><b>Drei Varianten von den Folien:</b></p>
+<div class="scroll"><table class="tbl"><thead><tr><th>Variante</th><th>Durchläufe</th><th>Vergleiche pro Durchlauf j</th></tr></thead><tbody>
+<tr><td><b>Einfacher (klassischer)</b> Bubblesort</td><td>immer N − 1</td><td>immer bis zum Ende (N − 1 Vergleiche)</td></tr>
+<tr><td><b>Einfach optimiert</b></td><td>bricht ab, sobald ein Durchlauf <b>ohne Tausch</b> war</td><td>bis zum Ende</td></tr>
+<tr><td><b>Zweifach optimiert</b></td><td>bricht ab, sobald nicht mehr getauscht wird</td><td>nur bis <b>N − j</b>, weil die j − 1 größten Elemente schon richtig stehen</td></tr></tbody></table></div>
+<p>Beim Folien-Array mit N = 7: 1. Durchlauf bis i = 6, 2. bis i = 5, 3. bis i = 4, im 4. Durchlauf (bis i = 3) wird nicht mehr getauscht → fertig.</p>
+${J(RAW`
+static void bubbleSort(int[] arr) {
+    boolean getauscht = true;
+    for (int j = 1; j < arr.length && getauscht; j++) {     // höchstens N - 1 Durchläufe
+        getauscht = false;
+        for (int i = 1; i <= arr.length - j; i++) {         // nur bis N - j
+            if (arr[i - 1] > arr[i]) {                      // Vorgänger größer?
+                int temp = arr[i - 1];
+                arr[i - 1] = arr[i];
+                arr[i] = temp;
+                getauscht = true;
+            }
+        }
+    }
+}`, 'class')}
+<p class="muted">Klassische Variante: <code>getauscht</code> weglassen und die innere Schleife immer bis <code>i &lt; arr.length</code> laufen lassen.</p>
+
+<h4>2. Selectionsort: „Sortieren durch Auswahl des Minimums“</h4>
+<div class="box"><b>Prinzip:</b> Die <b>Einfügeposition i</b> markiert den Anfang der noch unsortierten Elemente (am Anfang Index 0). Das <b>kleinste Element</b> der unsortierten Teilfolge wird gesucht (<code>minPos</code>) und mit dem Element an der Einfügeposition <b>getauscht</b>. Dann rückt i um 1 weiter. Pro Durchlauf gibt es genau einen Tausch.</div>
+${selectionTable(SORT_START)}
+${J(RAW`
+static void selectionSort(int[] arr) {
+    for (int i = 0; i < arr.length - 1; i++) {      // i = Einfügeposition
+        int minPos = i;
+        for (int j = i + 1; j < arr.length; j++) {  // Minimum im Rest suchen
+            if (arr[j] < arr[minPos]) {
+                minPos = j;
+            }
+        }
+        int temp = arr[i];                          // Minimum nach vorne tauschen
+        arr[i] = arr[minPos];
+        arr[minPos] = temp;
+    }
+}`, 'class')}
+
+<h4>3. Insertionsort: „das Spielkartenprinzip“</h4>
+<div class="box"><b>Prinzip:</b> Die Folge wird von links nach rechts durchwandert. Das aktuelle Element (Index i) wird in <code>temp</code> gemerkt und in die bereits sortierte Teilfolge <b>links von i</b> an der richtigen Stelle eingefügt. Ein einzelnes Element ist immer sortiert, deshalb beginnt der erste Durchlauf mit <b>i = 1</b>. Die Einfügeposition sucht man mit <b>j</b>: solange <code>j != 0</code> und <code>temp &lt; arr[j - 1]</code>, wird <code>arr[j - 1]</code> nach rechts geschoben.</div>
+${insertionTable(SORT_START)}
+${J(RAW`
+static void insertionSort(int[] arr) {
+    for (int i = 1; i < arr.length; i++) {
+        int temp = arr[i];                       // Karte aufnehmen
+        int j = i;
+        while (j != 0 && temp < arr[j - 1]) {    // Einfügeposition suchen ...
+            arr[j] = arr[j - 1];                 // ... und dabei nach rechts schieben
+            j--;
+        }
+        arr[j] = temp;                           // Karte in die Lücke legen
+    }
+}`, 'class')}
+<div class="warn"><b>Achtung (Folie):</b> Es wird <b>nicht</b> rückwärts „gebubbled“, also nicht paarweise getauscht. Beim Suchen werden die größeren Elemente gleichzeitig nach rechts <b>verschoben</b>, bis die Einfügeposition j gefunden ist. Das Ergebnis ist ein <b>Ringtausch</b>.</div>
+
+<h4>Vergleich der drei Verfahren</h4>
+<div class="scroll"><table class="tbl"><thead><tr><th></th><th>Bubblesort</th><th>Selectionsort</th><th>Insertionsort</th></tr></thead><tbody>
+<tr><td>Idee</td><td>Nachbarn vergleichen und tauschen</td><td>Minimum suchen, nach vorne tauschen</td><td>nächstes Element in den sortierten Teil einfügen</td></tr>
+<tr><td>Nach Durchlauf k fest</td><td>die k <b>größten</b> Elemente rechts</td><td>die k <b>kleinsten</b> Elemente links</td><td>die ersten k + 1 Elemente sind <b>untereinander</b> sortiert (noch nicht endgültig)</td></tr>
+<tr><td>Startwerte der Schleifen</td><td><code>j = 1</code>, <code>i = 1</code> (vergleicht <code>i - 1</code> und <code>i</code>)</td><td><code>i = 0</code>, <code>j = i + 1</code></td><td><code>i = 1</code>, <code>j = i</code></td></tr>
+<tr><td>Vergleiche bei N Elementen</td><td>klassisch (N − 1)², zweifach optimiert höchstens N · (N − 1) / 2</td><td>immer N · (N − 1) / 2</td><td>höchstens N · (N − 1) / 2</td></tr>
+<tr><td>Schon sortiertes Array</td><td>optimiert: 1 Durchlauf, dann Abbruch</td><td>trotzdem alle Vergleiche</td><td>sehr schnell, nichts wird verschoben</td></tr>
+<tr><td>Aufwand allgemein</td><td colspan="3">alle drei wachsen <b>quadratisch</b>: doppelt so viele Elemente ≈ viermal so viele Vergleiche</td></tr></tbody></table></div>
+<p class="muted">Die letzten beiden Zeilen stehen nicht auf den Folien, gehören aber zum Standardwissen über diese Verfahren.</p>
+
+<h4>Aufgabe von der Folie (LS2C_Sortieralgorithmen)</h4>
+<p>„Implementieren Sie die dargestellten Sortieralgorithmen in jeweils einer eigenen Funktion zusammen in einem Programm. Nutzen Sie Ihre Funktionen zum Füllen eines Arrays mit Zufallszahlen und zum Ausgeben.“ Gerüst dafür:</p>
+${J(RAW`
+static void fuellen(int[] arr) {
+    for (int i = 0; i < arr.length; i++) {
+        arr[i] = (int) (Math.random() * 100);    // Zufallszahl 0 bis 99
+    }
+}
+
+static void ausgeben(int[] arr) {
+    for (int i = 0; i < arr.length; i++) {
+        System.out.print(arr[i] + " ");
+    }
+    System.out.println();
+}
+
+public static void main(String[] args) {
+    int[] zahlen = new int[10];
+    fuellen(zahlen);
+    ausgeben(zahlen);
+    // hier bubbleSort(zahlen), selectionSort(zahlen) oder insertionSort(zahlen) aufrufen
+    ausgeben(zahlen);
+}`, 'class')}
+<p>Weil Arrays als <b>Referenz</b> übergeben werden, sortiert die Methode das Original. Darum brauchen die Sortiermethoden kein <code>return</code> (Rückgabetyp <code>void</code>). Wer alle drei Verfahren am selben Ausgangsarray testen will, kopiert es vorher: <code>int[] kopie = zahlen.clone();</code></p>
+<div class="warn"><b>Typische Fehler beim Sortieren:</b>
+<ul><li>Tausch ohne <code>temp</code>: ein Wert geht verloren.</li>
+<li>Bubblesort mit <code>i &lt;= arr.length</code> oder Vergleich <code>arr[i] &gt; arr[i + 1]</code> bei <code>i</code> bis <code>length - 1</code>: <code>ArrayIndexOutOfBoundsException</code>.</li>
+<li>Selectionsort: im Rest den <b>Wert</b> statt den <b>Index</b> des Minimums merken, dann weiß man nicht, wohin getauscht wird.</li>
+<li>Insertionsort: <code>j != 0</code> vergessen oder <b>nach</b> <code>arr[j - 1]</code> prüfen. Die Reihenfolge in der Bedingung ist wichtig, sonst wird <code>arr[-1]</code> gelesen.</li>
+<li><code>&gt;</code> und <code>&lt;</code> vertauscht: dann wird absteigend sortiert.</li></ul></div>
+<p class="muted">Tipp von der Folie zum Anschauen: visualgo.net/en/sorting</p>
+`});
+
+/* ======================= SUD – LS07 REKURSION UND QUICKSORT ======================= */
+D.lern.sud.push({ id: 'rek', title: '8 · LS07: Rekursion und Quicksort', html: RAW`
+<div class="box"><b>Quelle:</b> Folien „T SORT2 Rekursion“ und „LS07 T SORT3 Quick-Sort“ aus Moodle. Die Folien zeigen den Code in C/C++-Schreibweise, hier steht er in Java.</div>
+<h4>Was ist Rekursion?</h4>
+<div class="box"><b>rekursiv</b> (lat. <i>recurrere</i>) = zurückgehend. Eine Funktion ist rekursiv, wenn sie <b>sich selbst aufruft</b>.<br><b>Direkt rekursiv:</b> sie ruft sich unmittelbar in ihrem eigenen Code auf. <b>Indirekt rekursiv:</b> sie ruft sich über eine andere Funktion auf (f1 ruft f2, f2 ruft f1).</div>
+<ul><li>Jeder Aufruf bekommt <b>eigene lokale Variablen</b>. Die gleichnamigen Variablen werden im Speicher „gestapelt“ und unterschieden.</li>
+<li>Es braucht eine <b>Abbruchbedingung</b>. Ohne sie entsteht eine Endlos-Rekursion: anders als bei einer Endlosschleife läuft der Speicher voll und das Programm stürzt ab (in Java: <code>StackOverflowError</code>).</li>
+<li>Ist die Abbruchbedingung erfüllt, werden die Rückgabewerte wie in einer <b>Transportkette</b> zurückgereicht, bis der erste Aufruf erreicht ist.</li>
+<li>Die Aufrufe enden nach dem Prinzip <b>Last in, first out</b>: wer zuletzt entstanden ist, wird als erster wieder zerstört.</li></ul>
+<h4>Beispiel von den Folien: Quersumme</h4>
+${J(RAW`
+static int qsum(int zahl) {
+    int erg = 0;
+    if (zahl < 10) {                          // Abbruchbedingung
+        erg = zahl;
+    } else {
+        erg = (zahl % 10) + qsum(zahl / 10);  // letzte Ziffer + Quersumme vom Rest
+    }
+    return erg;
+}
+
+public static void main(String[] args) {
+    System.out.println(qsum(4567));           // 22
+}`, 'class')}
+<div class="scroll"><table class="tbl"><thead><tr><th>Aufruf</th><th>zahl</th><th>Hinweg: erg =</th><th>Rückweg: Ergebnis</th></tr></thead><tbody>
+<tr><td>1.</td><td>4567</td><td>7 + qsum(456) → wartet</td><td>7 + 15 = <b>22</b> (zurück an main)</td></tr>
+<tr><td>2.</td><td>456</td><td>6 + qsum(45) → wartet</td><td>6 + 9 = 15</td></tr>
+<tr><td>3.</td><td>45</td><td>5 + qsum(4) → wartet</td><td>5 + 4 = 9</td></tr>
+<tr><td>4.</td><td>4</td><td>Abbruchbedingung erfüllt: erg = 4</td><td>4</td></tr></tbody></table></div>
+<p>Die Aufrufe 1 bis 3 sind gleichzeitig „aktiv“ und warten. Erst Aufruf 4 liefert direkt ein Ergebnis, danach wird von unten nach oben zusammengerechnet.</p>
+<h4>Rekursion oder Schleife?</h4>
+${J(RAW`
+static int qsumSchleife(int zahl) {
+    int erg = 0;
+    while (zahl >= 10) {
+        erg = erg + (zahl % 10);
+        zahl = zahl / 10;
+    }
+    erg = erg + zahl;
+    return erg;
+}`, 'class')}
+<div class="warn"><b>Wichtig (Folie):</b> Rekursive Programme sind <b>speicherintensiv</b> und haben <b>hohe Laufzeiten</b>. Ist eine einfache Lösung mit einer Schleife möglich, sollte man die Schleife nehmen. Rekursion lohnt sich, wenn sie die Anzahl der Arbeitsschritte drastisch verkürzt, typischerweise wenn man ein Problem in <b>zwei einfachere Teilprobleme</b> aufteilen kann, wie beim <b>Quicksort</b>.</div>
+<p><b>Ausgabe vor oder nach dem Aufruf?</b> Steht <code>System.out.print(n)</code> <b>vor</b> dem rekursiven Aufruf, kommt die Ausgabe auf dem Hinweg (5 4 3 2 1). Steht sie <b>danach</b>, kommt sie auf dem Rückweg, also umgekehrt (1 2 3 4 5). Genau das nutzt die Aufgabe „Wort rückwärts ausgeben“.</p>
+
+<h4>Quicksort</h4>
+<div class="box"><b>Ablauf eines Teilungsschritts (Folien):</b>
+<ol><li><b>Initialisierung:</b> Suchindex <b>i</b> auf den linken Rand, Suchindex <b>j</b> auf das <b>vorletzte</b> Element, <b>pivot</b> = Wert des <b>letzten</b> Elements.</li>
+<li>Mit i läuft man von links nach rechts, bis <code>feld[i] &gt; pivot</code>. Mit j läuft man von rechts nach links, bis <code>feld[j] &lt;= pivot</code>.</li>
+<li><code>feld[i]</code> und <code>feld[j]</code> tauschen, dann weitersuchen.</li>
+<li>Ist <b>i &gt; j</b>, ist der Durchlauf beendet. Das Pivotelement wird mit <code>feld[i]</code> getauscht.</li></ol>
+Danach steht das Pivot an seiner <b>endgültigen Position</b>: links davon ist alles kleiner, rechts alles größer. Die linke und rechte Teilfolge werden <b>rekursiv</b> genauso sortiert, dabei übergibt man jeweils den linken und rechten <b>Rand</b>. Hat eine Teilfolge <b>weniger als 2 Elemente</b>, ist sie sortiert.</div>
+${J(RAW`
+static int teile(int[] feld, int links, int rechts) {
+    int pivot = feld[rechts];                  // letztes Element
+    int i = links;
+    int j = rechts - 1;                        // vorletztes Element
+    while (i <= j) {
+        while (i <= j && feld[i] <= pivot) {   // bis feld[i] > pivot
+            i++;
+        }
+        while (j >= i && feld[j] > pivot) {    // bis feld[j] <= pivot
+            j--;
+        }
+        if (i < j) {
+            int temp = feld[i];
+            feld[i] = feld[j];
+            feld[j] = temp;
+        }
+    }
+    int temp = feld[i];                        // i > j: Pivot an seinen Platz
+    feld[i] = feld[rechts];
+    feld[rechts] = temp;
+    return i;                                  // endgültige Position des Pivots
+}
+
+static void quickSort(int[] feld, int links, int rechts) {
+    if (links < rechts) {                      // mindestens 2 Elemente
+        int p = teile(feld, links, rechts);
+        quickSort(feld, links, p - 1);         // linke Teilfolge
+        quickSort(feld, p + 1, rechts);        // rechte Teilfolge
+    }
+}
+
+public static void main(String[] args) {
+    int[] feld = {43, 2, 47, 17, 4, 8, 15};
+    quickSort(feld, 0, feld.length - 1);       // Aufruf mit beiden Rändern
+    for (int v : feld) {
+        System.out.print(v + " ");             // 2 4 8 15 17 43 47
+    }
+}`, 'class')}
+<p>Ablauf mit dem Array von SORT1 (das Zahlenbeispiel von der Quicksort-Folie ist im Folientext nicht lesbar, deshalb ein eigenes Beispiel):</p>
+${quickTable(SORT_START)}
+<h4>Verbesserung: 3-Median-Strategie</h4>
+<p>Das Pivot ist „zufällig“ das letzte Element. Ist es sehr groß oder sehr klein, werden die Teilfolgen ungleich und die <b>Aufruftiefe</b> steigt. Bei der <b>3-Median-Strategie</b> nimmt man das mittelgroße der drei Elemente <code>feld[links]</code>, <code>feld[rechts]</code> und <code>feld[(links + rechts) / 2]</code> (Mitte) als Pivot und setzt es am Anfang an den rechten Rand. Auf der Folie sinkt die Aufruftiefe dadurch von 4 auf 3.</p>
+${J(RAW`
+static void medianNachRechts(int[] feld, int links, int rechts) {
+    int mitte = (links + rechts) / 2;
+    int a = feld[links], b = feld[mitte], c = feld[rechts];
+    int m;                                       // Index des mittleren Werts
+    if ((a <= b && b <= c) || (c <= b && b <= a)) {
+        m = mitte;
+    } else if ((b <= a && a <= c) || (c <= a && a <= b)) {
+        m = links;
+    } else {
+        m = rechts;
+    }
+    int temp = feld[m];                          // Median an den rechten Rand
+    feld[m] = feld[rechts];
+    feld[rechts] = temp;
+}`, 'class')}
+<p class="muted">Aufruf in <code>quickSort</code> direkt vor <code>teile(...)</code>. Diese Umsetzung ist meine, die Folie beschreibt nur die Idee.</p>
+<div class="scroll"><table class="tbl"><thead><tr><th></th><th>Elementare Verfahren</th><th>Quicksort</th></tr></thead><tbody>
+<tr><td>Arbeitsweise</td><td>Schleifen, ein Element pro Durchlauf an seinen Platz</td><td>rekursiv: teilen und beide Hälften einzeln sortieren</td></tr>
+<tr><td>Aufwand</td><td>quadratisch</td><td>im Mittel deutlich weniger (etwa N · log N), im schlechtesten Fall (immer ungünstiges Pivot) auch quadratisch</td></tr>
+<tr><td>Speicher</td><td>nur einige Variablen</td><td>zusätzlich ein Aufruf je Rekursionsebene</td></tr></tbody></table></div>
+<h4>Aufgaben von den Folien</h4>
+<ul><li><b>LS02C_ReverseWord:</b> Ein Wort zeichenweise mit <code>System.in.read()</code> einlesen (keine Strings) und rekursiv rückwärts ausgeben. Die Enter-Taste ist das Zeichen <code>'\n'</code>.</li>
+<li><b>LS02C_Zahlenumwandlung:</b> Eine beliebige Ganzzahl als <code>int</code> einlesen und als Text ausgeben, ohne Array und ohne String, z. B. 123 → „eins zwei drei“.</li>
+<li><b>C08_Quicksort:</b> den Quicksort implementieren.</li></ul>
+<p>Musterlösungen zu den ersten beiden stehen bei den Freitextaufgaben im Probetest und hier zum Nachlesen:</p>
+${J(RAW`
+static void rueckwaerts() throws java.io.IOException {
+    int zeichen = System.in.read();          // ein Zeichen lesen (als int)
+    if (zeichen != '\n' && zeichen != -1) {  // Abbruch: Enter oder Ende der Eingabe
+        rueckwaerts();                       // erst den Rest lesen ...
+        if (zeichen != '\r') {               // (Windows sendet vor '\n' noch '\r')
+            System.out.print((char) zeichen);  // ... dann auf dem Rückweg ausgeben
+        }
+    }
+}
+
+static void zifferAlsWort(int ziffer) {
+    switch (ziffer) {
+        case 0: System.out.print("null "); break;
+        case 1: System.out.print("eins "); break;
+        case 2: System.out.print("zwei "); break;
+        case 3: System.out.print("drei "); break;
+        case 4: System.out.print("vier "); break;
+        case 5: System.out.print("fünf "); break;
+        case 6: System.out.print("sechs "); break;
+        case 7: System.out.print("sieben "); break;
+        case 8: System.out.print("acht "); break;
+        default: System.out.print("neun ");
+    }
+}
+
+static void zahlAlsText(int zahl) {
+    if (zahl >= 10) {
+        zahlAlsText(zahl / 10);       // erst die vorderen Ziffern ...
+    }
+    zifferAlsWort(zahl % 10);         // ... dann die letzte Ziffer
+}
+
+public static void main(String[] args) {
+    java.util.Scanner sc = new java.util.Scanner(System.in);
+    System.out.print("Zahl: ");
+    int zahl = sc.nextInt();
+    zahlAlsText(zahl);                // 123 → eins zwei drei
+}`, 'class')}
+<p class="muted">Negative Zahlen: vorher „minus“ ausgeben und mit dem Betrag weitermachen. Für <code>rueckwaerts()</code> im <code>main</code> nicht gleichzeitig einen <code>Scanner</code> auf <code>System.in</code> benutzen, sonst liest der Scanner die Zeichen vorab.</p>
+`});
+
 'use strict';
 /* ======================= SUD – KORREKTUREN deiner Kontrollfragen ======================= */
-D.lern.sud.push({ id: 'korr', title: '7 · Korrekturen: Das stimmt in deinen Kontrollfragen nicht', html: RAW`
+D.lern.sud.push({ id: 'korr', title: '9 · Korrekturen: Das stimmt in deinen Kontrollfragen nicht', html: RAW`
 <div class="warn"><b>Wichtig vor der Klausur:</b> Ich habe deine ausgefüllten Kontrollfragen und deinen Code mit Java gegengeprüft. An diesen Stellen steht etwas Falsches oder Ungenaues. Lerne die rechte Spalte. Wo euer Lehrer eigene Formulierungen verwendet, haben seine Folien Vorrang (markiert mit <span class="tag open">Lehrer fragen</span>).</div>
 <h4>LS01 · Variablen, Operatoren, Aufgabe 3</h4>
 <div class="scroll"><table class="tbl"><thead><tr><th>Frage</th><th>Deine Antwort</th><th>Richtig</th></tr></thead><tbody>
@@ -2802,7 +3280,7 @@ D.lern.sud.push({ id: 'korr', title: '7 · Korrekturen: Das stimmt in deinen Kon
 /* ======================= SUD – ÜBERBLICK ======================= */
 D.lern.sud.forEach((s) => { s.open = false; });
 D.lern.sud.unshift({ id: 'ov', title: 'Überblick: Was kommt in der SUD-Klausur dran?', open: true, html: RAW`
-<p>Grundlage ist dein SUD-Ordner (Java, Lernsituationen LS01 bis LS05) und, wie von dir genannt, das Thema <b>Arrays</b>:</p>
+<p>Grundlage ist dein SUD-Ordner (Java, Lernsituationen LS01 bis LS05), wie von dir genannt das Thema <b>Arrays</b> und die <b>LS07-Folien aus Moodle</b> (Sortieren, Rekursion, Quicksort):</p>
 <div class="scroll"><table class="tbl"><thead><tr><th>Thema</th><th>Inhalte</th><th>Quelle im Ordner</th><th>Abschnitt</th></tr></thead><tbody>
 <tr><td><b>LS01</b></td><td>Ausgabe, Variablen, Datentypen, Operatoren, Eingabe</td><td>Aufgaben, Kontrollfragen „Variablen und Operatoren“, dein Code</td><td>1</td></tr>
 <tr><td><b>LS02</b></td><td>Verzweigungen: if/else, switch</td><td>Kontrollfragen „Verzweigungen“, BMI-Aufgabe</td><td>2</td></tr>
@@ -2810,8 +3288,10 @@ D.lern.sud.unshift({ id: 'ov', title: 'Überblick: Was kommt in der SUD-Klausur 
 <tr><td><b>LS04</b></td><td>Testen: Black-Box-Test (Zahnbürsten)</td><td>Zahnbuersten.java, BlackBoxProtokoll.md</td><td>4</td></tr>
 <tr><td><b>LS05</b></td><td>Methoden, Parameter, Rückgabe, Scope, Überladung</td><td>Vokabelliste und Kontrollfragen, Signaturen-Übung, a2 bis a5, Taschenrechner</td><td>5</td></tr>
 <tr><td><b>Arrays</b></td><td>Erzeugen, Index, Schleifen, Referenz, Methoden, 2D</td><td><b>nicht im Ordner</b></td><td>6</td></tr>
-<tr><td><b>Korrekturen</b></td><td>Fehler in deinen Antworten und in deinem Code</td><td>alle Kontrollfragen</td><td>7</td></tr></tbody></table></div>
-<div class="box"><b>Empfohlener Lernweg:</b> 1. Abschnitte 1 bis 6 lesen, die Codebeispiele im Kopf nachvollziehen · 2. <b>Abschnitt 7 zuerst ernst nehmen</b>, dort stehen deine Fehler · 3. Karteikarten, bis jede Karte „gewusst“ ist · 4. <b>Code-Trainer</b>: Programme lesen und die Ausgabe bestimmen, je Aufgabentyp etwa 10 Stück · 5. Quiz · 6. <b>Probetest</b> mit Zeitanzeige. Zum Schluss die Freitextaufgaben von Hand (auf Papier) lösen.</div>
+<tr><td><b>LS07 Sortieren</b></td><td>Bubblesort (3 Varianten), Selectionsort, Insertionsort, Tauschen mit temp</td><td>Folien „T SORT1 Elementare Sortieralgorithmen“</td><td>7</td></tr>
+<tr><td><b>LS07 Rekursion</b></td><td>Rekursion, Abbruchbedingung, Quersumme, Quicksort, 3-Median-Strategie</td><td>Folien „T SORT2 Rekursion“, „T SORT3 Quick-Sort“</td><td>8</td></tr>
+<tr><td><b>Korrekturen</b></td><td>Fehler in deinen Antworten und in deinem Code</td><td>alle Kontrollfragen</td><td>9</td></tr></tbody></table></div>
+<div class="box"><b>Empfohlener Lernweg:</b> 1. Abschnitte 1 bis 8 lesen, die Codebeispiele im Kopf nachvollziehen (in Abschnitt 7 die Sortierverfahren im Schritt-für-Schritt-Feld durchklicken) · 2. <b>Abschnitt 9 zuerst ernst nehmen</b>, dort stehen deine Fehler · 3. Karteikarten, bis jede Karte „gewusst“ ist · 4. <b>Code-Trainer</b>: Programme lesen und die Ausgabe bestimmen, je Aufgabentyp etwa 10 Stück · 5. Quiz · 6. <b>Probetest</b> mit Zeitanzeige. Zum Schluss die Freitextaufgaben von Hand (auf Papier) lösen.</div>
 <div class="box"><b>Die häufigsten Prüfungsfallen:</b>
 <ul><li><code>int / int</code> ist wieder <code>int</code>: <code>double c = 1 / 3;</code> ergibt <b>0.0</b>.</li>
 <li><b>Strings</b> mit <code>equals</code> vergleichen, nicht mit <code>==</code>.</li>
@@ -2820,9 +3300,11 @@ D.lern.sud.unshift({ id: 'ov', title: 'Überblick: Was kommt in der SUD-Klausur 
 <li><b>Überladung</b>: Anzahl, Typen, Reihenfolge der Parameter, <b>nicht</b> der Rückgabetyp.</li>
 <li><b>call-by-value</b>: primitive Werte werden kopiert, bei Arrays wird die <b>Referenz</b> kopiert (Elemente änderbar).</li>
 <li><b>Arrays:</b> Index beginnt bei 0, höchster Index ist <code>length − 1</code>, <code>length</code> bei Arrays ohne Klammern.</li>
-<li><code>i &lt; n</code> oder <code>i &lt;= n</code>? <b>Um eins daneben</b> ist der häufigste Schleifenfehler.</li></ul></div>
+<li><code>i &lt; n</code> oder <code>i &lt;= n</code>? <b>Um eins daneben</b> ist der häufigste Schleifenfehler.</li>
+<li><b>Sortieren:</b> Bubblesort schiebt das <b>größte</b> Element nach rechts, Selectionsort holt das <b>kleinste</b> nach links, Insertionsort <b>schiebt</b> statt zu tauschen. Tauschen immer über <code>temp</code>.</li>
+<li><b>Rekursion</b> braucht eine <b>Abbruchbedingung</b>. Ausgabe vor dem Aufruf = Hinweg, nach dem Aufruf = Rückweg (umgekehrte Reihenfolge).</li></ul></div>
 <div class="box"><b>Checkliste, wenn du Code von Hand schreibst:</b> Semikolon · Klammern paarweise · Typ passt zur Zuweisung · <code>String</code> groß · <code>equals</code> statt <code>==</code> · alle Variablen deklariert · <code>return</code> in jedem Zweig · Schleifenbedingung (<code>&lt;</code> oder <code>&lt;=</code>) · Index nie gleich <code>length</code> · bei Mittelwerten <code>double</code> verwenden.</div>
-<div class="warn"><b>Was ich nicht gesehen habe:</b> die <b>Folien und Erklärungen eures Lehrers</b> (im Ordner liegen nur Aufgaben, Kontrollfragen und dein Code), das Aufgabenblatt zu LS04 und jegliches Material zu <b>Arrays</b>. Arrays habe ich nach dem üblichen Java-Stoff geschrieben. Frage bei Unsicherheit, was genau im Test verlangt wird (Schreibweisen, ob Hilfsmethoden wie <code>Arrays.sort</code> erlaubt sind). <b>Alle Codebeispiele habe ich mit Java 21 geprüft</b>, ebenso die Lösungen der Code-Aufgaben im Trainer und im Probetest.</div>
+<div class="warn"><b>Was ich nicht gesehen habe:</b> Für <b>LS07</b> (Sortieren, Rekursion, Quicksort) lagen mir die Folien aus Moodle vor, die Abschnitte 7 und 8 folgen ihnen. Für LS01 bis LS05 fehlen die <b>Folien und Erklärungen eures Lehrers</b> (im Ordner liegen nur Aufgaben, Kontrollfragen und dein Code), das Aufgabenblatt zu LS04 und jegliches Material zu <b>Arrays</b>. Arrays habe ich nach dem üblichen Java-Stoff geschrieben. Frage bei Unsicherheit, was genau im Test verlangt wird (Schreibweisen, ob Hilfsmethoden wie <code>Arrays.sort</code> erlaubt sind). <b>Alle Codebeispiele habe ich mit Java 21 geprüft</b>, ebenso die Lösungen der Code-Aufgaben im Trainer und im Probetest.</div>
 `});
 /* ======================= SUD – KARTEIKARTEN ======================= */
 D.cards.sud = [
@@ -2921,7 +3403,25 @@ D.cards.sud = [
 { t: 'Arrays', q: 'Kann man ein Array vergrößern?', a: 'Nein, die Länge ist fest. Man erzeugt ein neues Array (<code>Arrays.copyOf(a, neueLaenge)</code>) oder verwendet eine <code>ArrayList</code>.' },
 { t: 'Arrays', q: 'Welche Ausnahmen gibt es bei Arrays?', a: '<code>ArrayIndexOutOfBoundsException</code> (falscher Index) · <code>NegativeArraySizeException</code> (<code>new int[-1]</code>) · <code>NullPointerException</code> (Array ist <code>null</code>).' },
 { t: 'Arrays', q: 'Wie wird ein Array an eine Methode übergeben?', a: 'Als Parameter <code>int[] werte</code>, Aufruf <code>summe(arr)</code>. Die Referenz wird kopiert, Elemente sind änderbar. Rückgabe ebenfalls als <code>int[]</code> möglich.' },
-{ t: 'Arrays', q: 'Wie wandelt man einen String in ein Zeichen-Array um?', a: '<code>"Hallo".toCharArray()</code> ergibt ein <code>char[]</code> der Länge 5. Zurück: <code>String.valueOf(zeichen)</code>.' }
+{ t: 'Arrays', q: 'Wie wandelt man einen String in ein Zeichen-Array um?', a: '<code>"Hallo".toCharArray()</code> ergibt ein <code>char[]</code> der Länge 5. Zurück: <code>String.valueOf(zeichen)</code>.' },
+/* --- LS07: Sortieren --- */
+{ t: 'Sortieren', q: 'Wie funktioniert Bubblesort?', a: 'Jeweils <b>zwei benachbarte</b> Elemente vergleichen. Ist der <b>Vorgänger größer</b> als der Nachfolger (<code>arr[i - 1] &gt; arr[i]</code>), tauschen. Einen Schritt weitergehen bis zum Arrayende. Nach jedem Durchlauf steht das größte unsortierte Element ganz rechts.' },
+{ t: 'Sortieren', q: 'Welche drei Bubblesort-Varianten zeigen die Folien?', a: '<b>Einfach (klassisch):</b> immer N − 1 Durchläufe bis zum Ende. <b>Einfach optimiert:</b> Abbruch, sobald ein Durchlauf ohne Tausch war. <b>Zweifach optimiert:</b> zusätzlich läuft Durchlauf j nur bis <b>N − j</b>, weil die größten Elemente schon richtig stehen.' },
+{ t: 'Sortieren', q: 'Wie funktioniert Selectionsort?', a: '„Sortieren durch Auswahl“: Die Einfügeposition <code>i</code> markiert den Anfang des unsortierten Teils. Das <b>kleinste</b> Element des Rests wird gesucht (<code>minPos</code>) und mit <code>arr[i]</code> getauscht. Dann <code>i + 1</code>. Genau ein Tausch pro Durchlauf.' },
+{ t: 'Sortieren', q: 'Wie funktioniert Insertionsort?', a: '„Spielkartenprinzip“: von links nach rechts; <code>arr[i]</code> in <code>temp</code> merken, größere Elemente links davon <b>nach rechts schieben</b> (<code>j != 0 &amp;&amp; temp &lt; arr[j - 1]</code>), dann <code>arr[j] = temp</code>. Start bei <b>i = 1</b>, weil ein Element immer sortiert ist.' },
+{ t: 'Sortieren', q: 'Warum braucht man beim Tauschen eine Hilfsvariable?', a: 'Sonst geht ein Wert verloren: <code>a[0] = a[1];</code> überschreibt a[0]. Richtig: <code>int temp = a[0]; a[0] = a[1]; a[1] = temp;</code>' },
+{ t: 'Sortieren', q: 'Woran erkennst du nach einem Durchlauf, welches Verfahren benutzt wurde?', a: '<b>Bubblesort:</b> das größte Element steht ganz rechts. <b>Selectionsort:</b> das kleinste steht ganz links, sonst wurde nur ein Paar getauscht. <b>Insertionsort:</b> nur der Anfang (erste k + 1 Elemente) wurde umsortiert, der Rest ist unverändert.' },
+{ t: 'Sortieren', q: 'Was meint die Folie mit „nicht rückwärts bubbeln“ beim Insertionsort?', a: 'Insertionsort tauscht nicht paarweise rückwärts. Beim Suchen der Einfügeposition werden die größeren Elemente <b>verschoben</b> und das gemerkte Element am Ende in die Lücke gesetzt: ein <b>Ringtausch</b>.' },
+{ t: 'Sortieren', q: 'Wie viele Vergleiche brauchen die Verfahren bei N Elementen?', a: 'Klassischer Bubblesort: (N − 1)². Selectionsort: immer N · (N − 1) / 2 (z. B. 21 bei N = 7). Optimierter Bubblesort und Insertionsort: höchstens N · (N − 1) / 2, bei schon sortierten Daten viel weniger. Alle wachsen quadratisch.' },
+{ t: 'Sortieren', q: 'Warum braucht eine Sortiermethode <code>void sortiere(int[] arr)</code> kein <code>return</code>?', a: 'Beim Array wird die <b>Referenz</b> kopiert. Die Methode sortiert also direkt das Array des Aufrufers.' },
+/* --- LS07: Rekursion & Quicksort --- */
+{ t: 'Rekursion & Quicksort', q: 'Was ist eine rekursive Funktion? Direkt und indirekt?', a: 'Eine Funktion, die <b>sich selbst aufruft</b>. <b>Direkt:</b> unmittelbar im eigenen Code. <b>Indirekt:</b> über eine andere Funktion (f1 ruft f2, f2 ruft f1).' },
+{ t: 'Rekursion & Quicksort', q: 'Was passiert ohne Abbruchbedingung?', a: 'Endlos-Rekursion: jeder Aufruf belegt Speicher (lokale Variablen werden gestapelt), der Speicher läuft voll und das Programm stürzt ab. In Java: <code>StackOverflowError</code>.' },
+{ t: 'Rekursion & Quicksort', q: 'In welcher Reihenfolge enden rekursive Aufrufe?', a: '<b>Last in, first out:</b> wer zuletzt entstanden ist, wird als erster beendet. Die Rückgabewerte werden wie in einer Transportkette bis zum ersten Aufruf zurückgereicht.' },
+{ t: 'Rekursion & Quicksort', q: 'Wann sollte man Rekursion verwenden, wann eine Schleife?', a: 'Rekursion ist speicherintensiv und langsamer. Geht es einfach mit einer <b>Schleife</b>, nimmt man die Schleife. Rekursion lohnt sich, wenn sich das Problem in <b>zwei einfachere Teilprobleme</b> aufteilen lässt (z. B. Quicksort).' },
+{ t: 'Rekursion & Quicksort', q: 'Wie läuft ein Teilungsschritt beim Quicksort ab?', a: 'pivot = letztes Element, i = linker Rand, j = vorletztes Element. i läuft nach rechts bis <code>feld[i] &gt; pivot</code>, j nach links bis <code>feld[j] &lt;= pivot</code>, dann tauschen. Ist i &gt; j, wird das Pivot mit <code>feld[i]</code> getauscht und steht an seiner endgültigen Position.' },
+{ t: 'Rekursion & Quicksort', q: 'Wann ruft Quicksort sich nicht mehr auf?', a: 'Wenn eine Teilfolge <b>weniger als 2 Elemente</b> hat, ist sie sortiert (<code>links &lt; rechts</code> ist falsch). Sonst wird die linke (<code>links</code> bis <code>p - 1</code>) und die rechte Teilfolge (<code>p + 1</code> bis <code>rechts</code>) rekursiv sortiert.' },
+{ t: 'Rekursion & Quicksort', q: 'Was ist die 3-Median-Strategie?', a: 'Pivot ist das mittelgroße von <code>feld[links]</code>, <code>feld[rechts]</code> und <code>feld[(links + rechts) / 2]</code>. Es wird vorher an den rechten Rand getauscht. So werden die Teilfolgen gleichmäßiger und die Aufruftiefe sinkt.' }
 ];
 /* ======================= SUD – QUIZ (Multiple Choice) ======================= */
 const mq = (t, q, ok, wrong, w) => ({ t, q, o: [ok].concat(wrong), a: 0, w });
@@ -3029,7 +3529,23 @@ mq('Arrays', 'Welche Schleifenbedingung durchläuft ein Array <code>a</code> ric
 mq('Arrays', 'Was ist <code>a[0]</code> nach <code>int[] a = {5, 2, 9, 1}; Arrays.sort(a);</code>?', '1', ['5', '9', '2'], '<code>Arrays.sort</code> sortiert aufsteigend: {1, 2, 5, 9}.'),
 mq('Arrays', 'Was passiert bei <code>int[] a; a[0] = 1;</code>?', 'Compilerfehler: Variable ist nicht initialisiert', ['a[0] wird auf 1 gesetzt', 'ArrayIndexOutOfBoundsException', 'Das Array hat automatisch Länge 1'], 'Die Variable zeigt noch auf kein Array. Erst <code>a = new int[…]</code> erzeugt eines.'),
 mq('Arrays', 'Welche Zeile ist als Array-Erzeugung gültig?', '<code>int[] a = {1, 2, 3};</code>', ['<code>int[] a = new int[3]{1, 2, 3};</code>', '<code>int a[] = new int[];</code>', '<code>int[3] a;</code>'], 'Entweder die Größe angeben (<code>new int[3]</code>) oder die Werte (<code>{1, 2, 3}</code>), nicht beides.'),
-mq('Arrays', 'Wie viele Elemente hat <code>"Hallo".toCharArray()</code>?', '5', ['4', '6', '1'], 'Für jedes Zeichen ein Element: H, a, l, l, o.')
+mq('Arrays', 'Wie viele Elemente hat <code>"Hallo".toCharArray()</code>?', '5', ['4', '6', '1'], 'Für jedes Zeichen ein Element: H, a, l, l, o.'),
+/* --- LS07: Sortieren --- */
+mq('Sortieren', 'Was gilt nach dem <b>ersten Durchlauf</b> von Bubblesort (aufsteigend)?', 'Das größte Element steht ganz rechts.', ['Das kleinste Element steht ganz links.', 'Das Array ist zur Hälfte sortiert.', 'Die ersten beiden Elemente sind sortiert.'], 'Das größte Element wird bei jedem Vergleich weitergetauscht und „blubbert“ ans Ende.'),
+mq('Sortieren', 'Welches Verfahren sucht in jedem Durchlauf das <b>Minimum</b> des unsortierten Teils und tauscht es nach vorne?', 'Selectionsort', ['Bubblesort', 'Insertionsort', 'Quicksort'], 'Selectionsort = Sortieren durch Auswahl (des Minimums), mit <code>minPos</code>.'),
+mq('Sortieren', 'Mit welchem Index beginnt der erste Durchlauf beim Insertionsort?', '<code>i = 1</code>', ['<code>i = 0</code>', '<code>i = arr.length - 1</code>', '<code>i = 2</code>'], 'Ein einzelnes Element (Index 0) ist immer sortiert, deshalb wird ab Index 1 eingefügt.'),
+mq('Sortieren', '<code>int[] a = {43, 2, 47, 17, 4, 8, 15};</code> Wie sieht das Array nach dem <b>ersten</b> Bubblesort-Durchlauf aus?', '<code>{2, 43, 17, 4, 8, 15, 47}</code>', ['<code>{2, 43, 47, 17, 4, 8, 15}</code>', '<code>{2, 4, 47, 17, 43, 8, 15}</code>', '<code>{2, 4, 8, 15, 17, 43, 47}</code>'], 'Die 43 wird nach dem Tausch mit 2 von der 47 „überholt“, die 47 wandert bis ans Ende. <code>{2, 43, 47, …}</code> wäre Selection- oder Insertionsort, <code>{2, 4, 47, 17, 43, …}</code> wären zwei Durchläufe Selectionsort.'),
+mq('Sortieren', '<code>int[] a = {43, 2, 47, 17, 4, 8, 15};</code> Wie sieht das Array nach dem <b>ersten</b> Selectionsort-Durchlauf aus?', '<code>{2, 43, 47, 17, 4, 8, 15}</code>', ['<code>{2, 43, 17, 4, 8, 15, 47}</code>', '<code>{2, 4, 47, 17, 43, 8, 15}</code>', '<code>{43, 2, 47, 17, 4, 8, 15}</code>'], 'Das Minimum 2 steht an Index 1 und wird mit Index 0 (43) getauscht. Hier zufällig dasselbe Ergebnis wie beim ersten Insertionsort-Durchlauf.'),
+mq('Sortieren', 'Was ist hier falsch?<pre class="code bad" data-w="skip"><code>for (int i = 1; i &lt;= arr.length; i++) {\n    if (arr[i - 1] &gt; arr[i]) { … }\n}</code></pre>', 'Bei <code>i = arr.length</code> gibt es eine <code>ArrayIndexOutOfBoundsException</code>.', ['Nichts, das ist korrekt.', 'Der Vergleich muss <code>&lt;</code> heißen.', 'Die Schleife muss bei <code>i = 0</code> beginnen, weil sonst Index 0 fehlt.'], 'Gültig ist <code>i &lt; arr.length</code> (bzw. <code>i &lt;= arr.length - j</code>). <code>arr[arr.length]</code> gibt es nicht. Index 0 wird über <code>arr[i - 1]</code> trotzdem verglichen.'),
+mq('Sortieren', 'Was macht der <b>zweifach optimierte</b> Bubblesort zusätzlich zum einfach optimierten?', 'Durchlauf j vergleicht nur bis N − j.', ['Er sortiert von beiden Seiten gleichzeitig.', 'Er sucht in jedem Durchlauf das Minimum.', 'Er macht immer genau N − 1 Durchläufe.'], 'Nach j − 1 Durchläufen stehen die j − 1 größten Elemente schon richtig, die muss man nicht mehr vergleichen. Der einfach optimierte bricht nur ab, wenn nicht getauscht wurde.'),
+mq('Sortieren', 'Wie viele Vergleiche macht Selectionsort bei 7 Elementen?', '21', ['49', '36', '7'], '6 + 5 + 4 + 3 + 2 + 1 = 21 = 7 · 6 / 2, unabhängig von den Werten. 36 wären es beim klassischen Bubblesort (6 · 6).'),
+/* --- LS07: Rekursion & Quicksort --- */
+mq('Rekursion & Quicksort', 'Was liefert <code>qsum(4567)</code> mit <code>qsum(zahl) = zahl &lt; 10 ? zahl : zahl % 10 + qsum(zahl / 10)</code>?', '22', ['4567', '7', '15'], '7 + 6 + 5 + 4 = 22. 15 ist das Zwischenergebnis von qsum(456).'),
+mq('Rekursion & Quicksort', 'Welcher Fehler entsteht in Java bei einer Rekursion ohne Abbruchbedingung?', '<code>StackOverflowError</code>', ['<code>ArrayIndexOutOfBoundsException</code>', 'Eine Endlosschleife ohne Fehler', 'Ein Compilerfehler'], 'Jeder Aufruf belegt Speicher auf dem Stapel (Stack), bis er voll ist.'),
+mq('Rekursion & Quicksort', 'Welches Element wählt der Quicksort auf euren Folien als Pivot?', 'das letzte Element der Teilfolge', ['das erste Element', 'immer das kleinste Element', 'den Durchschnitt aller Werte'], '<code>pivot = feld[rechts]</code>. Mit der 3-Median-Strategie wird vorher der Median aus links, Mitte und rechts an diese Stelle getauscht.'),
+mq('Rekursion & Quicksort', 'Wo steht das Pivotelement nach einem Teilungsschritt?', 'an seiner endgültigen Position: links nur kleinere, rechts nur größere Elemente', ['immer am Anfang des Arrays', 'immer in der Mitte des Arrays', 'weiterhin am rechten Rand'], 'Danach werden nur noch die beiden Teilfolgen links und rechts davon rekursiv sortiert.'),
+mq('Rekursion & Quicksort', 'Wann ist eine rekursive Lösung laut Folie sinnvoll?', 'wenn sich das Problem in zwei einfachere Teilprobleme aufteilen lässt', ['immer, weil sie schneller ist als eine Schleife', 'nur bei Strings', 'wenn wenig Speicher zur Verfügung steht'], 'Rekursion ist speicherintensiv und langsamer. Gibt es eine einfache Schleifenlösung, nimmt man die Schleife.'),
+mq('Rekursion & Quicksort', 'Was gibt <code>zaehle(3)</code> aus?<pre class="code" data-w="skip"><code>static void zaehle(int n) {\n    if (n &gt; 0) {\n        zaehle(n - 1);\n        System.out.print(n + " ");\n    }\n}</code></pre>', '1 2 3', ['3 2 1', '3', '0 1 2 3'], 'Die Ausgabe steht <b>nach</b> dem Aufruf, sie passiert auf dem Rückweg: zuerst endet zaehle(1), dann zaehle(2), dann zaehle(3).')
 ];
 /* ======================= SUD – FREITEXTAUFGABEN (Selbstbewertung) ======================= */
 D.self.sud = [
@@ -3066,7 +3582,23 @@ D.self.sud = [
 { t: 'Testen', pts: 3, q: 'Du sollst die Rabattregel „ab 500 Stück 5 % Rabatt“ per Black-Box-Test prüfen. Nenne vier sinnvolle Testmengen und begründe die Auswahl.',
   m: 'Sinnvoll sind z. B. <b>100</b> (typischer Wert ohne Rabatt), <b>499</b> (Grenzwert knapp darunter, kein Rabatt), <b>500</b> (Grenzwert, Rabatt gilt gerade schon) und <b>600</b> (typischer Wert mit Rabatt). Dazu gehören die Grenzen bei 19.999 und 20.000 für den zweiten Rabatt. Die Grenzwerte sind wichtig, weil Fehler wie <code>&gt;</code> statt <code>&gt;=</code> nur dort auffallen. Der erwartete Preis wird vorher aus der Regel berechnet. <i>1 P. zwei Grenzwerte (499 und 500), 1 P. Werte aus beiden Klassen, 1 P. Begründung.</i>' },
 { t: 'Methoden', pts: 4, q: 'Finde die drei Fehler und schreibe die korrigierte Methode.<pre class="code bad" data-w="skip"><code>static int quadrat(int x) {\n    int ergebnis = x * x;\n}\n\nstatic void pruefe(string text) {\n    if (text == "ja") {\n        System.out.println("ok");\n    }\n}</code></pre>',
-  m: `<b>1.</b> <code>quadrat</code> hat kein <code>return</code> (<i>missing return statement</i>). <b>2.</b> <code>string</code> muss <code>String</code> heißen. <b>3.</b> Strings vergleicht man mit <code>equals</code>, nicht mit <code>==</code>.${J(`static int quadrat(int x) {\n    int ergebnis = x * x;\n    return ergebnis;\n}\n\nstatic void pruefe(String text) {\n    if (text.equals("ja")) {\n        System.out.println("ok");\n    }\n}`, 'class')}<i>Je 1 P. pro gefundenem Fehler, 1 P. für die korrigierte, vollständige Fassung.</i>` }
+  m: `<b>1.</b> <code>quadrat</code> hat kein <code>return</code> (<i>missing return statement</i>). <b>2.</b> <code>string</code> muss <code>String</code> heißen. <b>3.</b> Strings vergleicht man mit <code>equals</code>, nicht mit <code>==</code>.${J(`static int quadrat(int x) {\n    int ergebnis = x * x;\n    return ergebnis;\n}\n\nstatic void pruefe(String text) {\n    if (text.equals("ja")) {\n        System.out.println("ok");\n    }\n}`, 'class')}<i>Je 1 P. pro gefundenem Fehler, 1 P. für die korrigierte, vollständige Fassung.</i>` },
+{ t: 'Sortieren', pts: 5, q: 'Schreibe eine Methode <code>bubbleSort(int[] arr)</code>, die ein Array aufsteigend sortiert, und zwar in der <b>zweifach optimierten</b> Variante. Erkläre die beiden Optimierungen in je einem Satz.',
+  m: `${J(`static void bubbleSort(int[] arr) {\n    boolean getauscht = true;\n    for (int j = 1; j < arr.length && getauscht; j++) {\n        getauscht = false;\n        for (int i = 1; i <= arr.length - j; i++) {\n            if (arr[i - 1] > arr[i]) {\n                int temp = arr[i - 1];\n                arr[i - 1] = arr[i];\n                arr[i] = temp;\n                getauscht = true;\n            }\n        }\n    }\n}`, 'class')}<b>Optimierung 1:</b> Wird in einem Durchlauf nicht mehr getauscht, ist das Array sortiert und man bricht ab (<code>getauscht</code>). <b>Optimierung 2:</b> Nach j − 1 Durchläufen stehen die j − 1 größten Elemente schon am Ende, deshalb vergleicht Durchlauf j nur bis N − j. <i>1 P. Vergleich benachbarter Elemente, 1 P. Tausch mit temp, 1 P. Grenze <code>arr.length - j</code> ohne Indexfehler, 1 P. Abbruch über <code>getauscht</code>, 1 P. Erklärung.</i>` },
+{ t: 'Sortieren', pts: 4, q: 'Schreibe eine Methode <code>selectionSort(int[] arr)</code>. Benenne die Einfügeposition <code>i</code> und den Index des Minimums <code>minPos</code>.',
+  m: `${J(`static void selectionSort(int[] arr) {\n    for (int i = 0; i < arr.length - 1; i++) {\n        int minPos = i;\n        for (int j = i + 1; j < arr.length; j++) {\n            if (arr[j] < arr[minPos]) {\n                minPos = j;\n            }\n        }\n        int temp = arr[i];\n        arr[i] = arr[minPos];\n        arr[minPos] = temp;\n    }\n}`, 'class')}<i>1 P. äußere Schleife bis <code>length - 1</code>, 1 P. Minimum im Rest ab <code>i + 1</code> suchen, 1 P. Index (nicht Wert) merken, 1 P. Tausch mit temp.</i>` },
+{ t: 'Sortieren', pts: 4, q: 'Sortiere <code>{43, 2, 47, 17, 4, 8, 15}</code> von Hand mit <b>Insertionsort</b>. Gib das Array nach jedem Durchlauf an und schreibe die Methode <code>insertionSort(int[] arr)</code>.',
+  m: `${insertionTable(SORT_START)}${J(`static void insertionSort(int[] arr) {\n    for (int i = 1; i < arr.length; i++) {\n        int temp = arr[i];\n        int j = i;\n        while (j != 0 && temp < arr[j - 1]) {\n            arr[j] = arr[j - 1];\n            j--;\n        }\n        arr[j] = temp;\n    }\n}`, 'class')}<i>2 P. Zwischenstände (je Fehler −1), 1 P. Start bei i = 1 und temp, 1 P. Schieben mit <code>j != 0 &amp;&amp; temp &lt; arr[j - 1]</code> und Einsetzen.</i>` },
+{ t: 'Sortieren', pts: 3, q: 'Vergleiche Bubblesort, Selectionsort und Insertionsort: Was ist nach dem k-ten Durchlauf jeweils sicher, und welches Verfahren ist bei einem schon sortierten Array schnell?',
+  m: '<b>Bubblesort:</b> die k größten Elemente stehen rechts an ihrem endgültigen Platz. <b>Selectionsort:</b> die k kleinsten stehen links an ihrem endgültigen Platz. <b>Insertionsort:</b> die ersten k + 1 Elemente sind untereinander sortiert, aber noch nicht endgültig. Bei schon sortierten Daten sind der <b>optimierte Bubblesort</b> (ein Durchlauf, dann Abbruch) und <b>Insertionsort</b> (nichts wird verschoben) schnell, Selectionsort macht trotzdem alle N · (N − 1) / 2 Vergleiche. <i>Je 1 P. pro Verfahren, jeweils mit richtiger Aussage zum sortierten Array.</i>' },
+{ t: 'Rekursion & Quicksort', pts: 4, q: 'Erkläre den Ablauf von <code>qsum(4567)</code> (rekursive Quersumme von der Folie). Nenne die Abbruchbedingung, alle Aufrufe mit ihrem <code>zahl</code>-Wert und wie das Ergebnis zurückgegeben wird.',
+  m: `${J(`static int qsum(int zahl) {\n    int erg = 0;\n    if (zahl < 10) {\n        erg = zahl;\n    } else {\n        erg = (zahl % 10) + qsum(zahl / 10);\n    }\n    return erg;\n}`, 'class')}Abbruchbedingung: <code>zahl &lt; 10</code>. Aufrufe: qsum(4567) → qsum(456) → qsum(45) → qsum(4). Der 4. Aufruf liefert 4. Rückweg: 5 + 4 = 9, 6 + 9 = 15, 7 + 15 = <b>22</b>. Die Aufrufe enden in umgekehrter Reihenfolge (Last in, first out). <i>1 P. Abbruchbedingung, 1 P. vier Aufrufe, 1 P. Rückweg mit Zwischenergebnissen, 1 P. Ergebnis 22.</i>` },
+{ t: 'Rekursion & Quicksort', pts: 5, q: 'Schreibe <code>quickSort(int[] feld, int links, int rechts)</code> mit einer Hilfsmethode <code>teile</code> wie auf den Folien (Pivot = letztes Element, i von links, j ab dem vorletzten Element). Wie wird die Methode aus <code>main</code> aufgerufen?',
+  m: `${J(TEILE_CODE + `\n\nstatic void quickSort(int[] feld, int links, int rechts) {\n    if (links < rechts) {\n        int p = teile(feld, links, rechts);\n        quickSort(feld, links, p - 1);\n        quickSort(feld, p + 1, rechts);\n    }\n}`, 'class')}Aufruf: <code>quickSort(feld, 0, feld.length - 1);</code> <i>1 P. Pivot und Startwerte von i und j, 1 P. Suchschleifen mit <code>&gt;</code> bzw. <code>&lt;=</code>, 1 P. Tausch und Pivot an Position i, 1 P. Abbruch <code>links &lt; rechts</code>, 1 P. zwei rekursive Aufrufe mit den richtigen Rändern.</i>` },
+{ t: 'Rekursion & Quicksort', pts: 4, q: 'Folienaufgabe LS02C_ReverseWord: Lies ein Wort zeichenweise mit <code>System.in.read()</code> ein (keine Strings) und gib es <b>rekursiv rückwärts</b> aus. Enter ist das Zeichen <code>\'\\n\'</code>.',
+  m: `${J(`static void rueckwaerts() throws java.io.IOException {\n    int zeichen = System.in.read();\n    if (zeichen != '\\n' && zeichen != -1) {\n        rueckwaerts();                         // erst weiterlesen\n        if (zeichen != '\\r') {\n            System.out.print((char) zeichen);  // dann auf dem Rückweg ausgeben\n        }\n    }\n}\n\npublic static void main(String[] args) throws java.io.IOException {\n    System.out.print("Wort: ");\n    rueckwaerts();\n}`, 'class')}Der Trick: Die Ausgabe steht <b>nach</b> dem rekursiven Aufruf. Das zuletzt gelesene Zeichen wird zuerst ausgegeben. <code>System.in.read()</code> liefert ein <code>int</code> und kann eine <code>IOException</code> werfen, deshalb <code>throws</code>. <i>1 P. Abbruch bei <code>'\\n'</code>, 1 P. rekursiver Aufruf vor der Ausgabe, 1 P. Cast <code>(char)</code>, 1 P. <code>throws IOException</code>.</i>` },
+{ t: 'Rekursion & Quicksort', pts: 4, q: 'Folienaufgabe LS02C_Zahlenumwandlung: Lies eine Ganzzahl als <code>int</code> ein und gib sie als Text aus, z. B. 123 → „eins zwei drei“, <b>ohne Array und ohne String</b> und ohne sie ziffernweise einzulesen.',
+  m: `${J(`static void zifferAlsWort(int ziffer) {\n    switch (ziffer) {\n        case 0: System.out.print("null "); break;\n        case 1: System.out.print("eins "); break;\n        case 2: System.out.print("zwei "); break;\n        case 3: System.out.print("drei "); break;\n        case 4: System.out.print("vier "); break;\n        case 5: System.out.print("fünf "); break;\n        case 6: System.out.print("sechs "); break;\n        case 7: System.out.print("sieben "); break;\n        case 8: System.out.print("acht "); break;\n        default: System.out.print("neun ");\n    }\n}\n\nstatic void zahlAlsText(int zahl) {\n    if (zahl >= 10) {\n        zahlAlsText(zahl / 10);   // erst die vorderen Ziffern\n    }\n    zifferAlsWort(zahl % 10);     // dann die letzte\n}\n\npublic static void main(String[] args) {\n    java.util.Scanner sc = new java.util.Scanner(System.in);\n    System.out.print("Zahl: ");\n    zahlAlsText(sc.nextInt());\n}`, 'class')}Mit <code>% 10</code> bekommt man die <b>letzte</b> Ziffer. Damit die Ziffern von vorne ausgegeben werden, ruft man sich erst mit <code>zahl / 10</code> auf und gibt die letzte Ziffer auf dem Rückweg aus. <i>1 P. Ziffer per <code>% 10</code>, 1 P. Rest per <code>/ 10</code>, 1 P. Reihenfolge (Aufruf vor Ausgabe), 1 P. Ziffer in Wort (switch).</i>` }
 ];
 
 
@@ -3372,7 +3904,7 @@ D.self.deu = [
   const FACH = {
     evp: { label: 'EVP-Test', sub: 'Zahlensysteme · Bits & Bytes · Codes · Zweierkomplement · Netzwerke (CCNA 1)', gens: EVP },
     wub: { label: 'WUB-Klausur', sub: 'Kündigung · Lohnabrechnung & Steuern · Soziale Sicherung', gens: WUB },
-    sud: { label: 'SUD-Klausur', sub: 'Java: Variablen · Verzweigungen · Schleifen · Methoden · Arrays', gens: SUD },
+    sud: { label: 'SUD-Klausur', sub: 'Java: Variablen · Verzweigungen · Schleifen · Methoden · Arrays · Sortieren · Rekursion', gens: SUD },
     deu: { label: 'Deutsch-Test', sub: 'Kommunikation: Watzlawick · Eisberg · Schulz von Thun · inneres Team', gens: DEU }
   };
   const TABS = [['lern', 'Lernhilfe'], ['kk', 'Karteikarten'], ['qz', 'Quiz'], ['tr', 'Rechentrainer'], ['pt', 'Probetest']];
@@ -3386,8 +3918,8 @@ D.self.deu = [
       voll: { name: 'Vollständiger Test', min: 60, gens: ['kuendFrist', 'sozialauswahl', 'sozialauswahl', 'netto', 'svAn', 'agKosten'], mc: 18, self: 7 }
     },
     sud: {
-      kurz: { name: 'Kurztest', min: 30, gens: ['intDiv', 'typeMix', 'incDec', 'forCount', 'switchFall', 'arrLoop', 'callByValue', 'overload'], mc: 8, self: 3 },
-      voll: { name: 'Vollständiger Test', min: 75, gens: ['intDiv', 'typeMix', 'incDec', 'strConcat', 'castRound', 'forCount', 'whileTrace', 'digitSum', 'switchFall', 'arrLoop', 'arrMaxIdx', 'arr2d', 'callByValue', 'overload', 'zahnbuerste'], mc: 14, self: 6 }
+      kurz: { name: 'Kurztest', min: 40, gens: ['intDiv', 'typeMix', 'incDec', 'forCount', 'switchFall', 'arrLoop', 'callByValue', 'overload', 'bubbleRun', 'sortWhich', 'recursion'], mc: 9, self: 3 },
+      voll: { name: 'Vollständiger Test', min: 100, gens: ['intDiv', 'typeMix', 'incDec', 'strConcat', 'castRound', 'forCount', 'whileTrace', 'digitSum', 'switchFall', 'arrLoop', 'arrMaxIdx', 'arr2d', 'callByValue', 'overload', 'zahnbuerste', 'bubbleRun', 'selectionRun', 'insertionRun', 'sortWhich', 'sortCount', 'quickPart', 'recursion'], mc: 17, self: 8 }
     },
     deu: {
       kurz: { name: 'Kurztest', min: 20, gens: ['wahrFalsch', 'ebene', 'kommArt'], mc: 3, self: 2 },
@@ -3474,6 +4006,111 @@ D.self.deu = [
       };
       ap.onclick = (e) => { const b = e.target.closest('[data-ai]'); if (b) { idx = +b.dataset.ai; draw(); } };
       ap.onchange = (e) => { if (e.target.id === 'ap-i') { const v = Math.trunc(parseFloat(e.target.value)); if (!isNaN(v)) { idx = v; draw(); const i2 = $('#ap-i'); if (i2) i2.focus(); } } };
+      draw();
+    }
+    const sp = $('#sortplay');
+    if (sp) {
+      const SP = sp._st || (sp._st = { alg: 'bubble', start: SORT_START.slice(), steps: [], k: 0 });
+      const NAMES = { bubble: 'Bubblesort (zweifach optimiert)', selection: 'Selectionsort', insertion: 'Insertionsort', quick: 'Quicksort' };
+      const build = () => {
+        const a = SP.start.slice(), n = a.length, st = [], fest = {};
+        const push = (m, msg) => st.push({ a: a.slice(), mark: Object.assign({}, fest, m || {}), msg });
+        push({}, 'Startzustand. Klicke auf „Nächster Schritt“.');
+        if (SP.alg === 'bubble') {
+          let getauscht = true;
+          for (let j = 1; j < n && getauscht; j++) {
+            getauscht = false;
+            for (let i = 1; i <= n - j; i++) {
+              const big = a[i - 1] > a[i];
+              push({ [i - 1]: 'cmp', [i]: 'cmp' }, `Durchlauf j = ${j}, i = ${i}: arr[${i - 1}] = ${a[i - 1]} ${big ? '&gt;' : '≤'} arr[${i}] = ${a[i]} → ${big ? 'tauschen' : 'nicht tauschen'}`);
+              if (big) { swapA(a, i - 1, i); getauscht = true; push({ [i - 1]: 'sw', [i]: 'sw' }, `getauscht (über temp)`); }
+            }
+            fest[n - j] = 'done';
+            push({}, getauscht ? `Ende Durchlauf ${j}: ${a[n - j]} steht an seinem endgültigen Platz. Nächster Durchlauf nur bis i = ${n - j - 1}.` : `Durchlauf ${j} ohne Tausch → Abbruch, das Array ist sortiert.`);
+          }
+        } else if (SP.alg === 'selection') {
+          for (let i = 0; i < n - 1; i++) {
+            let minPos = i;
+            push({ [i]: 'piv' }, `Durchlauf ${i + 1}: Einfügeposition i = ${i}, minPos = ${i} (Wert ${a[i]})`);
+            for (let j = i + 1; j < n; j++) {
+              const kl = a[j] < a[minPos];
+              push({ [i]: 'piv', [minPos]: 'tmp', [j]: 'cmp' }, `j = ${j}: ${a[j]} ${kl ? '&lt;' : '≥'} ${a[minPos]} (aktuelles Minimum) → ${kl ? 'minPos = ' + j : 'minPos bleibt ' + minPos}`);
+              if (kl) minPos = j;
+            }
+            push({ [i]: 'sw', [minPos]: 'sw' }, i === minPos ? `Minimum ${a[i]} steht schon an Index ${i} (Tausch mit sich selbst).` : `tausche arr[${i}] = ${a[i]} mit dem Minimum arr[${minPos}] = ${a[minPos]}`);
+            swapA(a, i, minPos); fest[i] = 'done';
+            push({}, `Ende Durchlauf ${i + 1}: ${a[i]} steht fest.`);
+          }
+        } else if (SP.alg === 'insertion') {
+          for (let i = 1; i < n; i++) {
+            const temp = a[i]; let j = i;
+            push({ [i]: 'tmp' }, `Durchlauf ${i}: temp = arr[${i}] = ${temp}`);
+            while (j !== 0 && temp < a[j - 1]) {
+              push({ [j - 1]: 'cmp', [j]: 'tmp' }, `j = ${j}: temp = ${temp} &lt; arr[${j - 1}] = ${a[j - 1]} → ${a[j - 1]} nach rechts schieben`);
+              a[j] = a[j - 1]; j--;
+              push({ [j + 1]: 'sw', [j]: 'tmp' }, `arr[${j + 1}] = ${a[j + 1]}, j = ${j} (die ${a[j + 1]} steht kurz doppelt, temp ist gemerkt)`);
+            }
+            push({ [j]: 'tmp' }, j === 0 ? `j = 0 → Anfang erreicht` : `j = ${j}: temp = ${temp} ≥ arr[${j - 1}] = ${a[j - 1]} → Einfügeposition gefunden`);
+            a[j] = temp;
+            push({ [j]: 'sw' }, `arr[${j}] = temp = ${temp}. Index 0 bis ${i} ist jetzt sortiert.`);
+          }
+        } else {
+          const qs = (l, r, tiefe) => {
+            if (l < r) {
+              const pivot = a[r]; let i = l, j = r - 1;
+              push({ [r]: 'piv' }, `quickSort(feld, ${l}, ${r}), Tiefe ${tiefe}: pivot = feld[${r}] = ${pivot}, i = ${l}, j = ${r - 1}`);
+              while (i <= j) {
+                while (i <= j && a[i] <= pivot) i++;
+                while (j >= i && a[j] > pivot) j--;
+                if (i < j) {
+                  push({ [r]: 'piv', [i]: 'cmp', [j]: 'cmp' }, `i stoppt bei ${i} (${a[i]} &gt; ${pivot}), j stoppt bei ${j} (${a[j]} ≤ ${pivot}) → tauschen`);
+                  swapA(a, i, j); push({ [r]: 'piv', [i]: 'sw', [j]: 'sw' }, 'getauscht, weitersuchen');
+                }
+              }
+              push({ [r]: 'piv', [i]: 'cmp' }, `i = ${i} &gt; j = ${j}: Durchlauf beendet, Pivot ${pivot} mit feld[${i}] = ${a[i]} tauschen`);
+              swapA(a, i, r); fest[i] = 'done';
+              push({}, `${pivot} steht an Index ${i} endgültig. Links davon alles kleiner, rechts alles größer.`);
+              qs(l, i - 1, tiefe + 1); qs(i + 1, r, tiefe + 1);
+            } else if (l === r) { fest[l] = 'done'; push({}, `Teilfolge nur aus Index ${l} (${a[l]}): weniger als 2 Elemente, schon sortiert.`); }
+          };
+          qs(0, n - 1, 1);
+        }
+        for (let i = 0; i < n; i++) fest[i] = 'done';
+        push({}, `Fertig: ${a.join(', ')} · ${st.length} Schritte`);
+        SP.steps = st; SP.k = 0;
+      };
+      const draw = () => {
+        const s = SP.steps[SP.k];
+        sp.innerHTML = `<div class="row" style="margin-top:0"><label class="inl">Verfahren <select data-sp="alg">${Object.keys(NAMES).map((k) => `<option value="${k}" ${SP.alg === k ? 'selected' : ''}>${NAMES[k]}</option>`).join('')}</select></label>
+          <label class="inl">Zahlen <input type="text" data-sp="in" value="${SP.start.join(', ')}" style="width:220px" aria-label="Eigene Zahlen, mit Komma getrennt"></label></div>
+          <div class="bits">${s.a.map((v, i) => `<div class="bit arrcell ${s.mark[i] || ''}"><span class="bw">Index ${i}</span><span class="bv">${v}</span></div>`).join('')}</div>
+          <div class="fb ok" style="margin-top:4px"><span class="muted">Schritt ${SP.k} / ${SP.steps.length - 1}</span><br>${s.msg}</div>
+          <div class="row"><button class="btn small ghost" data-sp="back" ${SP.k === 0 ? 'disabled' : ''}>Zurück</button><button class="btn small" data-sp="next" ${SP.k === SP.steps.length - 1 ? 'disabled' : ''}>Nächster Schritt</button>
+          <button class="btn small ghost" data-sp="end">Bis zum Ende</button><button class="btn small ghost" data-sp="reset">Von vorn</button><button class="btn small ghost" data-sp="rnd">Zufallszahlen</button><button class="btn small ghost" data-sp="folie">Folienbeispiel</button></div>
+          <p class="muted">Farben: <span class="tag open">gelb</span> wird verglichen · <span class="tag" style="background:var(--bad-bg);color:var(--bad)">rot</span> getauscht oder verschoben · <span class="tag" style="background:var(--accent-soft);color:var(--accent)">blau</span> Pivot, Einfügeposition oder temp · <span class="tag done">grün</span> steht endgültig fest</p>`;
+      };
+      sp.onclick = (e) => {
+        const b = e.target.closest('[data-sp]'); if (!b || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
+        const w = b.dataset.sp;
+        if (w === 'next' && SP.k < SP.steps.length - 1) SP.k++;
+        else if (w === 'back' && SP.k > 0) SP.k--;
+        else if (w === 'end') SP.k = SP.steps.length - 1;
+        else if (w === 'reset') SP.k = 0;
+        else if (w === 'rnd') { const r = makeRng(Math.floor(Math.random() * 2147483647)); SP.start = uniqInts(r, 7, 1, 60); build(); }
+        else if (w === 'folie') { SP.start = SORT_START.slice(); build(); }
+        else return;
+        draw(); const f = sp.querySelector(`[data-sp="${w}"]`); if (f && !f.disabled) f.focus();
+      };
+      sp.onchange = (e) => {
+        const w = e.target.dataset.sp;
+        if (w === 'alg') { SP.alg = e.target.value; build(); draw(); }
+        else if (w === 'in') {
+          const z = (String(e.target.value).match(/-?\d+/g) || []).map(Number).slice(0, 12);
+          if (z.length >= 2) { SP.start = z; build(); }
+          draw();
+        }
+      };
+      if (!SP.steps.length) build();
       draw();
     }
   }
