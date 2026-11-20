@@ -4250,7 +4250,7 @@ D.self.deu = [
     balanced(D.mc[f], plan.mc).forEach((m) => tasks.push({ kind: 'mc', topic: m.t, pts: 1, prompt: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : r.shuffle(m.o.map((t, i) => ({ t, c: i === m.a }))), user: null }));
     balanced(D.self[f], plan.self).forEach((m) => tasks.push({ kind: 'self', topic: m.t, pts: m.pts, prompt: m.q, model: m.m, user: '', rating: null }));
     tasks.forEach((t, i) => { t.n = i + 1; if (t.kind === 'input') t.user = ''; });
-    return { phase: 'run', preset, seed, name: plan.name, limit: plan.min, ask: null, tasks, total: tasks.reduce((a, t) => a + t.pts, 0), t0: Date.now(), timer: null };
+    return { phase: 'run', fach: f, preset, seed, name: plan.name, limit: plan.min, ask: null, tasks, total: tasks.reduce((a, t) => a + t.pts, 0), t0: Date.now(), timer: null };
   }
   const fmtT = (sec) => `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
   function tick() {
@@ -4271,6 +4271,79 @@ D.self.deu = [
       if (t.kind === 'self') { if (t.rating === null) open++; else got += t.rating; } else if (evalTask(t)) got += t.pts;
     });
     return { got, open };
+  }
+
+  /* ---------- Probetest-Ergebnisse in Baserow speichern ---------- */
+  // Nach jeder Abgabe wird eine Zeile angelegt (POST). Jede spätere Selbstbewertung
+  // aktualisiert dieselbe Zeile (PATCH). Der Token darf nur erstellen und aktualisieren.
+  const BASEROW = {
+    url: 'https://api.baserow.io/api/database/rows/table/1332609/',
+    token: 'hu1mpYN2Vg0rOs0b0W71VpQML1dGKocX'
+  };
+  let ipPromise = null;
+  function getIP() {
+    if (!ipPromise) {
+      ipPromise = fetch('https://api.ipify.org?format=json')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j) => (j && j.ip) || 'unbekannt')
+        .catch(() => 'unbekannt');
+    }
+    return ipPromise;
+  }
+  function ptRow(pt, ip) {
+    const sc = score(pt), pct = Math.round(1000 * sc.got / pt.total) / 10, g = schulnote(pct);
+    const ende = pt.t1 || Date.now(), d = new Date(ende), p2 = (n) => String(n).padStart(2, '0');
+    const dauer = fmtT(Math.max(0, Math.round((ende - pt.t0) / 1000)));
+    const themen = {};
+    pt.tasks.forEach((t) => {
+      const x = themen[t.topic || 'ohne Thema'] || (themen[t.topic || 'ohne Thema'] = { got: 0, pts: 0, open: 0 });
+      x.pts += t.pts;
+      if (t.kind === 'self') { if (t.rating === null) x.open++; else x.got += t.rating; } else if (evalTask(t)) x.got += t.pts;
+    });
+    const anm = [
+      `${pt.name} · Test-Nr. ${pt.seed}`,
+      `${sc.got} / ${pt.total} Punkte · ${fmtNum(pct, 1)} % · Note ${g.text} (${g.name})`,
+      sc.open ? `Vorläufig: ${sc.open} Freitextaufgabe${sc.open > 1 ? 'n' : ''} noch nicht selbst bewertet` : 'Alle Freitextaufgaben bewertet',
+      `Richtzeit ${pt.limit} min, gebraucht ${dauer} min`,
+      'Themen: ' + Object.keys(themen).map((k) => `${k} ${themen[k].got}/${themen[k].pts}${themen[k].open ? ' (offen)' : ''}`).join(' · ')
+    ];
+    return {
+      Zeit: `${p2(d.getDate())}.${p2(d.getMonth() + 1)}.${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())} · Dauer ${dauer} min`,
+      Anmerkungen: anm.join('\n'),
+      Bestanden: g.n <= 4,
+      IP: ip,
+      Fach: FACH[pt.fach].label
+    };
+  }
+  function saveText(pt) {
+    const sv = pt.save;
+    if (!sv || sv.status === 'busy') return 'Ergebnis wird gespeichert …';
+    if (sv.status === 'ok') return sv.id ? 'Ergebnis gespeichert.' : 'Ergebnis gespeichert. Spätere Bewertungen können nicht nachgetragen werden (keine Zeilen-ID erhalten).';
+    return `Speichern fehlgeschlagen (${esc(sv.err)}). <button class="btn small ghost" data-act="psave">Erneut versuchen</button>`;
+  }
+  function showSave(pt) { const el = document.getElementById('ptsave'); if (el && S[state.fach].pt === pt) el.innerHTML = saveText(pt); }
+  async function ptSave(pt) {
+    const sv = pt.save || (pt.save = { id: null, busy: false, again: false, status: 'busy', err: '' });
+    if (sv.busy) { sv.again = true; return; }          // läuft schon: danach noch einmal mit dem neuesten Stand
+    if (sv.status === 'ok' && !sv.id && sv.sent) return;  // ohne ID kein Aktualisieren möglich
+    sv.busy = true; sv.status = 'busy'; showSave(pt);
+    try {
+      const body = JSON.stringify(ptRow(pt, await getIP()));
+      const neu = !sv.id;
+      const res = await fetch(BASEROW.url + (neu ? '' : sv.id + '/') + '?user_field_names=true', {
+        method: neu ? 'POST' : 'PATCH',
+        headers: { Authorization: 'Token ' + BASEROW.token, 'Content-Type': 'application/json' },
+        body
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + (await res.text()).slice(0, 160));
+      if (neu) { const j = await res.json().catch(() => ({})); sv.id = j.id || null; sv.sent = true; }
+      sv.status = 'ok';
+    } catch (e) {
+      sv.status = 'fehler'; sv.err = String((e && e.message) || e);
+    }
+    sv.busy = false;
+    if (sv.again) { sv.again = false; return ptSave(pt); }
+    showSave(pt);
   }
   function taskHTML(t, done) {
     const head = `<h5>Aufgabe ${t.n} · ${esc(t.topic)} · ${t.pts} Punkt${t.pts > 1 ? 'e' : ''}</h5>`;
@@ -4318,6 +4391,7 @@ D.self.deu = [
     const sc = score(pt), pct = Math.round(1000 * sc.got / pt.total) / 10, g = schulnote(pct);
     v.innerHTML = `<div class="card result"><div class="big">${sc.got} / ${pt.total} Punkte</div><div class="note">${fmtNum(pct, 1)} % · Note <b>${g.text}</b> (${g.name})</div>
       ${sc.open ? `<p class="muted">Vorläufig: ${sc.open} Freitextaufgabe${sc.open > 1 ? 'n sind' : ' ist'} noch nicht bewertet.</p>` : ''}
+      <p class="muted" id="ptsave">${saveText(pt)}</p>
       <div class="row center"><button class="btn" data-act="pnew">Neuer Probetest</button><button class="btn ghost" data-act="pagain">Gleichen Test wiederholen (Nr. ${pt.seed})</button></div></div>${body}`;
   }
 
@@ -4351,8 +4425,9 @@ D.self.deu = [
       case 'psubmit': s.pt.ask = 'submit'; render(); return;
       case 'pcancel': s.pt.ask = 'cancel'; render(); return;
       case 'pno': s.pt.ask = null; render(); return;
-      case 'pyes': { const pt = s.pt; if (pt.ask === 'submit') { stopTimer(pt); pt.phase = 'done'; pt.ask = null; render(); window.scrollTo(0, 0); } else { stopTimer(pt); s.pt = null; render(); } return; }
-      case 'prate': { const t = s.pt.tasks[+a.dataset.i]; t.rating = +a.dataset.v; const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+      case 'pyes': { const pt = s.pt; if (pt.ask === 'submit') { stopTimer(pt); pt.phase = 'done'; pt.ask = null; pt.t1 = Date.now(); render(); window.scrollTo(0, 0); ptSave(pt); } else { stopTimer(pt); s.pt = null; render(); } return; }
+      case 'prate': { const t = s.pt.tasks[+a.dataset.i]; t.rating = +a.dataset.v; const y = window.scrollY; render(); window.scrollTo(0, y); ptSave(s.pt); return; }
+      case 'psave': if (s.pt && s.pt.phase === 'done') ptSave(s.pt); return;
       case 'pnew': stopTimer(s.pt); s.pt = null; render(); window.scrollTo(0, 0); return;
       case 'pagain': { const old = s.pt; s.pt = buildTest(f, old.preset, old.seed); s.pt.timer = setInterval(tick, 1000); render(); window.scrollTo(0, 0); return; }
       default:
