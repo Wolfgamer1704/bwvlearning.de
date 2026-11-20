@@ -1549,37 +1549,20 @@ D.cards.evp = [
 
 /* ======================= EVP – QUIZ (Multiple Choice) ======================= */
 D.mc.evp = [
-{ t: 'Zahlensysteme', q: 'Welche Dezimalzahl ist 1011 0101 (dual)?', o: ['181', '173', '185', '169'], a: 0, w: '128 + 32 + 16 + 4 + 1 = 181.' },
-{ t: 'Zahlensysteme', q: 'Welche Hex-Zahl entspricht 1010 1111?', o: ['AF', 'FA', '9F', 'BF'], a: 0, w: '1010 = A, 1111 = F, also AF.' },
 { t: 'Zahlensysteme', q: 'Wie viele Bit entsprechen einer Hex-Ziffer?', o: ['4', '2', '8', '16'], a: 0, w: '16 = 2⁴, also genügen 4 Bit für eine Hex-Ziffer.' },
-{ t: 'Zahlensysteme', q: 'Welcher Dezimalwert gehört zu Hex FF?', o: ['255', '256', '225', '15'], a: 0, w: '15 · 16 + 15 = 255.' },
-{ t: 'Zahlensysteme', q: 'Wie lautet 100 (dezimal) als Dualzahl?', o: ['0110 0100', '0110 0010', '0101 1100', '0110 1000'], a: 0, w: '100 = 64 + 32 + 4 = 0110 0100.' },
-{ t: 'Zahlensysteme', q: 'Welcher Dezimalwert gehört zu Hex 1A?', o: ['26', '17', '11', '36'], a: 0, w: '1 · 16 + 10 = 26.' },
 { t: 'Zahlensysteme', q: 'Wie wandelt man Dual in Hex am einfachsten um?', o: ['Von rechts in 4er-Gruppen teilen', 'Von links in 3er-Gruppen teilen', 'Erst durch 10 teilen', 'Jedes Bit einzeln in eine Hex-Ziffer'], a: 0, w: 'Tetraden von rechts; jede Gruppe ergibt eine Hex-Ziffer.' },
-{ t: 'Bits & Bytes', q: 'Wie viele verschiedene Werte kann ein Byte (ohne Vorzeichen) darstellen?', o: ['256', '255', '128', '8'], a: 0, w: '2⁸ = 256 Werte (0 bis 255).' },
-{ t: 'Bits & Bytes', q: 'Wie viele Bit braucht man mindestens für 100 Zustände?', o: ['7', '6', '8', '10'], a: 0, w: '2⁶ = 64 ist zu wenig, 2⁷ = 128 reicht.' },
 { t: 'Bits & Bytes', q: 'Was bedeutet 1 KiB?', o: ['1 024 Byte', '1 000 Byte', '1 024 Bit', '1 000 Bit'], a: 0, w: 'Ki = Kibi = 2¹⁰ = 1 024, B = Byte.' },
 { t: 'Bits & Bytes', q: 'Warum zeigt das Betriebssystem bei einer 1-TB-Festplatte nur ca. 931 GB an?', o: ['Hersteller rechnen mit 10er-, das System mit 2er-Potenzen', 'Ein Teil der Platte ist immer defekt', 'Das Dateisystem belegt 7 % pauschal', 'Windows rechnet in Bit statt Byte'], a: 0, w: '10¹² Byte ÷ 2³⁰ ≈ 931 GiB.' },
 { t: 'Bits & Bytes', q: 'Wie viele Mbit/s entsprechen 1 MB/s?', o: ['8', '1', '1 024', '0,125'], a: 0, w: '1 Byte = 8 Bit.' },
-{ t: 'Bits & Bytes', q: 'Eine Datei mit 100 MB wird mit 50 Mbit/s übertragen. Wie lange dauert das?', o: ['16 s', '2 s', '8 s', '50 s'], a: 0, w: '100 · 8 = 800 Mbit; 800 ÷ 50 = 16 s.' },
 { t: 'Bits & Bytes', q: 'Welche Formel stimmt?', o: ['Zeit = Datenmenge ÷ Rate', 'Zeit = Rate ÷ Datenmenge', 'Zeit = Datenmenge · Rate', 'Zeit = Rate − Datenmenge'], a: 0, w: 'Dividiert man Menge durch Menge pro Zeit, bleibt die Zeit übrig.' },
-{ t: 'Codes', q: 'Welchen dezimalen ASCII-Code hat „A“?', o: ['65', '97', '48', '64'], a: 0, w: '„A“ = 65, „a“ = 97, „0“ = 48.' },
 { t: 'Codes', q: 'Wie viele Zeichen kennt der 7-Bit-ASCII-Code?', o: ['128', '256', '127', '64'], a: 0, w: '2⁷ = 128 Zeichen (0 bis 127).' },
-{ t: 'Codes', q: '„a“ hat den 7-Bit-Code 1100001. Welches Paritätsbit ergibt gerade Parität?', o: ['1', '0', 'Keins, es sind schon gerade viele Einsen', '3'], a: 0, w: 'Drei Einsen sind ungerade, die vierte macht sie gerade.' },
-{ t: 'Codes', q: 'Welches der Bytes ist bei gerader Parität FEHLERHAFT?', o: ['1100 0111', '1010 1010', '1111 0000', '0110 0110'], a: 0, w: '1100 0111 hat fünf Einsen (ungerade), die anderen vier.' },
 { t: 'Codes', q: 'Was kann ein einzelnes Paritätsbit?', o: ['Einzelbitfehler erkennen, aber nicht korrigieren', 'Jeden Fehler erkennen und korrigieren', 'Fehler lokalisieren', 'Nur 2-Bit-Fehler erkennen'], a: 0, w: 'Es erkennt eine ungerade Anzahl gekippter Bits, mehr nicht.' },
-{ t: 'Codes', q: 'Wie viele Byte belegt ein unkomprimiertes Schwarz/Weiß-Bild mit 8 × 8 Pixeln (1 Bit pro Pixel)?', o: ['8', '64', '1', '512'], a: 0, w: '8 · 8 · 1 = 64 Bit = 8 Byte.' },
 { t: 'Codes', q: 'Was bedeutet eine Farbtiefe von 24 Bit?', o: ['3 Byte pro Pixel (je 8 Bit für Rot, Grün, Blau)', '24 Byte pro Pixel', '24 Farben', '2 Byte pro Pixel'], a: 0, w: '3 · 8 Bit = 24 Bit = 3 Byte, ca. 16,7 Mio. Farben.' },
 { t: 'Codes', q: 'Wie berechnet man den Speicherbedarf eines unkomprimierten Bildes?', o: ['Breite × Höhe × Farbtiefe ÷ 8 (in Byte)', 'Breite + Höhe + Farbtiefe', 'Breite × Höhe ÷ Farbtiefe', 'Farbtiefe² × 8'], a: 0, w: 'Pixelzahl mal Bit pro Pixel, geteilt durch 8 ergibt Byte.' },
 { t: 'Codes', q: 'Eine IPv4-Adresse besteht aus wie vielen Bit?', o: ['32', '16', '64', '8'], a: 0, w: 'Vier Bytes zu je 8 Bit = 32 Bit.' },
 { t: 'Zweierkomplement', q: 'Welchen Wertebereich hat eine 8-Bit-Zahl im Zweierkomplement?', o: ['−128 bis +127', '−127 bis +128', '−255 bis +255', '0 bis 255'], a: 0, w: '−2⁷ bis 2⁷ − 1.' },
-{ t: 'Zweierkomplement', q: 'Wie lautet −5 im 4-Bit-Zweierkomplement?', o: ['1011', '1101', '1010', '0101'], a: 0, w: '5 = 0101 → invertiert 1010 → +1 = 1011.' },
-{ t: 'Zweierkomplement', q: 'Welche Dezimalzahl ist 1111 1110 im 8-Bit-Zweierkomplement?', o: ['−2', '254', '−126', '−1'], a: 0, w: '−128 + 64 + 32 + 16 + 8 + 4 + 2 = −2.' },
-{ t: 'Zweierkomplement', q: 'Wie lautet −1 im 8-Bit-Zweierkomplement?', o: ['1111 1111', '1000 0001', '1000 0000', '0000 0001'], a: 0, w: '1 = 0000 0001 → invertiert 1111 1110 → +1 = 1111 1111.' },
 { t: 'Zweierkomplement', q: 'Warum nutzt man das Zweierkomplement?', o: ['Subtraktion wird zur Addition, ein Rechenwerk genügt', 'Weil es weniger Bits braucht', 'Weil es schneller ist als Dualzahlen', 'Es gibt zwei Nullen'], a: 0, w: 'a − b = a + (−b). Außerdem hat es nur eine Null.' },
 { t: 'Zweierkomplement', q: 'Was passiert beim Addieren im Zweierkomplement mit dem Übertrag aus der höchsten Stelle?', o: ['Er wird verworfen', 'Er wird zum Ergebnis addiert', 'Er wird zum Vorzeichenbit', 'Das Ergebnis ist dann ungültig'], a: 0, w: 'Bei 10 + (−3) steht links ein „discarded“-Übertrag; das Ergebnis 0000 0111 = 7 ist richtig.' },
-{ t: 'Zweierkomplement', q: 'Was ist 0110 0100 + 0011 0010 (also 100 + 50) im 8-Bit-Zweierkomplement?', o: ['Überlauf: 1001 0110 = −106', '1001 0110 = +150', '0001 0110 = +22', 'Es passt genau in 8 Bit'], a: 0, w: '150 liegt über +127, das Ergebnis ist falsch (zwei positive ergeben ein negatives).' },
-{ t: 'Zweierkomplement', q: 'Welche Dualzahl ist das Einerkomplement von 0100 1101?', o: ['1011 0010', '1011 0011', '0100 1110', '1100 1101'], a: 0, w: 'Alle Bits invertieren. Mit +1 ergäbe sich das Zweierkomplement 1011 0011.' },
 { t: 'Zweierkomplement', q: 'Welche Zahl steht in 8 Bit als 1000 0000?', o: ['−128', '+128', '−0', '−127'], a: 0, w: 'Nur das MSB ist gesetzt: Stellenwert −128.' }
 ];
 
@@ -1593,12 +1576,6 @@ D.self.evp = [
   m: 'Erkennt einen Ein-Bit-Fehler (allgemein eine ungerade Anzahl gekippter Bits). Erkennt keine zwei Fehler (gerade Anzahl), kann den Fehler nicht lokalisieren und nicht korrigieren. <i>1 P. erkennt, 1 P. Grenzen.</i>' },
 { t: 'Zweierkomplement', pts: 2, q: 'Nenne zwei Vorteile des Zweierkomplements gegenüber Vorzeichen-Betrag.',
   m: 'Subtraktion wird zur Addition (a − b = a + (−b)), daher genügt ein Rechenwerk. Es gibt nur eine Darstellung der Null (kein +0/−0). Auch das normale Addierwerk funktioniert ohne Sonderbehandlung des Vorzeichens. <i>Je 1 P. für einen genannten Vorteil.</i>' },
-{ t: 'Zweierkomplement', pts: 3, q: 'Stelle −45 im 8-Bit-Zweierkomplement dar und beschreibe die Schritte.',
-  m: '1. Betrag: 45 = 0010 1101 (32 + 8 + 4 + 1). 2. Invertieren: 1101 0010. 3. +1: <b>1101 0011</b>. Probe: −128 + 64 + 16 + 2 + 1 = −45. <i>1 P. je Schritt/Ergebnis.</i>' },
-{ t: 'Codes', pts: 3, q: 'Ein Foto hat 1920 × 1080 Pixel bei 24 Bit Farbtiefe (unkomprimiert). Berechne den Speicherbedarf in Byte und ungefähr in MB.',
-  m: '1920 · 1080 = 2 073 600 Pixel · 24 Bit = 49 766 400 Bit ÷ 8 = <b>6 220 800 Byte</b> ≈ 6,2 MB (SI), das sind etwa 5,93 MiB. <i>1 P. Pixelzahl, 1 P. Bit→Byte, 1 P. Ergebnis.</i>' },
-{ t: 'Codes', pts: 3, q: 'Die IPv4-Adresse steht als Hex-Folge C0 A8 01 0A. Schreibe sie in der üblichen Punktschreibweise und erkläre den Aufbau.',
-  m: 'C0 = 192, A8 = 168, 01 = 1, 0A = 10 → <b>192.168.1.10</b>. Eine IPv4-Adresse hat 32 Bit = 4 Bytes (Oktette), jedes Byte wird dezimal (0 bis 255) geschrieben und durch Punkte getrennt. <i>2 P. Adresse, 1 P. Aufbau.</i>' },
 { t: 'Bits & Bytes', pts: 3, q: 'Warum muss man bei Übertragungsaufgaben „MB“ erst in „Mbit“ umrechnen? Zeige es an einem Beispiel mit 250 MB und 100 Mbit/s.',
   m: 'Datenmengen werden meist in Byte, Raten in Bit pro Sekunde angegeben; man kann nur gleiche Einheiten teilen. 250 MB · 8 = 2 000 Mbit, 2 000 Mbit ÷ 100 Mbit/s = <b>20 s</b>. <i>1 P. Begründung, 1 P. ·8, 1 P. Ergebnis.</i>' }
 ];
@@ -2230,11 +2207,8 @@ tf('Berufsausbildung', 'Gibt es im Betrieb eine Sicherheitsfachkraft oder einen 
 tf('Berufsausbildung', 'Jugendliche nehmen Urlaub außerhalb der Ferien, Familien erhalten in den Ferien Vorrang.', false, 'Urlaub soll in den Berufsschulferien gegeben werden.'),
 tf('Berufsausbildung', 'Ein 17-jähriger Auszubildender erhält 25 Urlaubstage, eine 16-jährige Auszubildende 30 Tage.', false, 'Die 16-Jährige (unter 17) erhält 27 Tage; 30 Tage gibt es nur unter 16 Jahren.'),
 tf('Berufsausbildung', 'Auszubildende sind für Berufsschule und Prüfungstage freizustellen, jugendliche auch einen Tag vor der Prüfung.', true, 'Freistellung am Tag vor der schriftlichen Prüfung (Jugendliche).'),
-{ t: 'Berufsausbildung', q: 'Wie viele Urlaubstage haben Jugendliche unter 18 Jahren nach dem JArbSchG?', o: ['25', '27', '30', '24'], a: 0, w: 'Unter 16: 30, unter 17: 27, unter 18: 25.' },
-{ t: 'Berufsausbildung', q: 'Wie lange muss die Ruhepause bei Jugendlichen mit mehr als 6 Stunden Arbeitszeit sein?', o: ['60 Minuten', '30 Minuten', '45 Minuten', '15 Minuten'], a: 0, w: '30 Minuten bei mehr als 4,5 bis 6 Stunden, 60 Minuten bei mehr als 6 Stunden.' },
 { t: 'Berufsausbildung', q: 'Zwischen Arbeitsende und -beginn muss eine Ruhezeit liegen von mindestens …', o: ['11 Stunden (Erwachsene)', '8 Stunden', '12 Stunden (Erwachsene)', '10 Stunden (Erwachsene)'], a: 0, w: 'Arbeitszeitgesetz: 11 Stunden. Für Jugendliche gilt mindestens 12 Stunden Freizeit.' },
 { t: 'Berufsausbildung', q: 'Wie lange darf nach dem Arbeitszeitgesetz die tägliche Arbeitszeit höchstens sein, wenn im Schnitt von 6 Monaten 8 Stunden eingehalten werden?', o: ['10 Stunden', '9 Stunden', '12 Stunden', '8,5 Stunden'], a: 0, w: 'Bis zu 10 Stunden täglich und 60 Stunden wöchentlich bei Ausgleich innerhalb von 6 Monaten.' },
-{ t: 'Berufsausbildung', q: 'Welche Pause steht bei 8,5 Stunden Arbeitszeit (Erwachsene) mindestens zu?', o: ['30 Minuten', '45 Minuten', '60 Minuten', '15 Minuten'], a: 0, w: 'Mehr als 6 bis 9 Stunden: 30 Minuten, über 9 Stunden: 45 Minuten.' },
 { t: 'Berufsausbildung', q: 'Wie lange besteht Anspruch auf Entgeltfortzahlung bei unverschuldeter Krankheit?', o: ['bis zu 6 Wochen', 'bis zu 4 Wochen', 'bis zu 12 Wochen', 'bis zu 3 Monate'], a: 0, w: 'Danach zahlt die Krankenkasse Krankengeld.' },
 { t: 'Berufsausbildung', q: 'Wann ist ein Betriebliches Eingliederungsmanagement (BEM) fällig?', o: ['Bei mehr als 6 Wochen Krankheit (ununterbrochen oder wiederholt)', 'Bei jeder Krankmeldung', 'Erst nach 6 Monaten Krankheit', 'Nur bei Arbeitsunfällen'], a: 0, w: 'Prüfung, wie die Arbeitsunfähigkeit überwunden und der Arbeitsplatz erhalten werden kann.' },
 { t: 'Berufsausbildung', q: 'Welche Regelung gilt, wenn Einzelvertrag, Tarifvertrag und Betriebsvereinbarung Unterschiedliches bestimmen?', o: ['Die für den Arbeitnehmer günstigere (Günstigkeitsprinzip)', 'Immer der Tarifvertrag', 'Immer der Einzelvertrag', 'Die für den Arbeitgeber günstigere'], a: 0, w: 'Günstigkeitsprinzip.' },
@@ -2246,8 +2220,6 @@ tf('Berufsausbildung', 'Auszubildende sind für Berufsschule und Prüfungstage f
 { t: 'Kündigung', q: 'Welche Form verlangt § 623 BGB für eine Kündigung?', o: ['Schriftform, die elektronische Form ist ausgeschlossen', 'Mündlich reicht aus', 'E-Mail genügt', 'Beliebige Form mit Zeugen'], a: 0, w: 'Auch der Aufhebungsvertrag braucht Schriftform.' },
 { t: 'Kündigung', q: 'Wie lang ist die gesetzliche Grundkündigungsfrist?', o: ['4 Wochen zum 15. oder zum Monatsende', '1 Monat zum Quartalsende', '2 Wochen', '3 Monate zum Monatsende'], a: 0, w: '§ 622 Abs. 1 BGB.' },
 { t: 'Kündigung', q: 'Welche Frist gilt in einer vereinbarten Probezeit (höchstens 6 Monate) im normalen Arbeitsverhältnis?', o: ['2 Wochen', '4 Wochen', '1 Monat', 'keine Frist'], a: 0, w: '§ 622 Abs. 3 BGB. Nur bei Auszubildenden gilt in der Probezeit gar keine Frist.' },
-{ t: 'Kündigung', q: 'Der Arbeitgeber kündigt nach 10 Jahren Betriebszugehörigkeit. Welche Frist gilt?', o: ['4 Monate zum Monatsende', '2 Monate zum Monatsende', '3 Monate zum Monatsende', '4 Wochen'], a: 0, w: '2 J. = 1 Mon., 5 J. = 2, 8 J. = 3, 10 J. = 4, 12 J. = 5, 15 J. = 6, 20 J. = 7.' },
-{ t: 'Kündigung', q: 'Der Arbeitnehmer kündigt nach 10 Jahren selbst. Welche gesetzliche Frist gilt?', o: ['4 Wochen', '4 Monate', '3 Monate', '2 Wochen'], a: 0, w: 'Die verlängerten Fristen gelten nur für Kündigungen durch den Arbeitgeber.' },
 { t: 'Kündigung', q: 'Wann gilt der allgemeine Kündigungsschutz nach § 1 KSchG?', o: ['Wenn das Arbeitsverhältnis länger als 6 Monate besteht (und der Betrieb mehr als 10 Beschäftigte hat)', 'Ab dem ersten Tag', 'Erst nach 2 Jahren', 'Nur mit Betriebsrat'], a: 0, w: 'Mindestbeschäftigungszeit 6 Monate.' },
 { t: 'Kündigung', q: 'Wer genießt besonderen Kündigungsschutz?', o: ['Betriebsratsmitglieder, Schwerbehinderte, werdende Mütter, Auszubildende, Datenschutzbeauftragte', 'Abteilungsleiter und Prokuristen', 'Alle Teilzeitkräfte', 'Alle Beschäftigten mit mehr als 3 Jahren Betriebszugehörigkeit'], a: 0, w: 'So nennt es das Blatt „Kündigungen“.' },
 { t: 'Kündigung', q: 'Was muss in der Regel vor einer verhaltensbedingten Kündigung erfolgen?', o: ['Eine Abmahnung', 'Eine Sozialauswahl', 'Ein Aufhebungsvertrag', 'Eine Anhörung des Finanzamts'], a: 0, w: 'Die Abmahnung gibt Rüge, Dokumentation und Warnung.' },
@@ -2260,7 +2232,6 @@ tf('Berufsausbildung', 'Auszubildende sind für Berufsschule und Prüfungstage f
 { t: 'Kündigung', q: 'Wie viele Punkte gibt das Alter in der Sozialauswahl laut Punkteschema höchstens?', o: ['55', '70', '45', '100'], a: 0, w: '1 Punkt je Lebensjahr, höchstens 55.' },
 { t: 'Kündigung', q: 'Wie wird die Betriebszugehörigkeit im Punkteschema bewertet?', o: ['Bis 10 Jahre 1 Punkt je Jahr, ab dem 11. Jahr 2 Punkte je Jahr (max. 70)', '1 Punkt je Jahr, max. 55', '2 Punkte je Jahr', '5 Punkte je Jahr'], a: 0, w: 'Es werden nur Zeiten bis zum vollendeten 55. Lebensjahr berücksichtigt.' },
 { t: 'Kündigung', q: 'Wem wird in der Sozialauswahl nach Punkteschema gekündigt?', o: ['Wer die niedrigste Punktzahl hat', 'Wer die höchste Punktzahl hat', 'Wer zuletzt eingestellt wurde', 'Wer am häufigsten krank war'], a: 0, w: 'Die Kündigung soll den am wenigsten Schutzbedürftigen treffen.' },
-{ t: 'Kündigung', q: 'Sophie ist 34, 8 Jahre im Betrieb, verheiratet, kinderlos. Wie viele Punkte hat sie?', o: ['50', '42', '34', '58'], a: 0, w: '34 (Alter) + 8 (Betriebszugehörigkeit) + 8 (verheiratet) = 50.' },
 { t: 'Kündigung', q: 'Welche Funktion hat eine Abmahnung NICHT?', o: ['Sofortige Beendigung des Arbeitsverhältnisses', 'Rüge', 'Dokumentation', 'Warnung'], a: 0, w: 'Die Abmahnung beendet das Arbeitsverhältnis nicht, sie warnt vor der Kündigung.' },
 { t: 'Kündigung', q: 'Eine Arbeitnehmerin ist seit 5 Monaten im Betrieb und wird ohne Grund schriftlich gekündigt. Ist das zulässig?', o: ['Ja, das KSchG gilt noch nicht (Wartezeit 6 Monate)', 'Nein, jede Kündigung braucht einen Grund', 'Nein, sie ist alleinerziehend', 'Nur mit Zustimmung des Arbeitsgerichts'], a: 0, w: 'Form, Frist und Betriebsrat müssen stimmen, Diskriminierung (AGG) ist verboten.' },
 { t: 'Kündigung', q: 'Marcel wurde wegen eines Arbeitsschutzverstoßes abgemahnt und verstößt erneut gleichartig dagegen. Welche Kündigung ist möglich?', o: ['Verhaltensbedingt', 'Personenbedingt', 'Betriebsbedingt', 'Keine'], a: 0, w: 'Die einschlägige Abmahnung liegt vor.' },
@@ -2323,8 +2294,6 @@ D.self.wub = [
   m: 'Grundlage: <b>§ 11 BBiG</b>. Mindestinhalte, z. B.: Art, sachliche und zeitliche Gliederung und Ziel · Beginn und Dauer · Maßnahmen außerhalb der Ausbildungsstätte · tägliche Ausbildungszeit · <b>Probezeit</b> · Zahlung und Höhe der Vergütung · Urlaub · Kündigungsvoraussetzungen · Hinweise auf Tarifverträge/Betriebsvereinbarungen · Form des Ausbildungsnachweises. <i>1 P. Grundlage, je 1 P. für 2 Inhalte (max. 3).</i>' },
 { t: 'Berufsausbildung', pts: 4, q: 'Erkläre die Probezeit im Ausbildungsverhältnis: Dauer, Kündigung in der Probezeit und Kündigung nach der Probezeit.',
   m: '<b>Dauer:</b> mindestens 1, höchstens 4 Monate (§ 20 BBiG). <b>In der Probezeit:</b> von beiden Seiten jederzeit <b>ohne Kündigungsfrist</b> und ohne Grund, schriftlich (§ 22 Abs. 1). <b>Nach der Probezeit:</b> der Betrieb nur <b>fristlos aus wichtigem Grund</b> (binnen 2 Wochen ab Kenntnis), der Azubi mit <b>4 Wochen</b> Frist, wenn er die Ausbildung aufgibt oder den Beruf wechselt; schriftlich mit Angabe der Gründe (§ 22 Abs. 2 und 3). <i>1 P. Dauer, 1 P. Probezeit, 2 P. danach.</i>' },
-{ t: 'Berufsausbildung', pts: 4, q: 'Eine 17-jährige Auszubildende arbeitet 8 Stunden täglich. Welche Pause steht ihr zu, wie viele Urlaubstage hat sie, und wie viele Stunden Freizeit muss zwischen zwei Arbeitstagen liegen?',
-  m: 'Nach dem <b>Jugendarbeitsschutzgesetz</b>: Pause <b>60 Minuten</b> (bei mehr als 6 Stunden), <b>25 Urlaubstage</b> (unter 18 Jahren), mindestens <b>12 Stunden Freizeit</b> nach der Arbeit. Außerdem: 40-Stunden-Woche, 5-Tage-Woche, Arbeit nur zwischen 6 und 20 Uhr. <i>Je 1 P., 1 P. für die Nennung des Gesetzes oder weitere Regeln.</i>' },
 { t: 'Berufsausbildung', pts: 5, q: 'Notiere die wichtigsten Aspekte des Arbeitszeitgesetzes: werktägliche Arbeitszeit, maximale tägliche Arbeitszeit, Pause bei 8,5 Stunden, Mindest-Ruhezeit, Sonntagsarbeit.',
   m: 'Werktägliche Arbeitszeit <b>8 Stunden</b> · maximal <b>10 Stunden</b> täglich (bis 60 Std./Woche), wenn innerhalb von 6 Monaten im Schnitt 8 Stunden nicht überschritten werden · Pause bei 8,5 Stunden mindestens <b>30 Minuten</b> (mehr als 6 bis 9 Std.) · Mindest-Ruhezeit <b>11 Stunden</b> · Sonntagsarbeit grundsätzlich <b>verboten</b> (Ausnahmen z. B. Krankenhaus, Gastronomie). <i>Je 1 P.</i>' },
 { t: 'Kündigung', pts: 5, q: 'Fallaufgabe: Frau K. arbeitet seit 3 Jahren in einem Betrieb mit 40 Beschäftigten. Am 28.10. erhält sie per WhatsApp die Nachricht: „Du bist entlassen, weil du dreimal zu spät gekommen bist.“ Beurteile, ob die Kündigung wirksam ist (mit gesetzlicher Grundlage).',
@@ -2337,8 +2306,6 @@ D.self.wub = [
   m: '<b>Muss enthalten:</b> Betreff „Abmahnung“, Empfängerin mit Anschrift, Datum, Absender · <b>genaue Beschreibung</b> der drei Verspätungen mit Datum, Uhrzeit und Dauer (20 Min., 1 Std. 15 Min., 30 Min.) · die verletzte Pflicht (Arbeitsbeginn 07:00 Uhr) · <b>Rüge</b> und <b>Aufforderung</b>, künftig pünktlich zu sein · <b>Androhung</b> arbeitsrechtlicher Konsequenzen bis zur Kündigung bei Wiederholung · Hinweis auf <b>Personalakte</b> und Möglichkeit zur Stellungnahme · Unterschrift. Sachlich, ohne Beleidigungen, ohne die pünktlichen oder zu frühen Tage zu erwähnen. <i>Je 1 P. für: Form/Adressat, genaue Daten, verletzte Pflicht, Rüge/Aufforderung, Androhung, Personalakte/Unterschrift.</i>' },
 { t: 'Kündigung', pts: 4, q: 'Funktionen und Bestandteile einer Abmahnung: Nenne die drei Funktionen und vier Bestandteile.',
   m: '<b>Funktionen:</b> Rüge-, Dokumentations- (Hinweis-) und Warnfunktion. <b>Bestandteile:</b> genaue Beschreibung des Fehlverhaltens (Datum, Uhrzeit), verletzte Pflicht, Aufforderung zu vertragsgemäßem Verhalten, Androhung von Konsequenzen bis zur Kündigung, Aufnahme in die Personalakte, Unterschrift. <i>2 P. Funktionen, 2 P. Bestandteile.</i>' },
-{ t: 'Kündigung', pts: 6, q: 'Sozialauswahl: Führe sie mit dem Punkteschema (Alter 1 P. je Jahr, max. 55 · Betriebszugehörigkeit bis 10 Jahre 1 P., danach 2 P. je Jahr, max. 70, nur bis zum 55. Lebensjahr · Kind 4 P. · verheiratet 8 P.) für diese Personen durch: A) 40 Jahre, 12 Jahre im Betrieb, verheiratet, 1 Kind · B) 29 Jahre, 3 Jahre im Betrieb, ledig, keine Kinder · C) 52 Jahre, 20 Jahre im Betrieb, verheiratet, 2 Kinder. Wem wird gekündigt?',
-  m: '<b>A:</b> 40 + (10 + 2 · 2 = 14) + (8 + 4 = 12) = <b>66</b> · <b>B:</b> 29 + 3 + 0 = <b>32</b> · <b>C:</b> 52 + (10 + 2 · 10 = 30) + (8 + 8 = 16) = <b>98</b>. Gekündigt wird <b>B</b> mit der niedrigsten Punktzahl (32). <i>1 P. je richtig berechnete Person, 1 P. Ergebnis, 1 P. Begründung (am wenigsten schutzbedürftig, § 1 Abs. 3 KSchG).</i>' },
 { t: 'Kündigung', pts: 3, q: 'Eva T. (43 Jahre, verheiratet, 3 Kinder, 8 Jahre im Betrieb, zweimal über 8 Wochen krank, keine Besserung in Sicht) soll gekündigt werden. Welcher Kündigungsgrund liegt vor, gilt das KSchG, welche Frist gilt?',
   m: 'Grund: <b>personenbedingt</b> (Krankheit, § 1 Abs. 2 KSchG). Das KSchG ist <b>anwendbar</b> (8 Jahre, über 6 Monate). Kündigung möglich bei negativer Gesundheitsprognose und erheblicher Betriebsbelastung nach Interessenabwägung (BEM prüfen). Frist bei Kündigung durch den Arbeitgeber: <b>3 Monate zum Monatsende</b> (ab 8 Jahren). Schriftform und Betriebsrat nötig. <i>Je 1 P.: Grund, KSchG, Frist.</i>' },
 { t: 'Kündigung', pts: 3, q: 'Mehmet A. (59 Jahre, 28 Jahre im Betrieb, zufriedenstellende Leistungen, Probleme mit der Digitalisierung) soll gekündigt werden. Beurteile die Kündigung.',
@@ -3431,28 +3398,18 @@ D.cards.sud = [
 const mq = (t, q, ok, wrong, w) => ({ t, q, o: [ok].concat(wrong), a: 0, w });
 D.mc.sud = [
 /* --- Variablen & Operatoren --- */
-mq('Variablen & Operatoren', '<code>int a = 1, b = 3; double c = a / b;</code> Was steht danach in <code>c</code>?', '0.0', ['0.3333333333333333', '0.33', '1.0'], '<code>a / b</code> ist eine Ganzzahldivision (1 / 3 = 0), erst danach wird 0 in <code>double</code> umgewandelt. Erst <code>(double) a / b</code> ergäbe 0.333….'),
-mq('Variablen & Operatoren', 'Was liefert <code>10 % 3</code>?', '1', ['3', '0', '0.33'], 'Rest der Ganzzahldivision: 10 = 3 · 3 + 1.'),
 mq('Variablen & Operatoren', 'Welchen Datentyp hat der Ausdruck <code>\'j\'</code>?', 'char', ['String', 'int', 'boolean'], 'Einfache Hochkommas stehen für ein einzelnes Zeichen (<code>char</code>). <code>"j"</code> in doppelten Anführungszeichen wäre ein <code>String</code>.'),
 mq('Variablen & Operatoren', 'Welchen Datentyp hat der Ausdruck <code>"n"</code>?', 'String', ['char', 'int', 'Character'], 'Doppelte Anführungszeichen ergeben immer einen <code>String</code>, auch bei nur einem Zeichen.'),
-mq('Variablen & Operatoren', 'Was steht nach <code>int a = 5; a += 3;</code> in <code>a</code>?', '8', ['53', '3', '15'], '<code>a += 3</code> ist <code>a = a + 3</code>, also 8.'),
 mq('Variablen & Operatoren', 'Welche Zeile ist in Java richtig?', '<code>ergebnis = 45 * 4.5;</code>', ['<code>45 * 4.5 = ergebnis;</code>', '<code>ergebnis == 45 * 4.5;</code>', '<code>45 * 4.5 -&gt; ergebnis;</code>'], 'Links steht die Variable, die den Wert bekommt. <code>=</code> weist zu, <code>==</code> vergleicht.'),
 mq('Variablen & Operatoren', 'Was steht nach <code>String s = "Hallo "; s += "Bob!";</code> in <code>s</code>?', 'Hallo Bob!', ['Hallo', 'Bob!', 'Hallo + Bob!'], '<code>+=</code> hängt bei Strings an.'),
-mq('Variablen & Operatoren', 'Was gibt <code>System.out.println(1 + 2 + "x" + 1 + 2);</code> aus?', '3x12', ['12x12', '3x3', 'x312'], 'Links nach rechts: 1 + 2 = 3 (noch Zahlen), dann kommt der Text, ab da wird alles angehängt: 3, x, 1, 2.'),
 mq('Variablen & Operatoren', 'Was passiert bei <code>int x = 3.5;</code>?', 'Compilerfehler (lossy conversion)', ['x ist 3', 'x ist 4', 'x ist 3.5'], 'Ein <code>double</code> passt nicht ohne Cast in einen <code>int</code>. Mit <code>(int) 3.5</code> wäre es erlaubt und ergäbe 3.'),
-mq('Variablen & Operatoren', 'Was ergibt <code>(int) 7.9</code>?', '7', ['8', '7.9', '7.0'], 'Der Cast schneidet die Nachkommastellen ab, er rundet nicht.'),
-mq('Variablen & Operatoren', 'Was ergibt <code>Math.round(2.5)</code>?', '3', ['2', '2.5', '3.0'], '<code>Math.round</code> rundet kaufmännisch (ab ,5 aufwärts) und liefert eine ganze Zahl.'),
-mq('Variablen & Operatoren', 'Was ergibt <code>\'a\' + 1</code> (ohne Cast)?', '98 (int)', ['b (char)', 'a1 (String)', 'Compilerfehler'], '<code>char</code> rechnet mit dem Zeichencode (a = 97). Das Ergebnis ist ein <code>int</code>. Erst <code>(char) (\'a\' + 1)</code> ergibt <code>b</code>.'),
-mq('Variablen & Operatoren', 'Werte nach <code>int a = 5; int b = a++;</code>?', 'a = 6, b = 5', ['a = 6, b = 6', 'a = 5, b = 5', 'a = 5, b = 6'], 'Postfix: <code>a++</code> liefert erst den alten Wert (5) und erhöht danach a auf 6.'),
 mq('Variablen & Operatoren', 'Wie vergleicht man zwei Strings auf gleichen Inhalt?', '<code>s1.equals(s2)</code>', ['<code>s1 == s2</code>', '<code>s1.isEqual(s2)</code>', '<code>s1 = s2</code>'], '<code>equals</code> vergleicht den Inhalt. <code>==</code> prüft die Referenz, <code>isEqual</code> gibt es nicht, <code>=</code> ist die Zuweisung.'),
-mq('Variablen & Operatoren', 'Wie bekommt man die letzte Ziffer von 2345?', '<code>2345 % 10</code>', ['<code>2345 / 10</code>', '<code>2345 % 2</code>', '<code>2345 / 5</code>'], '<code>% 10</code> liefert den Rest und damit die Einerstelle (5). <code>/ 10</code> würde sie abschneiden (234).'),
 mq('Variablen & Operatoren', 'Welche drei Dinge passieren bei der Deklaration einer Variablen?', 'Speicher reservieren, Datentyp festlegen, Namen vergeben', ['Wert zuweisen, Speicher freigeben, Typ ändern', 'Namen löschen, Wert berechnen, Typ prüfen', 'Variable ausgeben, Wert kopieren, Namen ändern'], 'Bei <code>int alter;</code> wird Speicher reserviert, der Typ <code>int</code> festgelegt und der Name <code>alter</code> vergeben.'),
 tf('Variablen & Operatoren', 'Eine Variable muss einmal deklariert werden und kann danach beliebig oft verwendet werden.', true, 'Deklarieren: einmal pro Gültigkeitsbereich. Lesen und Überschreiben: beliebig oft.'),
 tf('Variablen & Operatoren', 'Der Datentyp <code>int</code> kann Nachkommastellen speichern.', false, '<code>int</code> speichert nur ganze Zahlen. Für Kommazahlen nimmt man <code>double</code>.'),
 mq('Variablen & Operatoren', 'Was liefert <code>sc.nextLine()</code> direkt nach <code>sc.nextInt()</code>, wenn man <code>5</code> und Enter eingegeben hat?', 'einen leeren String (Rest der Zeile)', ['die Zahl 5', 'null', 'die nächste eingegebene Zeile'], '<code>nextInt()</code> lässt den Zeilenumbruch im Puffer, <code>nextLine()</code> liest diesen leeren Rest. Abhilfe: einmal <code>nextLine()</code> dazwischen aufrufen.'),
 mq('Variablen & Operatoren', 'Was passiert bei <code>Integer.parseInt("3,5")</code>?', 'NumberFormatException', ['Ergebnis 3', 'Ergebnis 3.5', 'Ergebnis 35'], 'Der Text ist keine gültige ganze Zahl. Auch Kommazahlen müssen mit <b>Punkt</b> geschrieben sein, und bei <code>int</code> sind sie gar nicht erlaubt.'),
 tf('Variablen & Operatoren', 'Jede positive ungerade Zahl ergibt bei <code>% 2</code> den Rest 1.', true, 'Gerade Zahlen ergeben 0, ungerade 1. So prüft man auf gerade: <code>n % 2 == 0</code>.'),
-mq('Variablen & Operatoren', 'Was gibt <code>System.out.println((double) (10 / 4));</code> aus?', '2.0', ['2.5', '2', '3.0'], 'Die Klammer wird zuerst berechnet: <code>10 / 4</code> ist eine <code>int</code>-Division = 2. Der Cast kommt zu spät, 2 wird zu 2.0.'),
 tf('Variablen & Operatoren', '<code>"Abc".equals("abc")</code> ergibt <code>true</code>.', false, '<code>equals</code> beachtet Groß- und Kleinschreibung. <code>equalsIgnoreCase</code> würde <code>true</code> liefern.'),
 mq('Variablen & Operatoren', 'Was passiert bei <code>final int MAX = 5; MAX = 6;</code>?', 'Compilerfehler: final darf nicht neu zugewiesen werden', ['MAX ist danach 6', 'MAX ist danach 11', 'Laufzeitfehler'], '<code>final</code> macht aus der Variablen eine Konstante.'),
 mq('Variablen & Operatoren', 'Was bewirkt <code>\\n</code> in einem Text?', 'Zeilenumbruch', ['Tabulator', 'Leerzeichen', 'Textende'], '<code>\\t</code> ist der Tabulator, <code>\\"</code> ein Anführungszeichen im Text, <code>\\\\</code> ein Backslash.'),
@@ -3460,22 +3417,17 @@ mq('Variablen & Operatoren', 'Was bewirkt <code>\\n</code> in einem Text?', 'Zei
 mq('Verzweigungen', 'Was passiert, wenn in einem <code>switch</code> das <code>break</code> fehlt?', 'Die folgenden Fälle laufen mit (Fall-through)', ['Compilerfehler', 'Nur der erste Fall läuft', 'Das Programm endet'], 'Ohne <code>break</code> geht es im nächsten <code>case</code> weiter, bis ein <code>break</code> kommt oder der switch endet.'),
 mq('Verzweigungen', 'Welche Typen sind in <code>switch (…)</code> erlaubt?', '<code>int</code>, <code>char</code>, <code>String</code>', ['<code>long</code>, <code>double</code>, <code>boolean</code>', '<code>float</code> und <code>double</code>', 'nur <code>int</code>'], 'Erlaubt: <code>byte, short, char, int, String, enum</code>. Nicht erlaubt: <code>long, float, double, boolean</code>.'),
 mq('Verzweigungen', 'Was passiert bei <code>int x = 3; if (x = 5) { … }</code>?', 'Compilerfehler (int ist kein boolean)', ['Bedingung ist wahr', 'Bedingung ist falsch', 'x wird verglichen'], 'Ein einzelnes <code>=</code> weist zu und liefert hier einen <code>int</code>. Eine Bedingung braucht <code>boolean</code>, also <code>x == 5</code>.'),
-mq('Verzweigungen', 'Was ergibt <code>true || false &amp;&amp; false</code>?', 'true', ['false', 'Compilerfehler', 'null'], '<code>&amp;&amp;</code> bindet stärker als <code>||</code>: <code>false &amp;&amp; false</code> ist false, dann <code>true || false</code> ist true.'),
 mq('Verzweigungen', 'Was ergibt <code>a != 0 &amp;&amp; 10 / a &gt; 1</code> bei <code>a = 0</code>?', '<code>false</code>, ohne Fehler', ['ArithmeticException', '<code>true</code>', 'Compilerfehler'], 'Kurzschluss: Die linke Seite ist schon falsch, die rechte (Division durch 0) wird gar nicht ausgewertet.'),
 mq('Verzweigungen', 'Ein Wert soll auf 10 verschiedene Fälle geprüft werden (ohne switch). Wie sieht die Kette aus?', '1 × if, 8 × else if, 1 × else', ['10 × if und 10 × else', '9 × if und 1 × switch', '1 × if und 9 × else'], 'Eine Kette: erster Fall mit <code>if</code>, die mittleren mit <code>else if</code>, der Rest mit <code>else</code>.'),
 mq('Verzweigungen', 'Darf man <code>default</code> im switch weglassen?', 'Ja, nicht aufgeführte Werte bewirken dann nichts', ['Nein, Compilerfehler', 'Ja, aber dann stürzt das Programm bei anderen Werten ab', 'Nein, es wird automatisch ergänzt'], '<code>default</code> ist optional. Man sollte sich der Folge bewusst sein.'),
 mq('Verzweigungen', 'Wann ist <code>switch</code> ungeeignet?', 'bei Bereichen wie <code>bmi &lt; 25</code>', ['bei einer Menüauswahl 1 bis 4', 'bei einer Wochentagsnummer', 'bei einem <code>char</code>-Wert'], '<code>case</code> vergleicht nur mit festen Werten, nicht mit Bereichen.'),
-mq('Verzweigungen', `Was passiert bei <code>bmi = 40</code>?${J(`double bmi = 40;\nif (bmi < 25) {\n    // A\n} else if (bmi < 40) {\n    // B\n} else if (bmi > 40) {\n    // C\n}`, 'main')}`, 'Kein Zweig wird ausgeführt', ['Zweig B', 'Zweig C', 'Compilerfehler'], '40 ist weder kleiner als 40 noch größer als 40. Solche Lücken vermeidet man mit <code>else</code> oder <code>&gt;=</code>.'),
 tf('Verzweigungen', 'Mit <code>==</code> vergleicht man bei Strings zuverlässig den Inhalt.', false, '<code>==</code> prüft, ob es dasselbe Objekt ist. Für den Inhalt <code>equals</code> verwenden.'),
 mq('Verzweigungen', 'Was macht der Operator <code>!</code>?', 'Er kehrt einen Wahrheitswert um', ['Er vergleicht auf Ungleichheit', 'Er multipliziert', 'Er beendet das Programm'], '<code>!true</code> ist <code>false</code>. Ungleichheit prüft man mit <code>!=</code>.'),
-mq('Verzweigungen', `Welche Ausgabe entsteht bei <code>x = 12</code>?${J(`int x = 12;\nif (x > 10) {\n    System.out.println("A");\n} else if (x > 5) {\n    System.out.println("B");\n}`, 'main')}`, 'nur A', ['A und B', 'nur B', 'keine'], 'Bei einer else-if-Kette läuft nur der erste zutreffende Zweig.'),
 mq('Verzweigungen', `Was gibt das Programm aus?${J(`int x = 3;\nif (x == 5);\n{\n    System.out.println("ja");\n}`, 'main')}`, 'ja', ['nichts', 'Compilerfehler', 'nein'], 'Der Strichpunkt direkt hinter der Bedingung ist ein leerer Rumpf. Der folgende Block ist ein ganz normaler Block und läuft immer.'),
 mq('Verzweigungen', 'Warum verschachtelt man Verzweigungen häufig, statt viele nacheinander zu schreiben?', 'Es werden weniger Bedingungen geprüft (früher Abbruch)', ['Es läuft immer schneller um den Faktor 10', 'Der Compiler verlangt es', 'Es spart Variablen'], 'Ist die äußere Bedingung falsch, werden die inneren nicht mehr geprüft. Das spart Prüfungen und ist übersichtlicher.'),
 /* --- Schleifen --- */
 mq('Schleifen', 'Was unterscheidet eine fußgesteuerte von einer kopfgesteuerten Schleife?', 'Der Rumpf läuft mindestens einmal (Bedingung am Ende)', ['Sie läuft immer endlos', 'Sie hat keinen Zähler', 'Die Bedingung wird nie geprüft'], 'Fußgesteuert (<code>do-while</code>) prüft nach dem Durchlauf. Kopfgesteuerte Schleifen können 0-mal laufen.'),
-mq('Schleifen', `Was gibt das Programm aus?${J(`int i = 10;\ndo {\n    i++;\n} while (i < 5);\nSystem.out.println(i);`, 'main')}`, '11', ['10', '5', '6'], 'Der Rumpf läuft einmal (i wird 11), erst danach wird <code>11 &lt; 5</code> geprüft (falsch).'),
 mq('Schleifen', 'Ist die <code>for</code>-Schleife kopf- oder fußgesteuert?', 'kopfgesteuert', ['fußgesteuert', 'beides', 'keins von beiden'], 'Die Bedingung wird vor jedem Durchlauf geprüft. Das Hochzählen am Ende macht sie nicht zur fußgesteuerten Schleife.'),
-mq('Schleifen', 'Wie oft läuft der Rumpf von <code>for (int i = 2; i &lt;= 6; i++)</code>?', '5-mal', ['4-mal', '6-mal', '7-mal'], 'i nimmt die Werte 2, 3, 4, 5, 6 an (bei <code>&lt;=</code> zählt die 6 mit).'),
 mq('Schleifen', `Was passiert in der letzten Zeile?${J(`for (int i = 0; i < 3; i++) {\n}\nSystem.out.println(i);`, 'skip')}`, 'Compilerfehler: i ist hier unbekannt', ['Ausgabe 3', 'Ausgabe 0', 'Ausgabe null'], 'Eine im <code>for</code>-Kopf deklarierte Variable gilt nur in der Schleife.'),
 mq('Schleifen', 'Was bewirken <code>break</code> und <code>continue</code>?', '<code>break</code> beendet die Schleife, <code>continue</code> springt zum nächsten Durchlauf', ['<code>break</code> pausiert, <code>continue</code> beendet', 'beide beenden das Programm', '<code>break</code> startet neu, <code>continue</code> beendet'], '<code>break</code> verlässt die Schleife sofort. <code>continue</code> überspringt den Rest des aktuellen Durchlaufs.'),
 mq('Schleifen', `Was ist hier das Problem?${J(`int i = 0;\nwhile (i < 3) {\n    System.out.println(i);\n}`, 'main')}`, 'Endlosschleife: i wird nie erhöht', ['Compilerfehler', 'Die Schleife läuft nie', 'Sie gibt 0, 1, 2 aus'], 'Die Bedingung <code>i &lt; 3</code> bleibt immer wahr, weil im Rumpf kein <code>i++</code> steht.'),
@@ -3484,18 +3436,13 @@ mq('Schleifen', 'Welche zwei Anweisungen bilden im Rumpf die Quersumme?', '<code
 mq('Schleifen', 'Wie heißt der Überbegriff für Verzweigungen und Schleifen?', 'Kontrollstrukturen', ['Datenstrukturen', 'Operatoren', 'Methoden'], 'Kontrollstrukturen steuern den Ablauf des Programms.'),
 tf('Schleifen', 'Für den Primzahltest genügt es, Teiler bis zur Wurzel der Zahl zu prüfen.', true, 'Jeder Teiler größer als √n hat einen Partner kleiner als √n.'),
 tf('Schleifen', 'Die Zahl 1 ist eine Primzahl.', false, '1 ist keine Primzahl. Ein Programm, dessen Schleife bei 1 gar nicht läuft, meldet sie fälschlich als Primzahl, deshalb braucht man einen Sonderfall.'),
-mq('Schleifen', `Was gibt das Programm aus?${J(`int n = 20;\nint steps = 0;\nwhile (n > 1) {\n    n = n / 2;\n    steps++;\n}\nSystem.out.println(steps);`, 'main')}`, '4', ['5', '3', '10'], 'n: 20 → 10 → 5 → 2 → 1, das sind 4 Schritte (jeweils ganzzahlig halbiert).'),
 mq('Schleifen', 'Was gehört zur Schleife, wenn man die geschweiften Klammern weglässt?', 'nur die erste Anweisung danach', ['alle folgenden Anweisungen', 'keine', 'die ganze Methode'], 'Ohne <code>{ }</code> endet der Rumpf nach der ersten Anweisung.'),
-mq('Schleifen', `Was gibt das Programm aus?${J(`int count = 0;\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 4; j++) {\n        count++;\n    }\n}\nSystem.out.println(count);`, 'main')}`, '12', ['7', '3', '4'], 'Außen 3 Runden, innen jedes Mal 4: 3 · 4 = 12.'),
 mq('Schleifen', 'Was passiert bei <code>sc.nextInt()</code>, wenn der Benutzer <code>abc</code> eingibt?', 'InputMismatchException', ['NumberFormatException', 'der Wert 0', 'der Wert −1'], 'Der Scanner kann den Text nicht als <code>int</code> lesen. Mit <code>hasNextInt()</code> kann man vorher prüfen. <code>NumberFormatException</code> gäbe es bei <code>Integer.parseInt("abc")</code>.'),
 /* --- Testen --- */
 mq('Testen', 'Was ist ein Black-Box-Test?', 'Verhalten über Ein- und Ausgabe prüfen, ohne den Quelltext zu betrachten', ['Jede Zeile des Quelltexts einzeln lesen', 'Nur den Compiler laufen lassen', 'Das Programm ohne Eingabe starten'], 'Man vergleicht erwartete und tatsächliche Ausgabe. Wie das Programm innen arbeitet, spielt keine Rolle.'),
-mq('Testen', 'Bei „Rabatt ab 500 Stück“: Welche Mengen sind die wichtigsten Grenzwerte?', '499 und 500', ['100 und 200', '501 und 502', '0 und 1'], 'Fehler wie <code>&gt;</code> statt <code>&gt;=</code> zeigen sich nur an der Grenze (500).'),
 tf('Testen', 'Der erwartete Wert eines Testfalls wird aus der Spezifikation berechnet, nicht aus dem Programm abgeschrieben.', true, 'Sonst bestätigt der Test nur den Fehler des Programms.'),
 mq('Testen', 'Was unterscheidet White-Box von Black-Box?', 'Bei White-Box ist der Quelltext bekannt und wird gezielt geprüft', ['White-Box testet nur die Oberfläche', 'White-Box braucht keine Testdaten', 'Es gibt keinen Unterschied'], 'Black-Box: nur Ein- und Ausgabe. White-Box: Zweige und Pfade im Code.'),
 tf('Testen', 'Zu einem guten Test gehören auch ungültige Eingaben wie Kategorie „x“ oder eine negative Menge.', true, 'Das Programm soll nachfragen oder die Eingabe ablehnen und nicht abstürzen.'),
-mq('Testen', `Zahnbürsten: Menge 100, Kategorie w, Griff g. Wie hoch ist der erwartete Preis?<div class="muted">2,50 € je Stück; w mit n oder g: −1 %.</div>`, '247,50 €', ['250,00 €', '237,50 €', '262,50 €'], '100 · 2,50 € = 250 €, davon 1 % abziehen: 250 · 0,99 = 247,50 €.'),
-mq('Testen', `Zahnbürsten: Menge 500, Kategorie m, Griff n. Erwarteter Preis?<div class="muted">Ab 500 Stück −5 %; für m mit n gibt es keinen weiteren Zu- oder Abschlag.</div>`, '1.187,50 €', ['1.250,00 €', '1.312,50 €', '1.125,00 €'], '500 · 2,50 € = 1.250 €, −5 % → 1.250 · 0,95 = 1.187,50 €.'),
 /* --- Methoden --- */
 mq('Methoden', 'Wofür sind Methoden gut?', 'Wiederholungen vermeiden und Code strukturieren', ['Der Code läuft dadurch immer schneller', 'Variablen werden automatisch global', 'Der Compiler verlangt eine pro Programm'], 'Eine Methode schreibt man einmal und ruft sie beliebig oft auf (DRY, Wartbarkeit, Übersicht).'),
 mq('Methoden', 'Was ist der Unterschied zwischen Parameter und Argument?', 'Parameter stehen in der Definition, Argumente sind die Werte beim Aufruf', ['Beides ist dasselbe', 'Parameter sind Werte, Argumente sind Variablen', 'Argumente stehen nur in <code>main</code>'], 'Bei <code>add(1, 2)</code> sind 1 und 2 Argumente. In <code>int add(int a, int b)</code> sind <code>a</code> und <code>b</code> Parameter.'),
@@ -3503,9 +3450,6 @@ mq('Methoden', 'Welcher Rückgabetyp passt zu „Methode prüft, ob ein Text mit
 mq('Methoden', 'Welche Signatur passt zu <code>char buchstabe = antwortEinlesen("Ja oder Nein: ");</code>?', '<code>static char antwortEinlesen(String text)</code>', ['<code>static String antwortEinlesen(char text)</code>', '<code>static void antwortEinlesen(String text)</code>', '<code>static char antwortEinlesen(char text)</code>'], 'Das Ergebnis wird einer <code>char</code>-Variablen zugewiesen (Rückgabetyp <code>char</code>), das Argument ist ein Text (Parameter <code>String</code>).'),
 mq('Methoden', 'Woran erkennt der Compiler überladene Methoden?', 'an Anzahl, Typen und Reihenfolge der Parameter', ['am Rückgabetyp', 'an der Klasse', 'an den Parameternamen'], 'Rückgabetyp und Parameternamen zählen nicht.'),
 tf('Methoden', 'Zwei Methoden, die sich nur im Rückgabetyp unterscheiden, sind gültige Überladungen.', false, 'Das ist ein Compilerfehler (<i>method is already defined</i>), denn der Aufruf wäre nicht eindeutig.'),
-mq('Methoden', `Was gibt das Programm aus?${J(`static void f(int x) { System.out.println("int"); }\nstatic void f(double x) { System.out.println("double"); }\n\npublic static void main(String[] args) {\n    f('a');\n}`, 'class')}`, 'int', ['double', 'char', 'Compilerfehler'], 'Es gibt keine <code>f(char)</code>. <code>char</code> wird zu <code>int</code> erweitert, und <code>int</code> ist die nächste passende Variante.'),
-mq('Methoden', `Was gibt <code>main</code> aus?${J(`static void inc(int x) {\n    x = x + 5;\n}\n\npublic static void main(String[] args) {\n    int n = 7;\n    inc(n);\n    System.out.println(n);\n}`, 'class')}`, '7', ['12', '5', '0'], 'call-by-value: Die Methode ändert nur ihre Kopie. n bleibt 7.'),
-mq('Methoden', `Was gibt <code>main</code> aus?${J(`static void fill(int[] a) {\n    a[0] = 99;\n}\n\npublic static void main(String[] args) {\n    int[] arr = {1, 2, 3};\n    fill(arr);\n    System.out.println(arr[0]);\n}`, 'class')}`, '99', ['1', '0', 'Compilerfehler'], 'Bei Arrays wird die Referenz kopiert. Beide zeigen auf dasselbe Array, die Änderung ist auch in <code>main</code> sichtbar.'),
 mq('Methoden', 'Was passiert, wenn eine Methode eine in <code>main</code> deklarierte Variable benutzt?', 'Compilerfehler: falscher Gültigkeitsbereich (Scope)', ['Es funktioniert, Variablen sind überall bekannt', 'Der Wert wird automatisch kopiert', 'Laufzeitfehler'], 'Lokale Variablen gelten nur in ihrem Block. Man übergibt sie als Parameter.'),
 mq('Methoden', 'Wie sollte ein Methodenname beginnen?', 'mit einem Kleinbuchstaben (camelCase)', ['mit einem Großbuchstaben', 'mit einer Ziffer', 'mit einem Unterstrich und Großbuchstaben'], 'Methoden und Variablen schreibt man in camelCase, Klassen beginnen groß.'),
 mq('Methoden', 'Was bedeutet der Rückgabetyp <code>void</code>?', 'Die Methode liefert kein Ergebnis zurück', ['Die Methode liefert 0', 'Die Methode hat keine Parameter', 'Die Methode darf nicht aufgerufen werden'], 'Dann ist die Methode nur für ihre Wirkung da (z. B. Ausgabe).'),
@@ -3515,25 +3459,17 @@ mq('Methoden', 'Warum soll eine Methode nur eine Aufgabe haben?', 'Übersicht, W
 mq('Methoden', 'Was passiert bei <code>f(1)</code>, wenn nur <code>static void f(int a, int b)</code> existiert?', 'Compilerfehler: falsche Anzahl der Argumente', ['b ist automatisch 0', 'Laufzeitfehler', 'Die Methode läuft mit b = null'], 'Anzahl und Typen der Argumente müssen zu einer Signatur passen.'),
 /* --- Arrays --- */
 mq('Arrays', 'Welche Werte stehen nach <code>int[] a = new int[3];</code> im Array?', '0, 0, 0', ['null, null, null', 'leer', 'zufällige Werte'], 'Zahlen-Arrays werden mit 0 gefüllt, <code>boolean</code> mit false, Referenztypen mit <code>null</code>.'),
-mq('Arrays', 'Was ist der höchste gültige Index bei <code>new int[5]</code>?', '4', ['5', '6', '1'], 'Der Index beginnt bei 0, also 0 bis 4.'),
-mq('Arrays', 'Was passiert bei <code>int[] a = new int[5]; a[5] = 1;</code>?', 'ArrayIndexOutOfBoundsException zur Laufzeit', ['Compilerfehler', 'Das Array wird automatisch größer', 'a[5] wird ignoriert'], 'Index 5 liegt hinter dem letzten Element (Index 4). Der Compiler erkennt das nicht, erst das laufende Programm.'),
 mq('Arrays', 'Wie bekommt man die Länge eines Arrays <code>a</code>?', '<code>a.length</code>', ['<code>a.length()</code>', '<code>a.size()</code>', '<code>len(a)</code>'], 'Bei Arrays ist <code>length</code> ein Attribut ohne Klammern. Bei Strings ist <code>length()</code> eine Methode.'),
 tf('Arrays', 'Bei Arrays schreibt man <code>length</code> ohne Klammern, bei Strings <code>length()</code> mit Klammern.', true, '<code>a.length</code> für Arrays, <code>s.length()</code> für Strings.'),
-mq('Arrays', `Was ist danach <code>a[0]</code>?${J(`int[] a = {3, 1, 2};\nint[] b = a;\nb[0] = 9;`, 'main')}`, '9', ['3', '0', '1'], '<code>b = a</code> kopiert nur die Referenz. Beide Namen zeigen auf dasselbe Array.'),
 mq('Arrays', 'Was prüft <code>a == b</code> bei zwei Arrays?', 'ob beide dasselbe Array (dieselbe Referenz) sind', ['ob alle Elemente gleich sind', 'ob die Längen gleich sind', 'ob beide sortiert sind'], 'Für den Inhalt nimmt man <code>Arrays.equals(a, b)</code>.'),
 mq('Arrays', 'Welcher Wert steht nach <code>new String[2]</code> in den Elementen?', 'null', ['""', '0', 'false'], 'Referenztypen sind ohne Zuweisung <code>null</code>.'),
-mq('Arrays', `Was gilt für <code>a</code> danach?${J(`int[] a = {1, 2, 3};\nfor (int v : a) {\n    v = v * 2;\n}`, 'main')}`, 'unverändert {1, 2, 3}', ['{2, 4, 6}', '{1, 2, 3} mit Fehler', '{0, 0, 0}'], '<code>v</code> ist eine Kopie des Elements. Zum Ändern braucht man <code>a[i] = a[i] * 2;</code>.'),
-mq('Arrays', 'Was ergibt <code>(a[0] + a[1]) / a.length</code> bei <code>int[] a = {2, 3}</code>?', '2 (Ganzzahldivision)', ['2.5', '3', '5'], '<code>(2 + 3) / 2</code> sind zwei <code>int</code>, also 5 / 2 = 2. Für 2.5: <code>(double) (a[0] + a[1]) / a.length</code>.'),
-mq('Arrays', 'Wie ist <code>new int[3][4]</code> aufgebaut?', '3 Zeilen und 4 Spalten', ['4 Zeilen und 3 Spalten', '12 Zeilen und 1 Spalte', '7 Elemente'], 'Der erste Index ist die Zeile, der zweite die Spalte. <code>m.length</code> = 3, <code>m[0].length</code> = 4.'),
 mq('Arrays', 'Kann man die Größe eines Arrays nachträglich ändern?', 'Nein, man erzeugt ein neues Array oder nimmt eine ArrayList', ['Ja, mit <code>a.length = 10;</code>', 'Ja, mit <code>a.add()</code>', 'Ja, mit <code>a.resize(10)</code>'], 'Die Länge ist fest. <code>Arrays.copyOf(a, neueLaenge)</code> erzeugt ein neues Array.'),
 mq('Arrays', 'Was gibt <code>System.out.println(a)</code> bei <code>int[] a = {1, 2}</code> aus?', 'eine Referenz wie <code>[I@1b6d3586</code>', ['<code>[1, 2]</code>', '<code>1 2</code>', 'Compilerfehler'], 'Für die Elemente nimmt man <code>Arrays.toString(a)</code>.'),
 mq('Arrays', 'Welche Anweisungen vertauschen <code>a[0]</code> und <code>a[1]</code> richtig?', '<code>int t = a[0]; a[0] = a[1]; a[1] = t;</code>', ['<code>a[0] = a[1]; a[1] = a[0];</code>', '<code>a[0] = a[0] + a[1];</code>', '<code>int t = a[0]; a[1] = t;</code>'], 'Ohne Hilfsvariable geht der erste Wert verloren: Nach <code>a[0] = a[1];</code> steht in beiden dasselbe.'),
 mq('Arrays', 'Womit startet man die Suche nach dem Maximum in <code>int[] a</code>?', '<code>int max = a[0];</code>', ['<code>int max = 0;</code>', '<code>int max = a.length;</code>', '<code>int max = -1;</code>'], 'Mit dem ersten Element funktioniert es auch, wenn alle Werte negativ sind.'),
 mq('Arrays', 'Welche Schleifenbedingung durchläuft ein Array <code>a</code> richtig?', '<code>i &lt; a.length</code>', ['<code>i &lt;= a.length</code>', '<code>i &lt; a.length - 2</code>', '<code>i &lt;= a.length - 2</code>'], 'Gültig sind die Indizes 0 bis <code>length − 1</code>. <code>&lt;=</code> endet in einer <code>ArrayIndexOutOfBoundsException</code>.'),
-mq('Arrays', 'Was ist <code>a[0]</code> nach <code>int[] a = {5, 2, 9, 1}; Arrays.sort(a);</code>?', '1', ['5', '9', '2'], '<code>Arrays.sort</code> sortiert aufsteigend: {1, 2, 5, 9}.'),
 mq('Arrays', 'Was passiert bei <code>int[] a; a[0] = 1;</code>?', 'Compilerfehler: Variable ist nicht initialisiert', ['a[0] wird auf 1 gesetzt', 'ArrayIndexOutOfBoundsException', 'Das Array hat automatisch Länge 1'], 'Die Variable zeigt noch auf kein Array. Erst <code>a = new int[…]</code> erzeugt eines.'),
 mq('Arrays', 'Welche Zeile ist als Array-Erzeugung gültig?', '<code>int[] a = {1, 2, 3};</code>', ['<code>int[] a = new int[3]{1, 2, 3};</code>', '<code>int a[] = new int[];</code>', '<code>int[3] a;</code>'], 'Entweder die Größe angeben (<code>new int[3]</code>) oder die Werte (<code>{1, 2, 3}</code>), nicht beides.'),
-mq('Arrays', 'Wie viele Elemente hat <code>"Hallo".toCharArray()</code>?', '5', ['4', '6', '1'], 'Für jedes Zeichen ein Element: H, a, l, l, o.'),
 /* --- LS07: Sortieren --- */
 mq('Sortieren', 'Was gilt nach dem <b>ersten Durchlauf</b> von Bubblesort (aufsteigend)?', 'Das größte Element steht ganz rechts.', ['Das kleinste Element steht ganz links.', 'Das Array ist zur Hälfte sortiert.', 'Die ersten beiden Elemente sind sortiert.'], 'Das größte Element wird bei jedem Vergleich weitergetauscht und „blubbert“ ans Ende.'),
 mq('Sortieren', 'Welches Verfahren sucht in jedem Durchlauf das <b>Minimum</b> des unsortierten Teils und tauscht es nach vorne?', 'Selectionsort', ['Bubblesort', 'Insertionsort', 'Quicksort'], 'Selectionsort = Sortieren durch Auswahl (des Minimums), mit <code>minPos</code>.'),
@@ -3553,18 +3489,10 @@ mq('Rekursion & Quicksort', 'Was gibt <code>zaehle(3)</code> aus?<pre class="cod
 ];
 /* ======================= SUD – FREITEXTAUFGABEN (Selbstbewertung) ======================= */
 D.self.sud = [
-{ t: 'Variablen & Operatoren', pts: 3, q: 'Erkläre den Unterschied zwischen <code>10 / 4</code> und <code>(double) 10 / 4</code> und nenne jeweils das Ergebnis.',
-  m: '<code>10 / 4</code>: beide Operanden sind <code>int</code>, es wird <b>ganzzahlig</b> geteilt, die Nachkommastellen entfallen: <b>2</b>. <code>(double) 10 / 4</code>: der Cast macht die 10 zu <code>double</code>, damit wird als Kommazahl gerechnet: <b>2.5</b>. Wird erst die Klammer berechnet, <code>(double) (10 / 4)</code>, ist das Ergebnis wieder 2.0. <i>1 P. ganzzahlige Division mit Ergebnis 2, 1 P. Cast mit Ergebnis 2.5, 1 P. Begründung (Typ der Operanden).</i>' },
 { t: 'Variablen & Operatoren', pts: 3, q: 'Deklariere passende Variablen (mit Initialisierung) für: das Alter einer Person, den Preis eines Artikels, den Anfangsbuchstaben eines Namens und einen Ja/Nein-Wert „ist schulpflichtig“. Erhöhe danach das Alter um 1 und hänge an einen Namen <code>"Max"</code> ein Leerzeichen und <code>"Muster"</code> an.',
   m: `${J(`int alter = 17;\ndouble preis = 2.99;\nchar anfangsbuchstabe = 'M';\nboolean istSchulpflichtig = true;\n\nalter = alter + 1;            // oder alter++;\n\nString name = "Max";\nname = name + " Muster";      // oder name += " Muster";`)}<i>1 P. richtige Typen (int, double, char, boolean), 1 P. Literale richtig (einfache Hochkommas bei char, Punkt bei double), 1 P. Erhöhen und Anhängen.</i>` },
-{ t: 'Verzweigungen', pts: 4, q: 'Schreibe eine Verzweigung, die zu einer Punktzahl <code>punkte</code> ausgibt: ab 90 „sehr gut“, ab 75 „gut“, ab 50 „bestanden“, sonst „nicht bestanden“.',
-  m: `${J(`if (punkte >= 90) {\n    System.out.println("sehr gut");\n} else if (punkte >= 75) {\n    System.out.println("gut");\n} else if (punkte >= 50) {\n    System.out.println("bestanden");\n} else {\n    System.out.println("nicht bestanden");\n}`)}<i>1 P. if/else-if/else-Kette, 1 P. richtige Vergleichsoperatoren (<code>&gt;=</code>), 1 P. Reihenfolge von streng nach locker, 1 P. Syntax (Klammern, Semikolons).</i>` },
 { t: 'Verzweigungen', pts: 3, q: 'Schreibe ein <code>switch</code>, das zu einer Zahl <code>tag</code> (1 bis 7) „Wochenende“ für 6 und 7 ausgibt, „Werktag“ für 1 bis 5 und „ungültig“ sonst. Nutze möglichst wenig Code.',
   m: `${J(`switch (tag) {\n    case 1:\n    case 2:\n    case 3:\n    case 4:\n    case 5:\n        System.out.println("Werktag");\n        break;\n    case 6:\n    case 7:\n        System.out.println("Wochenende");\n        break;\n    default:\n        System.out.println("ungültig");\n}`)}Mehrere <code>case</code> ohne <code>break</code> teilen sich den Code (gewollter Fall-through). <i>1 P. Struktur mit <code>default</code>, 1 P. <code>break</code> richtig gesetzt, 1 P. Zusammenfassen der Fälle.</i>` },
-{ t: 'Schleifen', pts: 3, q: 'Schreibe eine Schleife, die die Summe aller geraden Zahlen von 1 bis 20 berechnet und ausgibt. Wie lautet das Ergebnis?',
-  m: `${J(`int summe = 0;\nfor (int i = 1; i <= 20; i++) {\n    if (i % 2 == 0) {\n        summe += i;\n    }\n}\nSystem.out.println(summe);   // 110`)}Ergebnis <b>110</b> (2 + 4 + … + 20). Alternativ <code>i += 2</code> ab 2. <i>1 P. Schleife mit richtigen Grenzen (<code>&lt;= 20</code>), 1 P. Test auf gerade (<code>i % 2 == 0</code>), 1 P. Summe und Ergebnis 110.</i>` },
-{ t: 'Schleifen', pts: 4, q: 'Schreibe eine Schleife, die die Quersumme einer positiven Zahl <code>n</code> berechnet (z. B. 4711 → 13). Erkläre, was in jedem Schritt passiert.',
-  m: `${J(`int sum = 0;\nwhile (n > 0) {\n    sum += n % 10;   // letzte Ziffer addieren\n    n /= 10;         // letzte Ziffer abschneiden\n}\nSystem.out.println(sum);`)}4711: 1 → 71 → 471 → 4711 ergibt 1 + 1 + 7 + 4 = 13. <i>1 P. Schleifenbedingung (<code>n &gt; 0</code>), 1 P. <code>% 10</code> für die Ziffer, 1 P. <code>/ 10</code> zum Abschneiden, 1 P. Summe richtig geführt.</i>` },
 { t: 'Schleifen', pts: 3, q: 'Erkläre den Unterschied zwischen <code>while</code> und <code>do-while</code> und gib ein Beispiel, bei dem sich die Ausgabe unterscheidet.',
   m: `<code>while</code> ist <b>kopfgesteuert</b>: Die Bedingung wird vor dem Durchlauf geprüft, der Rumpf kann nie laufen. <code>do-while</code> ist <b>fußgesteuert</b>: Die Bedingung wird nach dem Durchlauf geprüft, der Rumpf läuft <b>mindestens einmal</b>.${J(`int i = 10;\nwhile (i < 5) { i++; }       // Rumpf läuft nie, i bleibt 10\n\nint k = 10;\ndo { k++; } while (k < 5);  // Rumpf läuft einmal, k ist 11`)}<i>1 P. kopf/fuß richtig zugeordnet, 1 P. „mindestens einmal“ bzw. „kann nie laufen“, 1 P. passendes Beispiel.</i>` },
 { t: 'Methoden', pts: 4, q: 'Schreibe eine Methode <code>istGerade</code>, die für eine ganze Zahl prüft, ob sie gerade ist, und zeige einen Aufruf in <code>main</code>.',
@@ -3583,8 +3511,6 @@ D.self.sud = [
   m: `${J(`for (int i = 0; i < a.length / 2; i++) {\n    int tmp = a[i];\n    a[i] = a[a.length - 1 - i];\n    a[a.length - 1 - i] = tmp;\n}`)}Es werden Paare getauscht (erstes mit letztem, zweites mit vorletztem …). Liefe die Schleife bis zum Ende, würde jedes Paar zweimal getauscht und alles wäre wieder wie vorher. <i>1 P. Tausch mit Hilfsvariable, 1 P. richtiger Gegenindex <code>a.length - 1 - i</code>, 1 P. Begründung der halben Länge.</i>` },
 { t: 'Arrays', pts: 3, q: 'Was ist eine <code>ArrayIndexOutOfBoundsException</code>? Nenne ein Beispiel und wie man sie vermeidet.',
   m: `Sie tritt <b>zur Laufzeit</b> auf, wenn man auf einen Index zugreift, den es nicht gibt (kleiner 0 oder größer gleich <code>length</code>). Beispiel: ${J(`int[] a = new int[5];\na[5] = 1;      // Index 5 gibt es nicht, höchster Index ist 4\n\nfor (int i = 0; i <= a.length; i++) { }   // <= läuft einmal zu weit`, 'main')}Vermeiden: Schleifen mit <code>i &lt; a.length</code>, Index vor dem Zugriff prüfen. <i>1 P. Erklärung, 1 P. Beispiel, 1 P. Vermeidung.</i>` },
-{ t: 'Testen', pts: 3, q: 'Du sollst die Rabattregel „ab 500 Stück 5 % Rabatt“ per Black-Box-Test prüfen. Nenne vier sinnvolle Testmengen und begründe die Auswahl.',
-  m: 'Sinnvoll sind z. B. <b>100</b> (typischer Wert ohne Rabatt), <b>499</b> (Grenzwert knapp darunter, kein Rabatt), <b>500</b> (Grenzwert, Rabatt gilt gerade schon) und <b>600</b> (typischer Wert mit Rabatt). Dazu gehören die Grenzen bei 19.999 und 20.000 für den zweiten Rabatt. Die Grenzwerte sind wichtig, weil Fehler wie <code>&gt;</code> statt <code>&gt;=</code> nur dort auffallen. Der erwartete Preis wird vorher aus der Regel berechnet. <i>1 P. zwei Grenzwerte (499 und 500), 1 P. Werte aus beiden Klassen, 1 P. Begründung.</i>' },
 { t: 'Methoden', pts: 4, q: 'Finde die drei Fehler und schreibe die korrigierte Methode.<pre class="code bad" data-w="skip"><code>static int quadrat(int x) {\n    int ergebnis = x * x;\n}\n\nstatic void pruefe(string text) {\n    if (text == "ja") {\n        System.out.println("ok");\n    }\n}</code></pre>',
   m: `<b>1.</b> <code>quadrat</code> hat kein <code>return</code> (<i>missing return statement</i>). <b>2.</b> <code>string</code> muss <code>String</code> heißen. <b>3.</b> Strings vergleicht man mit <code>equals</code>, nicht mit <code>==</code>.${J(`static int quadrat(int x) {\n    int ergebnis = x * x;\n    return ergebnis;\n}\n\nstatic void pruefe(String text) {\n    if (text.equals("ja")) {\n        System.out.println("ok");\n    }\n}`, 'class')}<i>Je 1 P. pro gefundenem Fehler, 1 P. für die korrigierte, vollständige Fassung.</i>` },
 { t: 'Sortieren', pts: 5, q: 'Schreibe eine Methode <code>bubbleSort(int[] arr)</code>, die ein Array aufsteigend sortiert, und zwar in der <b>zweifach optimierten</b> Variante. Erkläre die beiden Optimierungen in je einem Satz.',
@@ -3889,6 +3815,525 @@ D.self.deu = [
   m: 'Das Schweigen kann Desinteresse, Unsicherheit, Zustimmung oder Ablehnung signalisieren. Nach Watzlawick kann man nicht nicht kommunizieren, weil auch ohne Worte durchgehend Signale gesendet und vom Gegenüber interpretiert werden. <i>1 P. erste mögliche Botschaft, 1 P. zweite mögliche Botschaft, 1 P. Erklärung nach Watzlawick (man sendet immer Signale).</i>' }
 ];
 
+
+'use strict';
+/* ======================= ZUFÄLLIG ERZEUGTE MULTIPLE-CHOICE- UND FREITEXTFRAGEN ======================= */
+// Multiple Choice: gq(thema, gen) – gen(r) liefert { q, ok, wrong: [...], w, fix?, java? }.
+//   Die falschen Antworten werden aus typischen Denkfehlern berechnet, nicht zufällig gewürfelt.
+//   java: { code, wrap: 'main' | 'class', expect } dient nur der Prüfung gegen echtes Java (Testskript).
+// Freitext: gs(thema, punkte, gen) – gen(r) liefert { q, m } (Musterlösung mit den erzeugten Werten).
+// Probetest: erzeugt mit dem Zufallsgenerator der Test-Nr. (gleiche Nr. = gleicher Test).
+// Quiz: bei jedem Start neu; „Falsche Fragen wiederholen“ erzeugt neue Zahlen zur selben Frageart.
+const gq = (t, gen) => ({ t, gen });
+const gs = (t, pts, gen) => ({ t, pts, gen });
+const optKey = (s) => String(s).replace(/<[^>]+>/g, '').replace(/\s+/g, '').toLowerCase();
+function mcInst(m, r) {
+  if (!m.gen) return m;
+  const g = m.gen(r), seen = [optKey(g.ok)], wrong = [];
+  g.wrong.forEach((x) => { const k = optKey(x); if (seen.indexOf(k) < 0) { seen.push(k); wrong.push(x); } });
+  return { t: m.t, q: g.q, o: [g.ok].concat(wrong.slice(0, 3)), a: 0, w: g.w, fix: !!g.fix, java: g.java, src: m };
+}
+function selfInst(m, r) {
+  if (!m.gen) return m;
+  const g = m.gen(r);
+  return { t: m.t, pts: m.pts, q: g.q, m: g.m, src: m };
+}
+const jc = (s) => '<code>' + jesc(String(s)) + '</code>';
+const dez = (x, d) => fmtNum(x, d);                       // deutsche Schreibweise für Nicht-Java-Werte
+const simLoop = (start, cmp, end, step) => { let n = 0; for (let i = start; cmp === '<' ? i < end : i <= end; i += step) n++; return n; };
+
+/* ---------- SUD: Variablen & Operatoren ---------- */
+D.mc.sud.push(
+gq('Variablen & Operatoren', (r) => {
+  const b = r.int(2, 9); let a = r.pick([r.int(1, b - 1), r.int(b + 1, 9 * b)]); if (a % b === 0) a++;
+  const q = Math.trunc(a / b), code = `int a = ${a}, b = ${b};\ndouble c = a / b;\nSystem.out.println(c);`;
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: dstr(q),
+    wrong: [String(Math.round(a / b * 100) / 100), dstr(Math.round(a / b)), String(q), dstr(q + 1), String(Math.round(a / b * 10) / 10)],
+    w: `${jc('a / b')} rechnet mit zwei ${jc('int')}-Werten, also ganzzahlig: ${a} / ${b} = ${q}. Erst danach wird das Ergebnis in ${jc('double')} umgewandelt: ${dstr(q)}.`,
+    java: { code, wrap: 'main', expect: dstr(q) } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const b = r.int(2, 9), k = r.int(1, 12), rest = r.int(1, b - 1), a = k * b + rest;
+  return { q: `Was liefert ${jc(a + ' % ' + b)}?`, ok: String(rest),
+    wrong: [String(k), String(b - rest), String(Math.round(a / b * 100) / 100), String(rest + 1), String(k * b)],
+    w: `${jc('%')} ist der Rest der Ganzzahldivision: ${a} = ${k} · ${b} + <b>${rest}</b>.`,
+    java: { code: `System.out.println(${a} % ${b});`, wrap: 'main', expect: String(rest) } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const A = r.int(7, 30), K = r.int(2, 6), ops = ['+=', '-=', '*=', '/=', '%='], op = r.pick(ops);
+  const val = { '+=': A + K, '-=': A - K, '*=': A * K, '/=': Math.trunc(A / K), '%=': A % K };
+  const code = `int a = ${A};\na ${op} ${K};\nSystem.out.println(a);`;
+  return { q: `Was steht danach in ${jc('a')}?${jpre(code)}`, ok: String(val[op]),
+    wrong: [op === '+=' ? `${A}${K}` : String(K), String(A)].concat(r.shuffle(ops.filter((o) => o !== op)).map((o) => String(val[o]))),
+    w: `${jc('a ' + op + ' ' + K)} ist die Kurzform von ${jc('a = a ' + op[0] + ' ' + K)}: ${A} ${op[0]} ${K} = ${val[op]}.${op === '/=' ? ' Bei int wird ganzzahlig geteilt.' : ''}`,
+    java: { code, wrap: 'main', expect: String(val[op]) } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const x = r.int(1, 9), y = r.int(1, 9), s = r.pick(['x', 'a', '#', 'Z', 'k']);
+  const forms = [
+    [`${x} + ${y} + "${s}"`, `${x + y}${s}`, 'Links nach rechts: erst die Zahlen addieren, dann den Text anhängen.'],
+    [`"${s}" + ${x} + ${y}`, `${s}${x}${y}`, 'Links steht schon ein String, darum wird jede Zahl als Text angehängt.'],
+    [`"${s}" + (${x} + ${y})`, `${s}${x + y}`, 'Die Klammer wird zuerst berechnet (Zahlen), danach angehängt.'],
+    [`${x} + ${y} + "${s}" + ${x} + ${y}`, `${x + y}${s}${x}${y}`, 'Vor dem String wird gerechnet, ab dem String wird nur noch angehängt.'],
+    [`${x} + "${s}" + ${y}`, `${x}${s}${y}`, 'Sobald ein String beteiligt ist, wird angehängt.']];
+  const f = r.pick(forms), all = [`${x + y}${s}`, `${x}${y}${s}`, `${s}${x}${y}`, `${s}${x + y}`, `${x + y}${s}${x + y}`, `${x}${y}${s}${x}${y}`, `${x + y}${s}${x}${y}`, `${x}${s}${y}`];
+  return { q: `Was gibt ${jc('System.out.println(' + f[0] + ');')} aus?`, ok: f[1], wrong: r.shuffle(all.filter((v) => v !== f[1])),
+    w: `${f[2]} Ergebnis: <b>${f[1]}</b>.`, java: { code: `System.out.println(${f[0]});`, wrap: 'main', expect: f[1] } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const d = r.int(1, 9) + r.pick([0.5, 0.6, 0.7, 0.8, 0.9, 0.3]), neg = r.int(0, 2) === 0, v = neg ? -d : d, out = Math.trunc(v);
+  const expr = `(int) ${neg ? '-' : ''}${d}`;
+  return { q: `Was ergibt ${jc(expr)}?`, ok: String(out),
+    wrong: [String(Math.round(v)), String(Math.floor(v)), String(Math.ceil(v)), dstr(out), String(v)],
+    w: `Der Cast auf ${jc('int')} schneidet die Nachkommastellen ab (Richtung null), er rundet nicht: ${out}.`,
+    java: { code: `System.out.println(${expr});`, wrap: 'main', expect: String(out) } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const v0 = r.int(1, 9) + r.pick([0.5, 0.5, 0.4, 0.6, 0.2, 0.8]), neg = r.int(0, 3) === 0, v = neg ? -v0 : v0, out = Math.round(v);
+  const expr = `Math.round(${v})`;
+  return { q: `Was gibt ${jc('System.out.println(' + expr + ');')} aus?`, ok: String(out),
+    wrong: [String(Math.trunc(v)), dstr(out), String(neg ? out - 1 : out + 1), String(neg ? Math.trunc(v) - 1 : Math.trunc(v) + 1), String(v)],
+    w: `${jc('Math.round')} rundet auf die nächste ganze Zahl, bei ,5 <b>nach oben</b> (Richtung +∞), und liefert eine ganze Zahl (long) ohne „.0“.${neg ? ` Bei negativen Zahlen heißt „nach oben“ Richtung null: ${v} → ${out}.` : ''}`,
+    java: { code: `System.out.println(${expr});`, wrap: 'main', expect: String(out) } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const up = r.int(0, 1) === 1, ch = String.fromCharCode((up ? 65 : 97) + r.int(0, 20)), k = r.int(1, 5), c = ch.charCodeAt(0), res = String.fromCharCode(c + k);
+  if (r.int(0, 1) === 0) {
+    return { q: `Was gibt ${jc(`System.out.println('${ch}' + ${k});`)} aus?`, ok: `${c + k} (int)`,
+      wrong: [`${res} (char)`, `${ch}${k} (String)`, 'Compilerfehler', `${c} (int)`],
+      w: `${jc('char')} + ${jc('int')} wird als Zahl gerechnet: '${ch}' hat den Code ${c}, plus ${k} = ${c + k}. Das Ergebnis ist ein ${jc('int')}, kein Zeichen.`,
+      java: { code: `System.out.println('${ch}' + ${k});`, wrap: 'main', expect: String(c + k) } };
+  }
+  return { q: `Was gibt ${jc(`System.out.println((char) ('${ch}' + ${k}));`)} aus?`, ok: `${res} (char)`,
+    wrong: [`${c + k} (int)`, `${ch}${k} (String)`, `${String.fromCharCode(c + k - 1)} (char)`, 'Compilerfehler'],
+    w: `'${ch}' = ${c}, plus ${k} = ${c + k}. Der Cast ${jc('(char)')} macht daraus wieder ein Zeichen: „${res}“.`,
+    java: { code: `System.out.println((char) ('${ch}' + ${k}));`, wrap: 'main', expect: res } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const A = r.int(2, 20), op = r.pick(['a++', '++a', 'a--', '--a']), K = r.pick([0, 0, r.int(1, 9)]);
+  const inc = op.indexOf('+') >= 0 ? 1 : -1, post = op[0] === 'a', aft = A + inc, used = post ? A : aft, b = used + K;
+  const rhs = K ? `${op} + ${K}` : op, code = `int a = ${A};\nint b = ${rhs};`;
+  const other = post ? aft : A;
+  return { q: `Welche Werte haben ${jc('a')} und ${jc('b')} danach?${jpre(code)}`, ok: `a = ${aft}, b = ${b}`,
+    wrong: [`a = ${aft}, b = ${other + K}`, `a = ${A}, b = ${b}`, `a = ${A}, b = ${other + K}`, `a = ${A - inc}, b = ${b}`],
+    w: `${post ? `Postfix ${jc(op)}: Erst wird der <b>alte</b> Wert ${A} verwendet, danach wird a ${inc > 0 ? 'erhöht' : 'verringert'}.` : `Präfix ${jc(op)}: Erst wird a ${inc > 0 ? 'erhöht' : 'verringert'}, dann wird der <b>neue</b> Wert ${aft} verwendet.`} a = ${aft}, b = ${used}${K ? ' + ' + K : ''} = ${b}.`,
+    java: { code: code + '\nSystem.out.println("a = " + a + ", b = " + b);', wrap: 'main', expect: `a = ${aft}, b = ${b}` } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const n = r.int(1000, 9999), f = r.int(0, 2);
+  const d = [[`${n} % 10`, n % 10, 'die letzte Ziffer (Einerstelle)', [`${n} / 10`, `${n} % 2`, `${n} / 1000`, `${n} % 100`]],
+    [`(${n} / 10) % 10`, Math.trunc(n / 10) % 10, 'die Zehnerstelle', [`${n} % 10`, `${n} % 100`, `${n} / 10`, `${n} / 100`]],
+    [`${n} / 10`, Math.trunc(n / 10), `die Zahl ohne die letzte Ziffer (${Math.trunc(n / 10)})`, [`${n} % 10`, `${n} - 10`, `${n} / 100`, `${n} % 1000`]]][f];
+  return { q: `Welcher Ausdruck liefert ${d[2].replace(/ \(\d+\)$/, '')} von ${n}?`, ok: jc(d[0]), wrong: d[3].map(jc),
+    w: `${jc('% 10')} liefert die letzte Ziffer, ${jc('/ 10')} schneidet sie bei int ab. ${jc(d[0])} = ${d[1]}.`,
+    java: { code: `System.out.println(${d[0]});`, wrap: 'main', expect: String(d[1]) } };
+}),
+gq('Variablen & Operatoren', (r) => {
+  const b = r.pick([2, 4, 5, 8]); let a = r.int(b + 1, 9 * b); if (a % b === 0) a++;
+  const tr = Math.trunc(a / b), ex = a / b, f = r.int(0, 2);
+  const expr = [`(double) (${a} / ${b})`, `(double) ${a} / ${b}`, `${a} / (double) ${b}`][f], out = f === 0 ? dstr(tr) : String(ex);
+  return { q: `Was gibt ${jc('System.out.println(' + expr + ');')} aus?`, ok: out,
+    wrong: [f === 0 ? String(ex) : dstr(tr), String(tr), dstr(Math.round(ex)), String(Math.round(ex)), dstr(tr + 1), String(ex + 1)],
+    w: f === 0 ? `Die Klammer wird zuerst berechnet, mit zwei int-Werten ganzzahlig: ${a} / ${b} = ${tr}. Erst danach wird ${tr} zu ${dstr(tr)}.` : `Der Cast wirkt nur auf einen Operanden, dadurch rechnet die Division mit ${jc('double')}: ${ex}.`,
+    java: { code: `System.out.println(${expr});`, wrap: 'main', expect: out } };
+})
+);
+
+/* ---------- SUD: Verzweigungen ---------- */
+D.mc.sud.push(
+gq('Verzweigungen', (r) => {
+  const x = r.int(1, 20), A = r.int(1, 20), B = r.int(1, 20), C = r.int(1, 20), f = r.int(0, 2);
+  const T = [
+    [`x > ${A} || x < ${B} && x != ${C}`, (x > A) || (x < B && x !== C), (x > A || x < B) && x !== C],
+    [`!(x > ${A}) || x == ${B} && x < ${C}`, !(x > A) || (x === B && x < C), (!(x > A) || x === B) && x < C],
+    [`x % 2 == 0 && x > ${A} || x < ${B}`, (x % 2 === 0 && x > A) || x < B, x % 2 === 0 && (x > A || x < B)]][f];
+  const code = `int x = ${x};\nSystem.out.println(${T[0]});`;
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: String(T[1]), wrong: [String(!T[1]), 'Compilerfehler', '1'],
+    w: `${jc('&&')} bindet stärker als ${jc('||')} (wie Punkt vor Strich). Mit x = ${x} ergibt sich <b>${T[1]}</b>.${T[1] !== T[2] ? ` Wer stur von links nach rechts rechnet, kommt fälschlich auf ${T[2]}.` : ''}`,
+    java: { code, wrap: 'main', expect: String(T[1]) } };
+}),
+gq('Verzweigungen', (r) => {
+  const t1 = r.int(10, 20), t2 = r.int(3, t1 - 2), x = r.int(0, 25), chain = r.int(0, 1) === 1;
+  let code, out = '';
+  if (chain) {
+    code = `int x = ${x};\nif (x > ${t1}) {\n    System.out.print("A");\n} else if (x > ${t2}) {\n    System.out.print("B");\n} else {\n    System.out.print("C");\n}`;
+    out = x > t1 ? 'A' : x > t2 ? 'B' : 'C';
+  } else {
+    code = `int x = ${x};\nif (x > ${t1}) {\n    System.out.print("A");\n}\nif (x > ${t2}) {\n    System.out.print("B");\n} else {\n    System.out.print("C");\n}`;
+    out = (x > t1 ? 'A' : '') + (x > t2 ? 'B' : 'C');
+  }
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: out, wrong: r.shuffle(['A', 'B', 'C', 'AB', 'AC', 'BC'].filter((v) => v !== out)),
+    w: chain ? `Bei ${jc('else if')} wird nur der <b>erste</b> zutreffende Zweig ausgeführt. x = ${x}: Ausgabe <b>${out}</b>.` : `Das sind <b>zwei getrennte</b> if-Anweisungen, beide werden geprüft. Das ${jc('else')} gehört nur zum zweiten if. x = ${x}: Ausgabe <b>${out}</b>.`,
+    java: { code, wrap: 'main', expect: out } };
+}),
+gq('Verzweigungen', (r) => {
+  const A = r.int(18, 25), B = r.int(A + 5, 40), v = r.pick([B, B, A, r.int(A + 1, B - 1), r.int(10, A - 1), r.int(B + 1, 50)]);
+  const code = `double bmi = ${v};\nif (bmi < ${A}) {\n    System.out.print("Untergewicht");\n} else if (bmi < ${B}) {\n    System.out.print("Normalgewicht");\n} else if (bmi > ${B}) {\n    System.out.print("Übergewicht");\n}`;
+  const out = v < A ? 'Untergewicht' : v < B ? 'Normalgewicht' : v > B ? 'Übergewicht' : '';
+  const ok = out || 'Keine Ausgabe';
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok, wrong: ['Untergewicht', 'Normalgewicht', 'Übergewicht', 'Keine Ausgabe', 'Compilerfehler'].filter((s) => s !== ok),
+    w: out ? `Bei bmi = ${v} trifft zuerst die Bedingung für „${out}“ zu.` : `Bei bmi = ${B} ist weder ${jc('bmi < ' + B)} noch ${jc('bmi > ' + B)} wahr. Es fehlt ein abschließendes ${jc('else')}, darum gibt es <b>keine Ausgabe</b>.`,
+    java: { code, wrap: 'main', expect: out } };
+})
+);
+
+/* ---------- SUD: Schleifen ---------- */
+D.mc.sud.push(
+gq('Schleifen', (r) => {
+  const L = r.int(3, 20), S = r.pick([r.int(L, L + 8), r.int(0, L - 1)]), K = r.int(1, 5), dw = r.int(0, 2) > 0;
+  let i = S; if (dw) { do { i += K; } while (i < L); } else { while (i < L) i += K; }
+  let j = S; if (!dw) { do { j += K; } while (j < L); } else { while (j < L) j += K; }
+  const code = dw ? `int i = ${S};\ndo {\n    i += ${K};\n} while (i < ${L});\nSystem.out.println(i);` : `int i = ${S};\nwhile (i < ${L}) {\n    i += ${K};\n}\nSystem.out.println(i);`;
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: String(i), wrong: [String(j), String(S), String(i + K), String(i - K), String(L), String(i + 2 * K)],
+    w: dw ? `${jc('do-while')} ist fußgesteuert: Der Rumpf läuft <b>mindestens einmal</b>, erst danach wird ${jc('i < ' + L)} geprüft. Ergebnis ${i}.` : `${jc('while')} ist kopfgesteuert: Die Bedingung wird <b>vor</b> jedem Durchlauf geprüft${S >= L ? ', hier ist sie schon am Anfang falsch, der Rumpf läuft gar nicht' : ''}. Ergebnis ${i}.`,
+    java: { code, wrap: 'main', expect: String(i) } };
+}),
+gq('Schleifen', (r) => {
+  const a = r.int(0, 5), b = r.int(a + 3, a + 12), step = r.pick([1, 1, 2, 3]), cmp = r.pick(['<', '<=']);
+  const n = simLoop(a, cmp, b, step), head = `for (int i = ${a}; i ${cmp} ${b}; ${step === 1 ? 'i++' : 'i += ' + step})`;
+  const werte = []; for (let i = a; cmp === '<' ? i < b : i <= b; i += step) werte.push(i);
+  return { q: `Wie oft läuft der Rumpf von ${jc(head)}?`, ok: `${n}-mal`, wrong: [`${n + 1}-mal`, `${n - 1}-mal`, `${b - a}-mal`, `${b - a + 1}-mal`, `${Math.max(1, n + 2)}-mal`],
+    w: `i nimmt die Werte ${werte.join(', ')} an, das sind ${n} Durchläufe.`,
+    java: { code: `int n = 0;\n${head} {\n    n++;\n}\nSystem.out.println(n);`, wrap: 'main', expect: String(n) } };
+}),
+gq('Schleifen', (r) => {
+  const d = r.pick([2, 2, 3, 10]), n0 = d === 10 ? r.int(100, 99999) : r.int(10, 300);
+  let n = n0, steps = 0; while (n > 1) { n = Math.trunc(n / d); steps++; }
+  const code = `int n = ${n0};\nint steps = 0;\nwhile (n > 1) {\n    n = n / ${d};\n    steps++;\n}\nSystem.out.println(steps);`;
+  const ws = []; let m = n0; while (m > 1) { m = Math.trunc(m / d); ws.push(m); }
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: String(steps), wrong: [String(steps + 1), String(steps - 1), String(n0 / d | 0), String(steps + 2)],
+    w: `n wird bei int ganzzahlig geteilt: ${n0} → ${ws.join(' → ')}. Das sind ${steps} Durchläufe.`,
+    java: { code, wrap: 'main', expect: String(steps) } };
+}),
+gq('Schleifen', (r) => {
+  const A = r.int(2, 6), B = r.int(2, 6), f = r.int(0, 3);
+  const inner = [`int j = 0; j < ${B}; j++`, `int j = 0; j < i; j++`, `int j = 0; j <= i; j++`, `int j = i; j < ${B}; j++`][f];
+  let c = 0; for (let i = 0; i < A; i++) for (let j = [0, 0, 0, i][f]; [j < B, j < i, j <= i, j < B][f]; j++) c++;
+  const code = `int count = 0;\nfor (int i = 0; i < ${A}; i++) {\n    for (${inner}) {\n        count++;\n    }\n}\nSystem.out.println(count);`;
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: String(c), wrong: [String(A * B), String(A + B), String(c + A), String(c - 1), String(c + 1)],
+    w: f === 0 ? `Die innere Schleife läuft bei jedem der ${A} äußeren Durchläufe ${B}-mal: ${A} · ${B} = ${c}.` : `Die innere Schleife hängt von i ab, darum zählt man je Durchlauf einzeln: ${Array.from({ length: A }, (_, i) => [0, i, i + 1, Math.max(0, B - i)][f]).join(' + ')} = ${c}.`,
+    java: { code, wrap: 'main', expect: String(c) } };
+})
+);
+
+/* ---------- SUD: Testen ---------- */
+D.mc.sud.push(
+gq('Testen', (r) => {
+  const N = r.pick([50, 100, 200, 250, 500, 1000, 2000]), P = r.pick([3, 5, 10, 15]), ding = r.pick(['Stück', 'Packungen', 'Lizenzen', 'Artikel']);
+  const ab = r.int(0, 1) === 1;
+  if (ab) return { q: `Regel: „Ab ${fmtNum(N, 0)} ${ding} gibt es ${P} % Rabatt.“ Welche Mengen sind die wichtigsten Grenzwerte für einen Black-Box-Test?`, ok: `${N - 1} und ${N}`,
+    wrong: [`${N} und ${N + 1}`, `${N - 10} und ${N + 10}`, `0 und ${N}`, `1 und ${N - 1}`],
+    w: `Grenzwerte liegen direkt <b>an der Grenze</b>: ${N - 1} (gerade noch ohne Rabatt) und ${N} (erster Wert mit Rabatt). Dort passieren Fehler wie ${jc('>')} statt ${jc('>=')}.` };
+  return { q: `Regel: „Bis ${fmtNum(N, 0)} ${ding} kostet der Versand pauschal, darüber ist er kostenlos.“ Welche Mengen sind die wichtigsten Grenzwerte für einen Black-Box-Test?`, ok: `${N} und ${N + 1}`,
+    wrong: [`${N - 1} und ${N}`, `${N - 10} und ${N + 10}`, `0 und ${N}`, `${N + 1} und ${N + 2}`],
+    w: `„Bis ${N}“ schließt ${N} ein. Die Grenze liegt also zwischen ${N} (letzter Wert mit Versandkosten) und ${N + 1} (erster ohne).` };
+}),
+gq('Testen', (r) => {
+  const menge = r.pick([r.int(20, 499), 499, 500, r.int(501, 19999), 20000, r.int(20001, 40000)]);
+  const kat = r.pick(['w', 'm', 'h']), griff = r.pick(['g', 'n', 'k']), names = { w: 'weich', m: 'mittelhart', h: 'hart', g: 'groß', n: 'normal', k: 'klein' };
+  const c = zbCalc(menge, kat, griff), v = Math.round(c.p * 100) / 100, brutto = menge * 2.5;
+  const mRab = menge >= 20000 ? 0.9 : menge >= 500 ? 0.95 : 1;
+  const sumPct = c.st.slice(1).map((s) => parseFloat((s.match(/([+−-])(\d+(?:,\d+)?) %/) || [0, '+', '0'])[2].replace(',', '.')) * ((s.match(/([+−-])\d/) || [0, '+'])[1] === '+' ? 1 : -1)).reduce((a, b) => a + b, 0);
+  const add = Math.round(brutto * (1 + sumPct / 100) * 100) / 100, onlyM = Math.round(brutto * mRab * 100) / 100;
+  const e = (x) => fmtNum(x, 2) + ' €';
+  return { q: `<div class="muted">${ZB.rules}</div>Erwarteter Endpreis (auf Cent gerundet) für: Menge <b>${fmtNum(menge, 0)}</b>, Kategorie <b>${kat}</b> (${names[kat]}), Griff <b>${griff}</b> (${names[griff]})?`, ok: e(v),
+    wrong: [e(brutto), e(add), e(onlyM), e(Math.round(v * 101) / 100), e(Math.round(v * 99) / 100)],
+    w: `${c.st.join('<br>')}<br>Ergebnis: <b>${e(v)}</b>. Rabatte wirken nacheinander auf den schon veränderten Preis, sie werden nicht addiert.` };
+})
+);
+
+/* ---------- SUD: Methoden ---------- */
+D.mc.sud.push(
+gq('Methoden', (r) => {
+  const t = SUD.overload.fn(r), types = (t.code.match(/\((int|long|double|String) x\)/g) || []).map((s) => s.slice(1, -3));
+  return { q: `Welche Zeile gibt das Programm aus?${jpre(t.code)}`, ok: t.ans, wrong: types.filter((x) => x !== t.ans).concat(['Compilerfehler: mehrdeutiger Aufruf']),
+    w: t.solution.replace(/^<b>[^<]*<\/b><br>/, ''), java: { code: t.code, wrap: 'class', expect: t.ans } };
+}),
+gq('Methoden', (r) => {
+  const f = r.int(0, 4), K = r.int(2, 9), N = r.int(3, 20), V = r.int(50, 99), F = r.int(1, 9);
+  const P = [
+    [`static void change(int x) {\n    x = x + ${K};\n}\n\npublic static void main(String[] args) {\n    int n = ${N};\n    change(n);\n    System.out.println(n);\n}`, N, [N + K, K, 0], `Bei primitiven Typen wird der <b>Wert kopiert</b> (call-by-value). Die Methode ändert nur ihre Kopie x, n bleibt ${N}.`],
+    [`static int change(int x) {\n    return x + ${K};\n}\n\npublic static void main(String[] args) {\n    int n = ${N};\n    n = change(n);\n    System.out.println(n);\n}`, N + K, [N, K, N + 2 * K], `Der Rückgabewert wird ${jc('n')} zugewiesen: ${N} + ${K} = ${N + K}.`],
+    [`static void fill(int[] a) {\n    a[0] = ${V};\n}\n\npublic static void main(String[] args) {\n    int[] arr = {${F}, 2, 3};\n    fill(arr);\n    System.out.println(arr[0]);\n}`, V, [F, 0, 2], `Bei Arrays wird die <b>Referenz</b> kopiert. Methode und main zeigen auf dasselbe Array, die Änderung ist sichtbar: ${V}.`],
+    [`static void fill(int[] a) {\n    a = new int[] {${V}, 2, 3};\n}\n\npublic static void main(String[] args) {\n    int[] arr = {${F}, 2, 3};\n    fill(arr);\n    System.out.println(arr[0]);\n}`, F, [V, 0, 2], `${jc('a = new int[] …')} lässt nur die <b>lokale Kopie der Referenz</b> auf ein neues Array zeigen. arr in main zeigt weiter auf das alte Array: ${F}.`],
+    [`static void twice(int x) {\n    x = x * 2;\n    System.out.print(x + " ");\n}\n\npublic static void main(String[] args) {\n    int n = ${N};\n    twice(n);\n    System.out.print(n);\n}`, `${2 * N} ${N}`, [`${2 * N} ${2 * N}`, `${N} ${N}`, `${N} ${2 * N}`], `In der Methode wird die Kopie verdoppelt und ausgegeben (${2 * N}), n in main bleibt ${N}.`]][f];
+  return { q: `Was gibt ${jc('main')} aus?${jpre(P[0])}`, ok: String(P[1]), wrong: P[2].map(String), w: P[3], java: { code: P[0], wrap: 'class', expect: String(P[1]) } };
+})
+);
+
+/* ---------- SUD: Arrays ---------- */
+D.mc.sud.push(
+gq('Arrays', (r) => {
+  const N = r.int(3, 12);
+  if (r.int(0, 1)) return { q: `Was ist der höchste gültige Index bei ${jc('new int[' + N + ']')}?`, ok: String(N - 1), wrong: [String(N), String(N + 1), '1', String(N - 2)],
+    w: `Der Index beginnt bei 0, also 0 bis ${N - 1}.`, java: { code: `System.out.println(new int[${N}].length - 1);`, wrap: 'main', expect: String(N - 1) } };
+  return { q: `Welchen Wert liefert ${jc('a.length')} nach ${jc('int[] a = new int[' + N + '];')}?`, ok: String(N), wrong: [String(N - 1), String(N + 1), '0'],
+    w: `${jc('length')} ist die <b>Anzahl</b> der Elemente (${N}), der höchste Index ist ${N - 1}.`, java: { code: `int[] a = new int[${N}];\nSystem.out.println(a.length);`, wrap: 'main', expect: String(N) } };
+}),
+gq('Arrays', (r) => {
+  const N = r.int(3, 10), K = r.pick([N, N, N - 1, -1, N + 1]), bad = K >= N || K < 0;
+  const ok = bad ? 'ArrayIndexOutOfBoundsException zur Laufzeit' : `a[${K}] wird auf 1 gesetzt`;
+  return { q: `Was passiert bei ${jc(`int[] a = new int[${N}]; a[${K}] = 1;`)}?`, ok,
+    wrong: ['ArrayIndexOutOfBoundsException zur Laufzeit', 'Compilerfehler', `a[${K}] wird auf 1 gesetzt`, 'Das Array wird automatisch vergrößert'].filter((s) => s !== ok),
+    w: bad ? `Gültig sind nur die Indizes 0 bis ${N - 1}. Der Compiler prüft das nicht, erst beim Ausführen kommt die Exception.` : `Index ${K} liegt im gültigen Bereich 0 bis ${N - 1}.`,
+    java: { code: `try {\n    int[] a = new int[${N}];\n    a[${K}] = 1;\n    System.out.print("ok");\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.print("aioobe");\n}`, wrap: 'main', expect: bad ? 'aioobe' : 'ok' } };
+}),
+gq('Arrays', (r) => {
+  const a = uniqInts(r, 3, 1, 9), i = r.int(0, 2), V = r.int(10, 99), f = r.int(0, 2);
+  const copy = ['int[] b = a;', 'int[] b = a.clone();', 'int[] b = Arrays.copyOf(a, a.length);'][f], out = f === 0 ? V : a[i];
+  const code = `int[] a = {${a.join(', ')}};\n${copy}\nb[${i}] = ${V};\nSystem.out.println(a[${i}]);`;
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: String(out), wrong: [String(f === 0 ? a[i] : V), '0', String(a[(i + 1) % 3])],
+    w: f === 0 ? `${jc('b = a')} kopiert nur die <b>Referenz</b>. a und b sind dasselbe Array, darum ist a[${i}] jetzt ${V}.` : `${jc(copy.slice(10, -1))} legt ein <b>neues</b> Array an. Die Änderung an b betrifft a nicht: ${a[i]}.`,
+    java: { code, wrap: 'main', expect: String(out) } };
+}),
+gq('Arrays', (r) => {
+  const n = r.int(2, 4); let a, s; do { a = Array.from({ length: n }, () => r.int(1, 9)); s = a.reduce((x, y) => x + y, 0); } while (s % n === 0);
+  const expr = `(${a.map((_, i) => `a[${i}]`).join(' + ')}) / a.length`, out = Math.trunc(s / n);
+  return { q: `Was ergibt ${jc(expr)} bei ${jc(`int[] a = {${a.join(', ')}}`)}?`, ok: `${out} (Ganzzahldivision)`,
+    wrong: [String(Math.round(s / n * 100) / 100), String(Math.round(s / n)), String(s), dstr(out)],
+    w: `(${a.join(' + ')}) / ${n} = ${s} / ${n}. Beide Operanden sind ${jc('int')}, darum ${out}. Für den genauen Mittelwert braucht man ${jc('(double)')}.`,
+    java: { code: `int[] a = {${a.join(', ')}};\nSystem.out.println(${expr});`, wrap: 'main', expect: String(out) } };
+}),
+gq('Arrays', (r) => {
+  const n = r.int(4, 6), a = uniqInts(r, n, 1, 60), s = a.slice().sort((x, y) => x - y), K = r.int(0, n - 1);
+  const code = `int[] a = {${a.join(', ')}};\nArrays.sort(a);\nSystem.out.println(a[${K}]);`;
+  return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: String(s[K]), wrong: [String(a[K]), String(s[n - 1 - K]), String(s[(K + 1) % n]), String(s[(K + n - 1) % n]), String(a[(K + 1) % n]), String(a[(K + 2) % n])],
+    w: `${jc('Arrays.sort')} sortiert aufsteigend: ${jlist(s)}. Index ${K} ist ${s[K]}.`, java: { code, wrap: 'main', expect: String(s[K]) } };
+}),
+gq('Arrays', (r) => {
+  const w = r.pick(['Hallo', 'Java', 'Array', 'Klausur', 'Schule', 'Code', 'Methode', 'Index', 'Byte', 'SUD']);
+  return { q: `Wie viele Elemente hat ${jc('"' + w + '".toCharArray()')}?`, ok: String(w.length), wrong: [String(w.length - 1), String(w.length + 1), '1'],
+    w: `Für jedes Zeichen ein Element: ${w.split('').join(', ')}.`, java: { code: `System.out.println("${w}".toCharArray().length);`, wrap: 'main', expect: String(w.length) } };
+}),
+gq('Arrays', (r) => {
+  const R = r.int(2, 6); let C = r.int(2, 6); if (C === R) C++;
+  const f = r.int(0, 2), expr = ['m.length', 'm[0].length', 'm.length * m[0].length'][f], out = [R, C, R * C][f];
+  return { q: `Was ergibt ${jc(expr)} bei ${jc(`int[][] m = new int[${R}][${C}];`)}?`, ok: String(out), wrong: [String([C, R, R + C][f]), String(R * C), String(R + C), String(out + 1), String(out - 1), String(R * C + R)],
+    w: `${jc(`new int[${R}][${C}]`)} hat ${R} Zeilen mit je ${C} Spalten. ${jc('m.length')} = Zeilen (${R}), ${jc('m[0].length')} = Spalten der ersten Zeile (${C}).`,
+    java: { code: `int[][] m = new int[${R}][${C}];\nSystem.out.println(${expr});`, wrap: 'main', expect: String(out) } };
+}),
+gq('Arrays', (r) => {
+  const a = uniqInts(r, 3, 1, 9), k = r.int(2, 3), fe = r.int(0, 1) === 1, d = a.map((v) => v * k);
+  const code = fe ? `int[] a = {${a.join(', ')}};\nfor (int v : a) {\n    v = v * ${k};\n}` : `int[] a = {${a.join(', ')}};\nfor (int i = 0; i < a.length; i++) {\n    a[i] = a[i] * ${k};\n}`;
+  const res = fe ? a : d;
+  return { q: `Welchen Inhalt hat ${jc('a')} danach?${jpre(code)}`, ok: jlist(res), wrong: [jlist(fe ? d : a), jlist([d[0], a[1], a[2]]), jlist(a.map(() => 0))],
+    w: fe ? `In der for-each-Schleife ist ${jc('v')} nur eine <b>Kopie</b> des Elements. Das Array bleibt unverändert.` : `Über den Index wird jedes Element direkt im Array geändert.`,
+    java: { code: code + '\nSystem.out.println(Arrays.toString(a));', wrap: 'main', expect: '[' + res.join(', ') + ']' } };
+})
+);
+
+/* ---------- SUD: Freitext ---------- */
+D.self.sud.push(
+gs('Variablen & Operatoren', 3, (r) => {
+  const b = r.pick([2, 4, 5, 8]); let a = r.int(b + 1, 9 * b); if (a % b === 0) a++;
+  return { q: `Erkläre den Unterschied zwischen ${jc(a + ' / ' + b)} und ${jc('(double) ' + a + ' / ' + b)} und nenne jeweils das Ergebnis.`,
+    m: `${jc(a + ' / ' + b)}: beide Operanden sind ${jc('int')}, es wird <b>ganzzahlig</b> geteilt, die Nachkommastellen entfallen: <b>${Math.trunc(a / b)}</b>. ${jc('(double) ' + a + ' / ' + b)}: der Cast macht ${a} zu ${dstr(a)}, damit rechnet die Division mit ${jc('double')}: <b>${a / b}</b>. <i>1 P. Ganzzahldivision, 1 P. Cast/double, 1 P. beide Ergebnisse.</i>` };
+}),
+gs('Verzweigungen', 4, (r) => {
+  const g = r.pick([[90, 75, 50], [92, 81, 67], [85, 70, 50], [88, 72, 55]]);
+  return { q: `Schreibe eine Verzweigung, die zu einer Punktzahl ${jc('punkte')} ausgibt: ab ${g[0]} „sehr gut“, ab ${g[1]} „gut“, ab ${g[2]} „bestanden“, sonst „nicht bestanden“.`,
+    m: `${jpre(`if (punkte >= ${g[0]}) {\n    System.out.println("sehr gut");\n} else if (punkte >= ${g[1]}) {\n    System.out.println("gut");\n} else if (punkte >= ${g[2]}) {\n    System.out.println("bestanden");\n} else {\n    System.out.println("nicht bestanden");\n}`)}Wichtig: von der <b>höchsten</b> Grenze abwärts prüfen und ${jc('>=')} verwenden („ab“ schließt die Grenze ein). <i>1 P. Reihenfolge, 1 P. ${jc('>=')}, 1 P. else-if-Kette, 1 P. else.</i>` };
+}),
+gs('Schleifen', 3, (r) => {
+  const N = r.int(12, 40), f = r.int(0, 2), k = r.int(3, 7);
+  const d = [['geraden Zahlen', 'i % 2 == 0'], ['ungeraden Zahlen', 'i % 2 != 0'], [`Vielfachen von ${k}`, `i % ${k} == 0`]][f];
+  let s = 0; for (let i = 1; i <= N; i++) if ([i % 2 === 0, i % 2 !== 0, i % k === 0][f]) s += i;
+  return { q: `Schreibe eine Schleife, die die Summe aller ${d[0]} von 1 bis ${N} berechnet und ausgibt. Wie lautet das Ergebnis?`,
+    m: `${jpre(`int summe = 0;\nfor (int i = 1; i <= ${N}; i++) {\n    if (${d[1]}) {\n        summe += i;\n    }\n}\nSystem.out.println(summe);   // ${s}`)}Ergebnis: <b>${s}</b>. Achtung: ${jc('<= ' + N)}, damit ${N} selbst mitgeprüft wird. <i>1 P. Schleife, 1 P. Bedingung, 1 P. Ergebnis.</i>` };
+}),
+gs('Schleifen', 4, (r) => {
+  const n = r.int(100, 99999), ds = String(n).split('').map(Number), s = ds.reduce((a, b) => a + b, 0);
+  return { q: `Schreibe eine Schleife, die die Quersumme einer positiven Zahl ${jc('n')} berechnet. Welches Ergebnis liefert sie für ${n}? Erkläre, warum die Schleife endet.`,
+    m: `${jpre(`int sum = 0;\nwhile (n > 0) {\n    sum += n % 10;   // letzte Ziffer addieren\n    n /= 10;         // letzte Ziffer abschneiden\n}\nSystem.out.println(sum);`)}Für ${n}: ${ds.slice().reverse().join(' + ')} = <b>${s}</b>. Die Schleife endet, weil ${jc('n /= 10')} die Zahl bei jedem Durchlauf um eine Stelle kürzt, bis n = 0 ist. <i>1 P. % 10, 1 P. / 10, 1 P. Ergebnis, 1 P. Abbruch.</i>` };
+}),
+gs('Testen', 3, (r) => {
+  const N = r.pick([100, 200, 250, 500, 1000]), P = r.pick([3, 5, 10]), typ = r.int(N / 5, N / 2);
+  return { q: `Du sollst die Regel „ab ${N} Stück ${P} % Rabatt“ per Black-Box-Test prüfen. Nenne vier sinnvolle Testmengen und begründe sie.`,
+    m: `Sinnvoll sind z. B. <b>${typ}</b> (typischer Wert ohne Rabatt), <b>${N - 1}</b> (Grenzwert knapp darunter, kein Rabatt), <b>${N}</b> (Grenzwert, Rabatt gilt), <b>${N * 2}</b> (typischer Wert mit Rabatt). Zusätzlich ungültige Eingaben wie <b>0</b> oder <b>−5</b>. Den erwarteten Preis rechnet man aus der Regel, nicht aus dem Programm. <i>Je Testmenge mit Begründung ¾ P., max. 3 P.</i>` };
+})
+);
+
+/* ---------- EVP ---------- */
+const flipBit = (n, k) => n ^ (1 << k);
+const revBits = (n, w) => parseInt(bin(n, w).split('').reverse().join(''), 2);
+D.mc.evp.push(
+gq('Zahlensysteme', (r) => {
+  const n = r.int(65, 254), k = r.int(0, 6);
+  return { q: `Welche Dezimalzahl ist ${grp(bin(n, 8))} (dual)?`, ok: String(n), wrong: [String(flipBit(n, k)), String(revBits(n, 8)), String(n + 8), String(n - 2)],
+    w: `${powSum(n)} = ${n}.` };
+}),
+gq('Zahlensysteme', (r) => {
+  let n; do { n = r.int(26, 254); } while ((n >> 4) === (n & 15));
+  const h = hexs(n, 2), hi = n >> 4, lo = n & 15, sw = hexs(lo * 16 + hi, 2);
+  return { q: `Welche Hex-Zahl entspricht ${grp(bin(n, 8))}?`, ok: h, wrong: [sw, hexs(((hi + 1) & 15) * 16 + lo, 2), hexs(hi * 16 + ((lo + 15) & 15), 2), `${hi}${lo}`],
+    w: `Von rechts in 4er-Gruppen (Tetraden): ${bin(hi, 4)} = ${hexs(hi)}, ${bin(lo, 4)} = ${hexs(lo)}, also ${h}.` };
+}),
+gq('Zahlensysteme', (r) => {
+  const hi = r.int(1, 15), lo = r.int(0, 15), n = hi * 16 + lo, h = hexs(n, 2);
+  return { q: `Welcher Dezimalwert gehört zu Hex ${h}?`, ok: String(n), wrong: [String(hi * 10 + lo), String(lo * 16 + hi), String(n + 1), String(hi + lo), String(n - 16)],
+    w: `${hexs(hi)} · 16 + ${hexs(lo)}${lo > 9 ? ' (= ' + lo + ')' : ''}${hi > 9 ? `, wobei ${hexs(hi)} = ${hi}` : ''}: ${hi} · 16 + ${lo} = ${n}.` };
+}),
+gq('Zahlensysteme', (r) => {
+  const hi = r.int(1, 15), lo = r.int(0, 15), n = hi * 16 + lo, h = hexs(n, 2);
+  return { q: `Wie lautet die Dezimalzahl ${n} als Hex-Zahl?`, ok: h, wrong: [hexs(lo * 16 + hi, 2), String(n).length <= 2 ? String(n) : hexs(n + 1, 2), hexs(n + 16, 2), hexs(n - 1, 2)],
+    w: `${n} : 16 = ${hi} Rest ${lo}. ${hi} = ${hexs(hi)}, ${lo} = ${hexs(lo)}, also ${h}.` };
+}),
+gq('Zahlensysteme', (r) => {
+  const n = r.int(33, 250), k = r.int(0, 6);
+  return { q: `Wie lautet ${n} (dezimal) als Dualzahl?`, ok: grp(bin(n, 8)), wrong: [grp(bin(flipBit(n, k), 8)), grp(bin(revBits(n, 8), 8)), grp(bin(n + 2 > 255 ? n - 2 : n + 2, 8)), grp(bin(n ^ 0x30, 8))],
+    w: `${n} = ${powSum(n)} → ${grp(bin(n, 8))}.` };
+}),
+gq('Bits & Bytes', (r) => {
+  const N = r.int(5, 2000), bits = Math.ceil(Math.log2(N));
+  return { q: `Wie viele Bit braucht man mindestens, um ${fmtNum(N, 0)} verschiedene Zustände darzustellen?`, ok: String(bits), wrong: [String(bits - 1), String(bits + 1), String(bits + 2)],
+    w: `2<sup>${bits - 1}</sup> = ${fmtNum(Math.pow(2, bits - 1), 0)} ist zu wenig, 2<sup>${bits}</sup> = ${fmtNum(Math.pow(2, bits), 0)} reicht.` };
+}),
+gq('Bits & Bytes', (r) => {
+  const n = r.int(3, 16), v = Math.pow(2, n);
+  return { q: `Wie viele verschiedene Werte kann man mit ${n} Bit (ohne Vorzeichen) darstellen?`, ok: fmtNum(v, 0), wrong: [fmtNum(v - 1, 0), fmtNum(2 * n, 0), fmtNum(n * n, 0), fmtNum(v / 2, 0)],
+    w: `2<sup>${n}</sup> = ${fmtNum(v, 0)} Werte (0 bis ${fmtNum(v - 1, 0)}). ${fmtNum(v - 1, 0)} ist der größte Wert, nicht die Anzahl.` };
+}),
+gq('Bits & Bytes', (r) => {
+  const rate = r.pick([10, 16, 20, 25, 40, 50, 80, 100, 200]); let mb, t; do { mb = r.int(5, 500); t = mb * 8 / rate; } while (!Number.isInteger(t));
+  return { q: `Eine Datei mit ${mb} MB wird mit ${rate} Mbit/s übertragen. Wie lange dauert das (ohne Overhead)?`, ok: `${fmtNum(t, 0)} s`,
+    wrong: [`${dez(mb / rate, 2)} s`, `${dez(mb * rate / 8, 2)} s`, `${fmtNum(t * 8, 0)} s`, `${dez(t / 60, 2)} s`],
+    w: `${mb} MB · 8 = ${fmtNum(mb * 8, 0)} Mbit; ${fmtNum(mb * 8, 0)} Mbit ÷ ${rate} Mbit/s = ${fmtNum(t, 0)} s. Byte und Bit nicht verwechseln: 1 Byte = 8 Bit.` };
+}),
+gq('Codes', (r) => {
+  const f = r.int(0, 2), ch = f === 2 ? String(r.int(0, 9)) : String.fromCharCode((f === 0 ? 65 : 97) + r.int(0, 25)), c = ch.charCodeAt(0);
+  const other = f === 0 ? c + 32 : f === 1 ? c - 32 : Number(ch);
+  return { q: `Welchen dezimalen ASCII-Code hat „${ch}“?`, ok: String(c), wrong: [String(other), String(c + 1), String(c - 1), String(c + 16)],
+    w: `Merkpunkte: „A“ = 65, „a“ = 97 (Unterschied 32), „0“ = 48. „${ch}“ = ${f === 2 ? '48 + ' + ch : f === 0 ? '65 + ' + (c - 65) : '97 + ' + (c - 97)} = ${c}.` };
+}),
+gq('Codes', (r) => {
+  const n = r.int(1, 126), b = bin(n, 7), ones = b.split('').filter((x) => x === '1').length, even = r.int(0, 1) === 1;
+  const p = even ? ones % 2 : 1 - ones % 2;
+  return { q: `Ein Zeichen hat den 7-Bit-Code ${b}. Welches Paritätsbit ergibt <b>${even ? 'gerade' : 'ungerade'}</b> Parität?`, ok: String(p), wrong: [String(1 - p), `Keins, die Anzahl der Einsen passt schon`, String(ones)],
+    w: `${b} hat ${ones} Einsen. Für ${even ? 'gerade' : 'ungerade'} Parität muss die Gesamtzahl der Einsen ${even ? 'gerade' : 'ungerade'} sein, also Paritätsbit <b>${p}</b>.` };
+}),
+gq('Codes', (r) => {
+  const even = r.int(0, 1) === 1, cnt = (n) => bin(n, 8).split('').filter((x) => x === '1').length;
+  const okPar = (n) => (cnt(n) % 2 === 0) === even, bytes = [];
+  let badB; do { badB = r.int(1, 254); } while (okPar(badB));
+  while (bytes.length < 3) { const x = r.int(1, 254); if (okPar(x) && bytes.indexOf(x) < 0 && x !== badB) bytes.push(x); }
+  return { q: `Welches Byte ist bei <b>${even ? 'gerader' : 'ungerader'}</b> Parität FEHLERHAFT?`, ok: grp(bin(badB, 8)), wrong: bytes.map((x) => grp(bin(x, 8))),
+    w: `${grp(bin(badB, 8))} hat ${cnt(badB)} Einsen (${cnt(badB) % 2 ? 'ungerade' : 'gerade'}), die anderen haben ${bytes.map(cnt).join(', ')}.` };
+}),
+gq('Codes', (r) => {
+  const W = r.pick([8, 16, 32, 64, 100, 128, 200, 640]), H = r.pick([8, 16, 32, 48, 100, 120, 480]), d = r.pick([1, 4, 8, 16, 24]);
+  const bits = W * H * d, by = bits / 8;
+  return { q: `Wie viele Byte belegt ein unkomprimiertes Bild mit ${W} × ${H} Pixeln bei ${d} Bit Farbtiefe?`, ok: fmtNum(by, 0), wrong: [fmtNum(bits, 0), fmtNum(W * H, 0), fmtNum(by * 8 * 8, 0), fmtNum(W * H * d / 1024, 2)],
+    w: `${W} · ${H} · ${d} Bit = ${fmtNum(bits, 0)} Bit ÷ 8 = ${fmtNum(by, 0)} Byte.` };
+}),
+gq('Zweierkomplement', (r) => {
+  const w = r.pick([4, 8, 8]), x = r.int(1, w === 4 ? 7 : 127), tw = twos(-x, w), pos = bin(x, w);
+  return { q: `Wie lautet −${x} im ${w}-Bit-Zweierkomplement?`, ok: grp(tw), wrong: [grp(invert(pos)), grp('1' + pos.slice(1)), grp(pos), grp(twos(-(x + 1), w))],
+    w: `${x} = ${grp(pos)} → invertiert ${grp(invert(pos))} → +1 = <b>${grp(tw)}</b>. (Nur invertieren wäre das Einerkomplement.)` };
+}),
+gq('Zweierkomplement', (r) => {
+  const w = r.pick([4, 8, 8]), x = r.int(1, w === 4 ? 7 : 127), tw = twos(-x, w), pos = bin(x, w);
+  return { q: `Wie lautet −${x} im ${w}-Bit-Zweierkomplement?`, ok: grp(tw), wrong: [grp(invert(pos)), grp('1' + pos.slice(1)), grp(pos), grp(twos(-(x - 1 || 2), w))],
+    w: `${x} = ${grp(pos)} → invertiert ${grp(invert(pos))} → +1 = <b>${grp(tw)}</b>.` };
+}),
+gq('Zweierkomplement', (r) => {
+  const n = r.int(128, 255), s = bin(n, 8), v = fromTwos(s);
+  return { q: `Welche Dezimalzahl ist ${grp(s)} im 8-Bit-Zweierkomplement?`, ok: String(v), wrong: [String(n), String(-(n & 127)), String(v - 1), String(v + 1)],
+    w: `Das MSB hat den Stellenwert −128: −128 + ${n - 128} = <b>${v}</b>. (${n} wäre der Wert ohne Vorzeichen.)` };
+}),
+gq('Zweierkomplement', (r) => {
+  const over = r.int(0, 1) === 1; let a, b;
+  if (over) { a = r.int(40, 120); b = r.int(128 - a, 127); } else { a = r.int(10, 120); b = -r.int(1, 120); }
+  const raw = (a + b) & 255, s = bin(raw, 8), v = fromTwos(s), sum = a + b;
+  const ok = over ? `Überlauf: ${grp(s)} = ${v}` : `${grp(s)} = ${v}`;
+  return { q: `Was ergibt ${grp(twos(a, 8))} + ${grp(twos(b, 8))} (also ${a} + (${b})) im 8-Bit-Zweierkomplement?`, ok,
+    wrong: over ? [`${grp(s)} = +${raw}`, `${grp(bin(sum & 127, 8))} = +${sum & 127}`, 'Es passt genau in 8 Bit'] : [`Überlauf: ${grp(s)} = ${v}`, `${grp(bin((sum + 1) & 255, 8))} = ${sum + 1}`, `${grp(bin(Math.abs(sum) & 255, 8))} = ${-sum}`],
+    w: over ? `${a} + ${b} = ${sum} liegt über +127. Das Ergebnis kippt ins Negative (${grp(s)} = ${v}): <b>Überlauf</b>.` : `${a} + (${b}) = ${sum} liegt im Bereich −128 bis +127, der Übertrag aus der höchsten Stelle wird verworfen.` };
+}),
+gq('Zweierkomplement', (r) => {
+  const n = r.int(1, 254), s = bin(n, 8);
+  return { q: `Welche Dualzahl ist das Einerkomplement von ${grp(s)}?`, ok: grp(invert(s)), wrong: [grp(twos(-n, 8)), grp(s), grp(s.split('').reverse().join('')), grp(bin(n ^ 15, 8)), grp(bin(n ^ 240, 8))],
+    w: `Einerkomplement: alle Bits invertieren. Mit +1 ergäbe sich das Zweierkomplement ${grp(twos(-n, 8))}.` };
+})
+);
+D.self.evp.push(
+gs('Zweierkomplement', 3, (r) => {
+  const x = r.int(20, 127), pos = bin(x, 8), inv = invert(pos), tw = twos(-x, 8);
+  return { q: `Stelle −${x} im 8-Bit-Zweierkomplement dar und beschreibe die Schritte.`,
+    m: `1. Betrag: ${x} = ${grp(pos)} (${powSum(x)}). 2. Invertieren: ${grp(inv)}. 3. +1: <b>${grp(tw)}</b>. Probe: −128 + ${128 - x} = −${x}. <i>1 P. je Schritt/Ergebnis.</i>` };
+}),
+gs('Codes', 3, (r) => {
+  const [W, H] = r.pick([[1920, 1080], [1280, 720], [800, 600], [1024, 768], [2560, 1440], [3840, 2160], [640, 480]]), d = r.pick([8, 16, 24, 32]);
+  const px = W * H, bits = px * d, by = bits / 8;
+  return { q: `Ein Bild hat ${W} × ${H} Pixel bei ${d} Bit Farbtiefe (unkomprimiert). Berechne den Speicherbedarf in Byte und ungefähr in MB.`,
+    m: `${W} · ${H} = ${fmtNum(px, 0)} Pixel · ${d} Bit = ${fmtNum(bits, 0)} Bit ÷ 8 = <b>${fmtNum(by, 0)} Byte</b> ≈ ${dez(by / 1e6, 1)} MB (SI), das sind etwa ${dez(by / 1048576, 2)} MiB. <i>1 P. Pixelzahl, 1 P. Bit→Byte, 1 P. Ergebnis.</i>` };
+}),
+gs('Codes', 3, (r) => {
+  const ip = [r.pick([10, 172, 192]), r.int(0, 255), r.int(0, 255), r.int(1, 254)];
+  return { q: `Eine IPv4-Adresse steht als Hex-Folge ${ip.map((x) => hexs(x, 2)).join(' ')}. Schreibe sie in der üblichen Punktschreibweise und erkläre den Aufbau.`,
+    m: `${ip.map((x) => `${hexs(x, 2)} = ${x}`).join(', ')} → <b>${ip.join('.')}</b>. Eine IPv4-Adresse hat 32 Bit = 4 Bytes (Oktette), jedes Byte wird dezimal (0 bis 255) geschrieben und durch Punkte getrennt. <i>2 P. Adresse, 1 P. Aufbau.</i>` };
+})
+);
+
+/* ---------- WUB ---------- */
+const fristAG = (y) => (y >= 20 ? 7 : y >= 15 ? 6 : y >= 12 ? 5 : y >= 10 ? 4 : y >= 8 ? 3 : y >= 5 ? 2 : y >= 2 ? 1 : 0);
+const fristText = (m) => (m ? `${m} Monat${m > 1 ? 'e' : ''} zum Monatsende` : '4 Wochen zum 15. oder zum Monatsende');
+const wubFrist = (who) => (r) => {
+  const y = r.pick([1, 2, 3, 5, 6, 8, 9, 10, 11, 12, 14, 15, 18, 20, 25]), ag = who === 'ag' || (who === 'x' && r.int(0, 1) === 1), m = ag ? fristAG(y) : 0;
+  const ok = fristText(m);
+  return { q: `Der <b>${ag ? 'Arbeitgeber' : 'Arbeitnehmer'}</b> kündigt nach <b>${y} Jahr${y > 1 ? 'en' : ''}</b> Betriebszugehörigkeit (keine Probezeit, keine abweichende Regelung). Welche gesetzliche Frist gilt?`, ok,
+    wrong: ag ? [fristText(Math.max(0, m - 1)), fristText(Math.min(7, m + 1)), m ? fristText(0) : fristText(2), fristText(Math.min(7, m + 2)), fristText(Math.max(0, m - 2)), fristText(3)]
+      : [fristText(fristAG(y)), fristText(1), fristText(3), fristText(2)],
+    w: ag ? `§ 622 Abs. 2 BGB: ab 2 Jahren 1 Monat, ab 5 Jahren 2, ab 8 Jahren 3, ab 10 Jahren 4, ab 12 Jahren 5, ab 15 Jahren 6, ab 20 Jahren 7 Monate (jeweils zum Monatsende). Darunter gilt die Grundfrist von 4 Wochen.` : `Die verlängerten Fristen gelten nur für Kündigungen durch den <b>Arbeitgeber</b>. Der Arbeitnehmer kündigt immer mit der Grundfrist: 4 Wochen zum 15. oder zum Monatsende.` };
+};
+D.mc.wub.push(
+gq('Kündigung', wubFrist('ag')),
+gq('Kündigung', wubFrist('x')),
+gq('Kündigung', (r) => {
+  let p, s; do { const alter = r.int(22, 62); p = { alter, jahre: r.int(1, Math.min(alter - 18, 35)), verh: r.int(0, 1) === 1, kinder: r.int(0, 3), schwer: r.int(0, 6) === 0 }; s = sozialPunkte(p); } while (p.alter <= 55 && p.jahre <= 10 && r.int(0, 2) > 0);
+  const name = r.pick(['Sophie', 'Tobias', 'Mehmet', 'Eva', 'Jonas', 'Lena', 'Murat', 'Petra']);
+  const naivBz = p.jahre <= 10 ? p.jahre : 10 + 2 * (p.jahre - 10), naiv = p.alter + naivBz + s.unterhalt + s.schwer;
+  const ohneVerh = s.summe - (p.verh ? 8 : 0) + (p.verh ? 0 : 8), einfach = s.alter + p.jahre + s.unterhalt + s.schwer;
+  return { q: `${SCHEMA_HTML}<br>${name} ist ${p.alter} Jahre alt, ${p.jahre} Jahr${p.jahre > 1 ? 'e' : ''} im Betrieb, ${p.verh ? 'verheiratet' : 'ledig'}, ${p.kinder ? p.kinder + ' Kind' + (p.kinder > 1 ? 'er' : '') : 'kinderlos'}${p.schwer ? ', schwerbehindert (50 %)' : ''}. Wie viele Punkte hat ${name}?`,
+    ok: String(s.summe), wrong: [String(naiv), String(einfach), String(ohneVerh), String(s.summe + 4), String(s.summe - 2)],
+    w: `Alter ${s.alter}${p.alter > 55 ? ' (höchstens 55)' : ''} + Betriebszugehörigkeit ${s.bz}${p.jahre > 10 ? ' (bis 10 Jahre 1 P., danach 2 P. je Jahr' + (p.alter > 55 ? ', nur bis zum 55. Lebensjahr' : '') + ')' : ''} + Unterhalt ${s.unterhalt} + Schwerbehinderung ${s.schwer} = <b>${s.summe}</b>.` };
+}),
+gq('Berufsausbildung', (r) => {
+  const a = r.pick([14, 15, 16, 17, 18]), t = { 14: 30, 15: 30, 16: 27, 17: 25, 18: 24 }[a];
+  return { q: `Wie viele <b>Werktage</b> Urlaub stehen einer Person zu, die zu Beginn des Kalenderjahres ${a} Jahre alt ist?`, ok: `${t} Werktage`, wrong: ['30 Werktage', '27 Werktage', '25 Werktage', '24 Werktage', '20 Werktage'].filter((x) => x !== `${t} Werktage`),
+    w: `Jugendarbeitsschutzgesetz: noch nicht 16 → 30, noch nicht 17 → 27, noch nicht 18 → 25 Werktage. Ab 18 gilt das Bundesurlaubsgesetz mit 24 Werktagen. Maßgeblich ist das Alter zu Beginn des Kalenderjahres.` };
+}),
+gq('Berufsausbildung', (r) => {
+  const jung = r.int(0, 1) === 1, h = jung ? r.pick([4, 5, 5.5, 6, 7, 8]) : r.pick([5, 6, 6.5, 7, 8, 8.5, 9, 9.5, 10]);
+  const p = jung ? (h > 6 ? 60 : h > 4.5 ? 30 : 0) : (h > 9 ? 45 : h > 6 ? 30 : 0), t = (m) => (m ? `${m} Minuten` : 'keine Pause vorgeschrieben');
+  return { q: `Welche Ruhepause steht ${jung ? 'einem <b>Jugendlichen</b>' : 'einem <b>Erwachsenen</b>'} bei ${dez(h, 1)} Stunden Arbeitszeit mindestens zu?`, ok: t(p), wrong: [0, 15, 30, 45, 60].map(t).filter((x) => x !== t(p)),
+    w: jung ? 'Jugendarbeitsschutzgesetz: mehr als 4,5 bis 6 Stunden → 30 Minuten, mehr als 6 Stunden → 60 Minuten.' : 'Arbeitszeitgesetz: mehr als 6 bis 9 Stunden → 30 Minuten, mehr als 9 Stunden → 45 Minuten.' };
+}),
+gq('Abrechnung', (r) => {
+  const lst = r.int(2000, 60000) / 100, ok = Math.floor(lst * 9 + 1e-6), e = (c) => eur(c);
+  return { q: `Die Lohnsteuer beträgt ${eur(Math.round(lst * 100))}. Wie hoch ist die Kirchensteuer in NRW?`, ok: e(ok),
+    wrong: [e(Math.floor(lst * 8 + 1e-6)), e(Math.ceil(lst * 9 - 1e-6) === ok ? ok + 1 : Math.ceil(lst * 9 - 1e-6)), e(Math.floor(lst * 5.5 + 1e-6)), e(Math.round(lst * 90))],
+    w: `9 % der Lohnsteuer: ${fmtNum(lst, 2)} € · 9 % = ${fmtNum(lst * 0.09, 4)} €, <b>abgerundet</b> auf ${e(ok)}. (8 % gelten in Bayern und Baden-Württemberg.)` };
+})
+);
+D.self.wub.push(
+gs('Kündigung', 6, (r) => {
+  const namen = r.shuffle(['A', 'B', 'C']); let pers, pts;
+  do {
+    pers = namen.map((n) => { const alter = r.int(24, 62); return { n, alter, jahre: r.int(1, Math.min(alter - 18, 35)), verh: alter >= 26 && r.int(0, 1) === 1, kinder: r.int(0, 3), schwer: false }; });
+    pts = pers.map(sozialPunkte);
+  } while (new Set(pts.map((p) => p.summe)).size < 3);
+  pers.sort((x, y) => (x.n < y.n ? -1 : 1)); pts = pers.map(sozialPunkte);
+  let low = 0; pts.forEach((p, i) => { if (p.summe < pts[low].summe) low = i; });
+  const desc = (p) => `${p.n}) ${p.alter} Jahre, ${p.jahre} Jahr${p.jahre > 1 ? 'e' : ''} im Betrieb, ${p.verh ? 'verheiratet' : 'ledig'}, ${p.kinder ? p.kinder + ' Kind' + (p.kinder > 1 ? 'er' : '') : 'keine Kinder'}`;
+  return { q: `Sozialauswahl: Führe sie mit dem Punkteschema (Alter 1 P. je Jahr, max. 55 · Betriebszugehörigkeit bis 10 Jahre 1 P., danach 2 P. je Jahr, max. 70, nur bis zum 55. Lebensjahr · Kind 4 P. · verheiratet 8 P.) für diese Personen durch: ${pers.map(desc).join(' · ')}. Wem wird gekündigt?`,
+    m: `${pers.map((p, i) => `<b>${p.n}:</b> ${pts[i].alter} + ${pts[i].bz} + ${pts[i].unterhalt} = <b>${pts[i].summe}</b>`).join(' · ')}. Gekündigt wird <b>${pers[low].n}</b> mit der niedrigsten Punktzahl (am wenigsten schutzbedürftig). <i>Je Person 1,5 P., 1,5 P. Entscheidung.</i>` };
+}),
+gs('Berufsausbildung', 4, (r) => {
+  const a = r.pick([15, 16, 17]), h = r.pick([7, 7.5, 8]), u = { 15: 30, 16: 27, 17: 25 }[a];
+  return { q: `Ein ${a}-jähriger Auszubildender arbeitet ${dez(h, 1)} Stunden täglich. Welche Pause steht ihm zu, wie viele Urlaubstage hat er (Alter zu Beginn des Kalenderjahres), und wie viele Stunden Freizeit müssen zwischen zwei Arbeitstagen liegen?`,
+    m: `Nach dem <b>Jugendarbeitsschutzgesetz</b>: Pause <b>60 Minuten</b> (mehr als 6 Stunden), <b>${u} Werktage</b> Urlaub (noch nicht ${a + 1} Jahre), mindestens <b>12 Stunden</b> Freizeit nach Arbeitsende. Außerdem: höchstens 8 Stunden täglich und 40 Stunden pro Woche, 5-Tage-Woche. <i>Je 1 P. Pause, Urlaub, Freizeit, 1 P. Gesetz.</i>` };
+})
+);
 
 'use strict';
 (function () {
@@ -4234,7 +4679,8 @@ D.self.deu = [
     // Neues Objekt je Durchgang, damit ein noch laufendes Speichern den alten Durchgang nicht vermischt
     const old = S[state.fach].qz, q = S[state.fach].qz = { phase: 'run', topic: old.topic, count: old.count, fach: state.fach, retry: !!retry, t0: Date.now(), t1: null, save: null };
     let list = shuf(pool); if (count) list = list.slice(0, count);
-    q.list = list.map((m) => ({ t: m.t, q: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : shuf(m.o.map((t, i) => ({ t, c: i === m.a }))), src: m, ok: false }));
+    const qr = makeRng(Math.floor(Math.random() * 2147483647));   // erzeugte Fragen bei jedem Start neu würfeln
+    q.list = list.map((m0) => { const m = mcInst(m0, qr); return { t: m.t, q: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : shuf(m.o.map((t, i) => ({ t, c: i === m.a }))), src: m0, ok: false }; });
     q.i = 0; q.right = 0; q.wrong = []; q.picked = null;
   }
 
@@ -4281,8 +4727,8 @@ D.self.deu = [
       return out;
     };
     plan.gens.filter((k) => !topicOff(f, FACH[f].gens[k].topic)).forEach((k) => tasks.push(genTask(FACH[f].gens, k, r, { satz: 'blatt' })));
-    balanced(D.mc[f].filter(isOn(f)), plan.mc).forEach((m) => tasks.push({ kind: 'mc', topic: m.t, pts: 1, prompt: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : r.shuffle(m.o.map((t, i) => ({ t, c: i === m.a }))), user: null }));
-    balanced(D.self[f].filter(isOn(f)), plan.self).forEach((m) => tasks.push({ kind: 'self', topic: m.t, pts: m.pts, prompt: m.q, model: m.m, user: '', rating: null }));
+    balanced(D.mc[f].filter(isOn(f)), plan.mc).map((m) => mcInst(m, r)).forEach((m) => tasks.push({ kind: 'mc', topic: m.t, pts: 1, prompt: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : r.shuffle(m.o.map((t, i) => ({ t, c: i === m.a }))), user: null }));
+    balanced(D.self[f].filter(isOn(f)), plan.self).map((m) => selfInst(m, r)).forEach((m) => tasks.push({ kind: 'self', topic: m.t, pts: m.pts, prompt: m.q, model: m.m, user: '', rating: null }));
     tasks.forEach((t, i) => { t.n = i + 1; if (t.kind === 'input') t.user = ''; });
     return { phase: 'run', fach: f, preset, seed, name: plan.name, limit: plan.min, ask: null, tasks, total: tasks.reduce((a, t) => a + t.pts, 0), t0: Date.now(), timer: null };
   }
