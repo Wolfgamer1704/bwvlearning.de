@@ -162,7 +162,7 @@ footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-ali
 <body>
 <div class="wrap" id="app">
   <header class="top">
-    <div><h1>Lernhilfe</h1><p>Stand 10. November 2026 · EVP, WUB, SUD und Deutsch: Lernhilfen, Abfragen und Probetests</p></div>
+    <div><h1>Lernhilfe</h1><p>Stand 20. November 2026 (Code-Version v4) · EVP, WUB, SUD und Deutsch: Lernhilfen, Abfragen und Probetests</p></div>
     <button class="btn ghost small" data-act="theme" aria-label="Hell oder dunkel umschalten">Hell / Dunkel</button>
   </header>
   <div class="faches" id="faches"></div>
@@ -3818,20 +3818,20 @@ D.self.deu = [
 
 'use strict';
 /* ======================= ZUFÄLLIG ERZEUGTE MULTIPLE-CHOICE- UND FREITEXTFRAGEN ======================= */
-// Multiple Choice: gq(thema, gen) – gen(r) liefert { q, ok, wrong: [...], w, fix?, java? }.
+// Multiple Choice: gq(thema, kurzname, gen) – gen(r) liefert { q, ok, wrong: [...], w, fix?, java? }.
 //   Die falschen Antworten werden aus typischen Denkfehlern berechnet, nicht zufällig gewürfelt.
 //   java: { code, wrap: 'main' | 'class', expect } dient nur der Prüfung gegen echtes Java (Testskript).
 // Freitext: gs(thema, punkte, gen) – gen(r) liefert { q, m } (Musterlösung mit den erzeugten Werten).
 // Probetest: erzeugt mit dem Zufallsgenerator der Test-Nr. (gleiche Nr. = gleicher Test).
 // Quiz: bei jedem Start neu; „Falsche Fragen wiederholen“ erzeugt neue Zahlen zur selben Frageart.
-const gq = (t, gen) => ({ t, gen });
+const gq = (t, lbl, gen) => ({ t, lbl, gen });
 const gs = (t, pts, gen) => ({ t, pts, gen });
 const optKey = (s) => String(s).replace(/<[^>]+>/g, '').replace(/\s+/g, '').toLowerCase();
 function mcInst(m, r) {
   if (!m.gen) return m;
   const g = m.gen(r), seen = [optKey(g.ok)], wrong = [];
   g.wrong.forEach((x) => { const k = optKey(x); if (seen.indexOf(k) < 0) { seen.push(k); wrong.push(x); } });
-  return { t: m.t, q: g.q, o: [g.ok].concat(wrong.slice(0, 3)), a: 0, w: g.w, fix: !!g.fix, java: g.java, src: m };
+  return { t: m.t, lbl: m.lbl, q: g.q, o: [g.ok].concat(wrong.slice(0, 3)), a: 0, w: g.w, fix: !!g.fix, java: g.java, src: m };
 }
 function selfInst(m, r) {
   if (!m.gen) return m;
@@ -3844,7 +3844,7 @@ const simLoop = (start, cmp, end, step) => { let n = 0; for (let i = start; cmp 
 
 /* ---------- SUD: Variablen & Operatoren ---------- */
 D.mc.sud.push(
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'int-Division in double-Variable', (r) => {
   const b = r.int(2, 9); let a = r.pick([r.int(1, b - 1), r.int(b + 1, 9 * b)]); if (a % b === 0) a++;
   const q = Math.trunc(a / b), code = `int a = ${a}, b = ${b};\ndouble c = a / b;\nSystem.out.println(c);`;
   return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: dstr(q),
@@ -3852,14 +3852,14 @@ gq('Variablen & Operatoren', (r) => {
     w: `${jc('a / b')} rechnet mit zwei ${jc('int')}-Werten, also ganzzahlig: ${a} / ${b} = ${q}. Erst danach wird das Ergebnis in ${jc('double')} umgewandelt: ${dstr(q)}.`,
     java: { code, wrap: 'main', expect: dstr(q) } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Rest mit %', (r) => {
   const b = r.int(2, 9), k = r.int(1, 12), rest = r.int(1, b - 1), a = k * b + rest;
   return { q: `Was liefert ${jc(a + ' % ' + b)}?`, ok: String(rest),
     wrong: [String(k), String(b - rest), String(Math.round(a / b * 100) / 100), String(rest + 1), String(k * b)],
     w: `${jc('%')} ist der Rest der Ganzzahldivision: ${a} = ${k} · ${b} + <b>${rest}</b>.`,
     java: { code: `System.out.println(${a} % ${b});`, wrap: 'main', expect: String(rest) } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Zusammengesetzte Zuweisung', (r) => {
   const A = r.int(7, 30), K = r.int(2, 6), ops = ['+=', '-=', '*=', '/=', '%='], op = r.pick(ops);
   const val = { '+=': A + K, '-=': A - K, '*=': A * K, '/=': Math.trunc(A / K), '%=': A % K };
   const code = `int a = ${A};\na ${op} ${K};\nSystem.out.println(a);`;
@@ -3868,7 +3868,7 @@ gq('Variablen & Operatoren', (r) => {
     w: `${jc('a ' + op + ' ' + K)} ist die Kurzform von ${jc('a = a ' + op[0] + ' ' + K)}: ${A} ${op[0]} ${K} = ${val[op]}.${op === '/=' ? ' Bei int wird ganzzahlig geteilt.' : ''}`,
     java: { code, wrap: 'main', expect: String(val[op]) } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Text und Zahlen verketten', (r) => {
   const x = r.int(1, 9), y = r.int(1, 9), s = r.pick(['x', 'a', '#', 'Z', 'k']);
   const forms = [
     [`${x} + ${y} + "${s}"`, `${x + y}${s}`, 'Links nach rechts: erst die Zahlen addieren, dann den Text anhängen.'],
@@ -3880,7 +3880,7 @@ gq('Variablen & Operatoren', (r) => {
   return { q: `Was gibt ${jc('System.out.println(' + f[0] + ');')} aus?`, ok: f[1], wrong: r.shuffle(all.filter((v) => v !== f[1])),
     w: `${f[2]} Ergebnis: <b>${f[1]}</b>.`, java: { code: `System.out.println(${f[0]});`, wrap: 'main', expect: f[1] } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Cast auf int', (r) => {
   const d = r.int(1, 9) + r.pick([0.5, 0.6, 0.7, 0.8, 0.9, 0.3]), neg = r.int(0, 2) === 0, v = neg ? -d : d, out = Math.trunc(v);
   const expr = `(int) ${neg ? '-' : ''}${d}`;
   return { q: `Was ergibt ${jc(expr)}?`, ok: String(out),
@@ -3888,7 +3888,7 @@ gq('Variablen & Operatoren', (r) => {
     w: `Der Cast auf ${jc('int')} schneidet die Nachkommastellen ab (Richtung null), er rundet nicht: ${out}.`,
     java: { code: `System.out.println(${expr});`, wrap: 'main', expect: String(out) } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Math.round', (r) => {
   const v0 = r.int(1, 9) + r.pick([0.5, 0.5, 0.4, 0.6, 0.2, 0.8]), neg = r.int(0, 3) === 0, v = neg ? -v0 : v0, out = Math.round(v);
   const expr = `Math.round(${v})`;
   return { q: `Was gibt ${jc('System.out.println(' + expr + ');')} aus?`, ok: String(out),
@@ -3896,7 +3896,7 @@ gq('Variablen & Operatoren', (r) => {
     w: `${jc('Math.round')} rundet auf die nächste ganze Zahl, bei ,5 <b>nach oben</b> (Richtung +∞), und liefert eine ganze Zahl (long) ohne „.0“.${neg ? ` Bei negativen Zahlen heißt „nach oben“ Richtung null: ${v} → ${out}.` : ''}`,
     java: { code: `System.out.println(${expr});`, wrap: 'main', expect: String(out) } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Rechnen mit char', (r) => {
   const up = r.int(0, 1) === 1, ch = String.fromCharCode((up ? 65 : 97) + r.int(0, 20)), k = r.int(1, 5), c = ch.charCodeAt(0), res = String.fromCharCode(c + k);
   if (r.int(0, 1) === 0) {
     return { q: `Was gibt ${jc(`System.out.println('${ch}' + ${k});`)} aus?`, ok: `${c + k} (int)`,
@@ -3909,7 +3909,7 @@ gq('Variablen & Operatoren', (r) => {
     w: `'${ch}' = ${c}, plus ${k} = ${c + k}. Der Cast ${jc('(char)')} macht daraus wieder ein Zeichen: „${res}“.`,
     java: { code: `System.out.println((char) ('${ch}' + ${k}));`, wrap: 'main', expect: res } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Inkrement/Dekrement (a++, ++a)', (r) => {
   const A = r.int(2, 20), op = r.pick(['a++', '++a', 'a--', '--a']), K = r.pick([0, 0, r.int(1, 9)]);
   const inc = op.indexOf('+') >= 0 ? 1 : -1, post = op[0] === 'a', aft = A + inc, used = post ? A : aft, b = used + K;
   const rhs = K ? `${op} + ${K}` : op, code = `int a = ${A};\nint b = ${rhs};`;
@@ -3919,7 +3919,7 @@ gq('Variablen & Operatoren', (r) => {
     w: `${post ? `Postfix ${jc(op)}: Erst wird der <b>alte</b> Wert ${A} verwendet, danach wird a ${inc > 0 ? 'erhöht' : 'verringert'}.` : `Präfix ${jc(op)}: Erst wird a ${inc > 0 ? 'erhöht' : 'verringert'}, dann wird der <b>neue</b> Wert ${aft} verwendet.`} a = ${aft}, b = ${used}${K ? ' + ' + K : ''} = ${b}.`,
     java: { code: code + '\nSystem.out.println("a = " + a + ", b = " + b);', wrap: 'main', expect: `a = ${aft}, b = ${b}` } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Ziffern mit % 10 und / 10', (r) => {
   const n = r.int(1000, 9999), f = r.int(0, 2);
   const d = [[`${n} % 10`, n % 10, 'die letzte Ziffer (Einerstelle)', [`${n} / 10`, `${n} % 2`, `${n} / 1000`, `${n} % 100`]],
     [`(${n} / 10) % 10`, Math.trunc(n / 10) % 10, 'die Zehnerstelle', [`${n} % 10`, `${n} % 100`, `${n} / 10`, `${n} / 100`]],
@@ -3928,7 +3928,7 @@ gq('Variablen & Operatoren', (r) => {
     w: `${jc('% 10')} liefert die letzte Ziffer, ${jc('/ 10')} schneidet sie bei int ab. ${jc(d[0])} = ${d[1]}.`,
     java: { code: `System.out.println(${d[0]});`, wrap: 'main', expect: String(d[1]) } };
 }),
-gq('Variablen & Operatoren', (r) => {
+gq('Variablen & Operatoren', 'Cast und Klammern bei Division', (r) => {
   const b = r.pick([2, 4, 5, 8]); let a = r.int(b + 1, 9 * b); if (a % b === 0) a++;
   const tr = Math.trunc(a / b), ex = a / b, f = r.int(0, 2);
   const expr = [`(double) (${a} / ${b})`, `(double) ${a} / ${b}`, `${a} / (double) ${b}`][f], out = f === 0 ? dstr(tr) : String(ex);
@@ -3941,7 +3941,7 @@ gq('Variablen & Operatoren', (r) => {
 
 /* ---------- SUD: Verzweigungen ---------- */
 D.mc.sud.push(
-gq('Verzweigungen', (r) => {
+gq('Verzweigungen', '&& vor ||', (r) => {
   const x = r.int(1, 20), A = r.int(1, 20), B = r.int(1, 20), C = r.int(1, 20), f = r.int(0, 2);
   const T = [
     [`x > ${A} || x < ${B} && x != ${C}`, (x > A) || (x < B && x !== C), (x > A || x < B) && x !== C],
@@ -3952,7 +3952,7 @@ gq('Verzweigungen', (r) => {
     w: `${jc('&&')} bindet stärker als ${jc('||')} (wie Punkt vor Strich). Mit x = ${x} ergibt sich <b>${T[1]}</b>.${T[1] !== T[2] ? ` Wer stur von links nach rechts rechnet, kommt fälschlich auf ${T[2]}.` : ''}`,
     java: { code, wrap: 'main', expect: String(T[1]) } };
 }),
-gq('Verzweigungen', (r) => {
+gq('Verzweigungen', 'if / else-if-Kette', (r) => {
   const t1 = r.int(10, 20), t2 = r.int(3, t1 - 2), x = r.int(0, 25), chain = r.int(0, 1) === 1;
   let code, out = '';
   if (chain) {
@@ -3966,7 +3966,7 @@ gq('Verzweigungen', (r) => {
     w: chain ? `Bei ${jc('else if')} wird nur der <b>erste</b> zutreffende Zweig ausgeführt. x = ${x}: Ausgabe <b>${out}</b>.` : `Das sind <b>zwei getrennte</b> if-Anweisungen, beide werden geprüft. Das ${jc('else')} gehört nur zum zweiten if. x = ${x}: Ausgabe <b>${out}</b>.`,
     java: { code, wrap: 'main', expect: out } };
 }),
-gq('Verzweigungen', (r) => {
+gq('Verzweigungen', 'Lücke in der else-if-Kette', (r) => {
   const A = r.int(18, 25), B = r.int(A + 5, 40), v = r.pick([B, B, A, r.int(A + 1, B - 1), r.int(10, A - 1), r.int(B + 1, 50)]);
   const code = `double bmi = ${v};\nif (bmi < ${A}) {\n    System.out.print("Untergewicht");\n} else if (bmi < ${B}) {\n    System.out.print("Normalgewicht");\n} else if (bmi > ${B}) {\n    System.out.print("Übergewicht");\n}`;
   const out = v < A ? 'Untergewicht' : v < B ? 'Normalgewicht' : v > B ? 'Übergewicht' : '';
@@ -3979,7 +3979,7 @@ gq('Verzweigungen', (r) => {
 
 /* ---------- SUD: Schleifen ---------- */
 D.mc.sud.push(
-gq('Schleifen', (r) => {
+gq('Schleifen', 'while oder do-while', (r) => {
   const L = r.int(3, 20), S = r.pick([r.int(L, L + 8), r.int(0, L - 1)]), K = r.int(1, 5), dw = r.int(0, 2) > 0;
   let i = S; if (dw) { do { i += K; } while (i < L); } else { while (i < L) i += K; }
   let j = S; if (!dw) { do { j += K; } while (j < L); } else { while (j < L) j += K; }
@@ -3988,7 +3988,7 @@ gq('Schleifen', (r) => {
     w: dw ? `${jc('do-while')} ist fußgesteuert: Der Rumpf läuft <b>mindestens einmal</b>, erst danach wird ${jc('i < ' + L)} geprüft. Ergebnis ${i}.` : `${jc('while')} ist kopfgesteuert: Die Bedingung wird <b>vor</b> jedem Durchlauf geprüft${S >= L ? ', hier ist sie schon am Anfang falsch, der Rumpf läuft gar nicht' : ''}. Ergebnis ${i}.`,
     java: { code, wrap: 'main', expect: String(i) } };
 }),
-gq('Schleifen', (r) => {
+gq('Schleifen', 'for-Durchläufe zählen', (r) => {
   const a = r.int(0, 5), b = r.int(a + 3, a + 12), step = r.pick([1, 1, 2, 3]), cmp = r.pick(['<', '<=']);
   const n = simLoop(a, cmp, b, step), head = `for (int i = ${a}; i ${cmp} ${b}; ${step === 1 ? 'i++' : 'i += ' + step})`;
   const werte = []; for (let i = a; cmp === '<' ? i < b : i <= b; i += step) werte.push(i);
@@ -3996,7 +3996,7 @@ gq('Schleifen', (r) => {
     w: `i nimmt die Werte ${werte.join(', ')} an, das sind ${n} Durchläufe.`,
     java: { code: `int n = 0;\n${head} {\n    n++;\n}\nSystem.out.println(n);`, wrap: 'main', expect: String(n) } };
 }),
-gq('Schleifen', (r) => {
+gq('Schleifen', 'Halbieren in while', (r) => {
   const d = r.pick([2, 2, 3, 10]), n0 = d === 10 ? r.int(100, 99999) : r.int(10, 300);
   let n = n0, steps = 0; while (n > 1) { n = Math.trunc(n / d); steps++; }
   const code = `int n = ${n0};\nint steps = 0;\nwhile (n > 1) {\n    n = n / ${d};\n    steps++;\n}\nSystem.out.println(steps);`;
@@ -4005,7 +4005,7 @@ gq('Schleifen', (r) => {
     w: `n wird bei int ganzzahlig geteilt: ${n0} → ${ws.join(' → ')}. Das sind ${steps} Durchläufe.`,
     java: { code, wrap: 'main', expect: String(steps) } };
 }),
-gq('Schleifen', (r) => {
+gq('Schleifen', 'Geschachtelte Schleifen', (r) => {
   const A = r.int(2, 6), B = r.int(2, 6), f = r.int(0, 3);
   const inner = [`int j = 0; j < ${B}; j++`, `int j = 0; j < i; j++`, `int j = 0; j <= i; j++`, `int j = i; j < ${B}; j++`][f];
   let c = 0; for (let i = 0; i < A; i++) for (let j = [0, 0, 0, i][f]; [j < B, j < i, j <= i, j < B][f]; j++) c++;
@@ -4018,7 +4018,7 @@ gq('Schleifen', (r) => {
 
 /* ---------- SUD: Testen ---------- */
 D.mc.sud.push(
-gq('Testen', (r) => {
+gq('Testen', 'Grenzwerte (Black-Box)', (r) => {
   const N = r.pick([50, 100, 200, 250, 500, 1000, 2000]), P = r.pick([3, 5, 10, 15]), ding = r.pick(['Stück', 'Packungen', 'Lizenzen', 'Artikel']);
   const ab = r.int(0, 1) === 1;
   if (ab) return { q: `Regel: „Ab ${fmtNum(N, 0)} ${ding} gibt es ${P} % Rabatt.“ Welche Mengen sind die wichtigsten Grenzwerte für einen Black-Box-Test?`, ok: `${N - 1} und ${N}`,
@@ -4028,7 +4028,7 @@ gq('Testen', (r) => {
     wrong: [`${N - 1} und ${N}`, `${N - 10} und ${N + 10}`, `0 und ${N}`, `${N + 1} und ${N + 2}`],
     w: `„Bis ${N}“ schließt ${N} ein. Die Grenze liegt also zwischen ${N} (letzter Wert mit Versandkosten) und ${N + 1} (erster ohne).` };
 }),
-gq('Testen', (r) => {
+gq('Testen', 'Zahnbürsten-Preis berechnen', (r) => {
   const menge = r.pick([r.int(20, 499), 499, 500, r.int(501, 19999), 20000, r.int(20001, 40000)]);
   const kat = r.pick(['w', 'm', 'h']), griff = r.pick(['g', 'n', 'k']), names = { w: 'weich', m: 'mittelhart', h: 'hart', g: 'groß', n: 'normal', k: 'klein' };
   const c = zbCalc(menge, kat, griff), v = Math.round(c.p * 100) / 100, brutto = menge * 2.5;
@@ -4044,12 +4044,12 @@ gq('Testen', (r) => {
 
 /* ---------- SUD: Methoden ---------- */
 D.mc.sud.push(
-gq('Methoden', (r) => {
+gq('Methoden', 'Überladung', (r) => {
   const t = SUD.overload.fn(r), types = (t.code.match(/\((int|long|double|String) x\)/g) || []).map((s) => s.slice(1, -3));
   return { q: `Welche Zeile gibt das Programm aus?${jpre(t.code)}`, ok: t.ans, wrong: types.filter((x) => x !== t.ans).concat(['Compilerfehler: mehrdeutiger Aufruf']),
     w: t.solution.replace(/^<b>[^<]*<\/b><br>/, ''), java: { code: t.code, wrap: 'class', expect: t.ans } };
 }),
-gq('Methoden', (r) => {
+gq('Methoden', 'call-by-value / Referenz', (r) => {
   const f = r.int(0, 4), K = r.int(2, 9), N = r.int(3, 20), V = r.int(50, 99), F = r.int(1, 9);
   const P = [
     [`static void change(int x) {\n    x = x + ${K};\n}\n\npublic static void main(String[] args) {\n    int n = ${N};\n    change(n);\n    System.out.println(n);\n}`, N, [N + K, K, 0], `Bei primitiven Typen wird der <b>Wert kopiert</b> (call-by-value). Die Methode ändert nur ihre Kopie x, n bleibt ${N}.`],
@@ -4063,14 +4063,14 @@ gq('Methoden', (r) => {
 
 /* ---------- SUD: Arrays ---------- */
 D.mc.sud.push(
-gq('Arrays', (r) => {
+gq('Arrays', 'Array: Index und Länge', (r) => {
   const N = r.int(3, 12);
   if (r.int(0, 1)) return { q: `Was ist der höchste gültige Index bei ${jc('new int[' + N + ']')}?`, ok: String(N - 1), wrong: [String(N), String(N + 1), '1', String(N - 2)],
     w: `Der Index beginnt bei 0, also 0 bis ${N - 1}.`, java: { code: `System.out.println(new int[${N}].length - 1);`, wrap: 'main', expect: String(N - 1) } };
   return { q: `Welchen Wert liefert ${jc('a.length')} nach ${jc('int[] a = new int[' + N + '];')}?`, ok: String(N), wrong: [String(N - 1), String(N + 1), '0'],
     w: `${jc('length')} ist die <b>Anzahl</b> der Elemente (${N}), der höchste Index ist ${N - 1}.`, java: { code: `int[] a = new int[${N}];\nSystem.out.println(a.length);`, wrap: 'main', expect: String(N) } };
 }),
-gq('Arrays', (r) => {
+gq('Arrays', 'Array: Index außerhalb', (r) => {
   const N = r.int(3, 10), K = r.pick([N, N, N - 1, -1, N + 1]), bad = K >= N || K < 0;
   const ok = bad ? 'ArrayIndexOutOfBoundsException zur Laufzeit' : `a[${K}] wird auf 1 gesetzt`;
   return { q: `Was passiert bei ${jc(`int[] a = new int[${N}]; a[${K}] = 1;`)}?`, ok,
@@ -4078,7 +4078,7 @@ gq('Arrays', (r) => {
     w: bad ? `Gültig sind nur die Indizes 0 bis ${N - 1}. Der Compiler prüft das nicht, erst beim Ausführen kommt die Exception.` : `Index ${K} liegt im gültigen Bereich 0 bis ${N - 1}.`,
     java: { code: `try {\n    int[] a = new int[${N}];\n    a[${K}] = 1;\n    System.out.print("ok");\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.print("aioobe");\n}`, wrap: 'main', expect: bad ? 'aioobe' : 'ok' } };
 }),
-gq('Arrays', (r) => {
+gq('Arrays', 'Array: Referenz oder Kopie', (r) => {
   const a = uniqInts(r, 3, 1, 9), i = r.int(0, 2), V = r.int(10, 99), f = r.int(0, 2);
   const copy = ['int[] b = a;', 'int[] b = a.clone();', 'int[] b = Arrays.copyOf(a, a.length);'][f], out = f === 0 ? V : a[i];
   const code = `int[] a = {${a.join(', ')}};\n${copy}\nb[${i}] = ${V};\nSystem.out.println(a[${i}]);`;
@@ -4086,7 +4086,7 @@ gq('Arrays', (r) => {
     w: f === 0 ? `${jc('b = a')} kopiert nur die <b>Referenz</b>. a und b sind dasselbe Array, darum ist a[${i}] jetzt ${V}.` : `${jc(copy.slice(10, -1))} legt ein <b>neues</b> Array an. Die Änderung an b betrifft a nicht: ${a[i]}.`,
     java: { code, wrap: 'main', expect: String(out) } };
 }),
-gq('Arrays', (r) => {
+gq('Arrays', 'Array: Ganzzahl-Mittelwert', (r) => {
   const n = r.int(2, 4); let a, s; do { a = Array.from({ length: n }, () => r.int(1, 9)); s = a.reduce((x, y) => x + y, 0); } while (s % n === 0);
   const expr = `(${a.map((_, i) => `a[${i}]`).join(' + ')}) / a.length`, out = Math.trunc(s / n);
   return { q: `Was ergibt ${jc(expr)} bei ${jc(`int[] a = {${a.join(', ')}}`)}?`, ok: `${out} (Ganzzahldivision)`,
@@ -4094,25 +4094,25 @@ gq('Arrays', (r) => {
     w: `(${a.join(' + ')}) / ${n} = ${s} / ${n}. Beide Operanden sind ${jc('int')}, darum ${out}. Für den genauen Mittelwert braucht man ${jc('(double)')}.`,
     java: { code: `int[] a = {${a.join(', ')}};\nSystem.out.println(${expr});`, wrap: 'main', expect: String(out) } };
 }),
-gq('Arrays', (r) => {
+gq('Arrays', 'Arrays.sort', (r) => {
   const n = r.int(4, 6), a = uniqInts(r, n, 1, 60), s = a.slice().sort((x, y) => x - y), K = r.int(0, n - 1);
   const code = `int[] a = {${a.join(', ')}};\nArrays.sort(a);\nSystem.out.println(a[${K}]);`;
   return { q: `Was gibt das Programm aus?${jpre(code)}`, ok: String(s[K]), wrong: [String(a[K]), String(s[n - 1 - K]), String(s[(K + 1) % n]), String(s[(K + n - 1) % n]), String(a[(K + 1) % n]), String(a[(K + 2) % n])],
     w: `${jc('Arrays.sort')} sortiert aufsteigend: ${jlist(s)}. Index ${K} ist ${s[K]}.`, java: { code, wrap: 'main', expect: String(s[K]) } };
 }),
-gq('Arrays', (r) => {
+gq('Arrays', 'toCharArray', (r) => {
   const w = r.pick(['Hallo', 'Java', 'Array', 'Klausur', 'Schule', 'Code', 'Methode', 'Index', 'Byte', 'SUD']);
   return { q: `Wie viele Elemente hat ${jc('"' + w + '".toCharArray()')}?`, ok: String(w.length), wrong: [String(w.length - 1), String(w.length + 1), '1'],
     w: `Für jedes Zeichen ein Element: ${w.split('').join(', ')}.`, java: { code: `System.out.println("${w}".toCharArray().length);`, wrap: 'main', expect: String(w.length) } };
 }),
-gq('Arrays', (r) => {
+gq('Arrays', 'Zweidimensionales Array', (r) => {
   const R = r.int(2, 6); let C = r.int(2, 6); if (C === R) C++;
   const f = r.int(0, 2), expr = ['m.length', 'm[0].length', 'm.length * m[0].length'][f], out = [R, C, R * C][f];
   return { q: `Was ergibt ${jc(expr)} bei ${jc(`int[][] m = new int[${R}][${C}];`)}?`, ok: String(out), wrong: [String([C, R, R + C][f]), String(R * C), String(R + C), String(out + 1), String(out - 1), String(R * C + R)],
     w: `${jc(`new int[${R}][${C}]`)} hat ${R} Zeilen mit je ${C} Spalten. ${jc('m.length')} = Zeilen (${R}), ${jc('m[0].length')} = Spalten der ersten Zeile (${C}).`,
     java: { code: `int[][] m = new int[${R}][${C}];\nSystem.out.println(${expr});`, wrap: 'main', expect: String(out) } };
 }),
-gq('Arrays', (r) => {
+gq('Arrays', 'for-each ändert Array nicht', (r) => {
   const a = uniqInts(r, 3, 1, 9), k = r.int(2, 3), fe = r.int(0, 1) === 1, d = a.map((v) => v * k);
   const code = fe ? `int[] a = {${a.join(', ')}};\nfor (int v : a) {\n    v = v * ${k};\n}` : `int[] a = {${a.join(', ')}};\nfor (int i = 0; i < a.length; i++) {\n    a[i] = a[i] * ${k};\n}`;
   const res = fe ? a : d;
@@ -4157,61 +4157,61 @@ gs('Testen', 3, (r) => {
 const flipBit = (n, k) => n ^ (1 << k);
 const revBits = (n, w) => parseInt(bin(n, w).split('').reverse().join(''), 2);
 D.mc.evp.push(
-gq('Zahlensysteme', (r) => {
+gq('Zahlensysteme', 'Dual → Dezimal', (r) => {
   const n = r.int(65, 254), k = r.int(0, 6);
   return { q: `Welche Dezimalzahl ist ${grp(bin(n, 8))} (dual)?`, ok: String(n), wrong: [String(flipBit(n, k)), String(revBits(n, 8)), String(n + 8), String(n - 2)],
     w: `${powSum(n)} = ${n}.` };
 }),
-gq('Zahlensysteme', (r) => {
+gq('Zahlensysteme', 'Dual → Hex', (r) => {
   let n; do { n = r.int(26, 254); } while ((n >> 4) === (n & 15));
   const h = hexs(n, 2), hi = n >> 4, lo = n & 15, sw = hexs(lo * 16 + hi, 2);
   return { q: `Welche Hex-Zahl entspricht ${grp(bin(n, 8))}?`, ok: h, wrong: [sw, hexs(((hi + 1) & 15) * 16 + lo, 2), hexs(hi * 16 + ((lo + 15) & 15), 2), `${hi}${lo}`],
     w: `Von rechts in 4er-Gruppen (Tetraden): ${bin(hi, 4)} = ${hexs(hi)}, ${bin(lo, 4)} = ${hexs(lo)}, also ${h}.` };
 }),
-gq('Zahlensysteme', (r) => {
+gq('Zahlensysteme', 'Hex → Dezimal', (r) => {
   const hi = r.int(1, 15), lo = r.int(0, 15), n = hi * 16 + lo, h = hexs(n, 2);
   return { q: `Welcher Dezimalwert gehört zu Hex ${h}?`, ok: String(n), wrong: [String(hi * 10 + lo), String(lo * 16 + hi), String(n + 1), String(hi + lo), String(n - 16)],
     w: `${hexs(hi)} · 16 + ${hexs(lo)}${lo > 9 ? ' (= ' + lo + ')' : ''}${hi > 9 ? `, wobei ${hexs(hi)} = ${hi}` : ''}: ${hi} · 16 + ${lo} = ${n}.` };
 }),
-gq('Zahlensysteme', (r) => {
+gq('Zahlensysteme', 'Dezimal → Hex', (r) => {
   const hi = r.int(1, 15), lo = r.int(0, 15), n = hi * 16 + lo, h = hexs(n, 2);
   return { q: `Wie lautet die Dezimalzahl ${n} als Hex-Zahl?`, ok: h, wrong: [hexs(lo * 16 + hi, 2), String(n).length <= 2 ? String(n) : hexs(n + 1, 2), hexs(n + 16, 2), hexs(n - 1, 2)],
     w: `${n} : 16 = ${hi} Rest ${lo}. ${hi} = ${hexs(hi)}, ${lo} = ${hexs(lo)}, also ${h}.` };
 }),
-gq('Zahlensysteme', (r) => {
+gq('Zahlensysteme', 'Dezimal → Dual', (r) => {
   const n = r.int(33, 250), k = r.int(0, 6);
   return { q: `Wie lautet ${n} (dezimal) als Dualzahl?`, ok: grp(bin(n, 8)), wrong: [grp(bin(flipBit(n, k), 8)), grp(bin(revBits(n, 8), 8)), grp(bin(n + 2 > 255 ? n - 2 : n + 2, 8)), grp(bin(n ^ 0x30, 8))],
     w: `${n} = ${powSum(n)} → ${grp(bin(n, 8))}.` };
 }),
-gq('Bits & Bytes', (r) => {
+gq('Bits & Bytes', 'Bits für N Zustände', (r) => {
   const N = r.int(5, 2000), bits = Math.ceil(Math.log2(N));
   return { q: `Wie viele Bit braucht man mindestens, um ${fmtNum(N, 0)} verschiedene Zustände darzustellen?`, ok: String(bits), wrong: [String(bits - 1), String(bits + 1), String(bits + 2)],
     w: `2<sup>${bits - 1}</sup> = ${fmtNum(Math.pow(2, bits - 1), 0)} ist zu wenig, 2<sup>${bits}</sup> = ${fmtNum(Math.pow(2, bits), 0)} reicht.` };
 }),
-gq('Bits & Bytes', (r) => {
+gq('Bits & Bytes', 'Werte mit n Bit', (r) => {
   const n = r.int(3, 16), v = Math.pow(2, n);
   return { q: `Wie viele verschiedene Werte kann man mit ${n} Bit (ohne Vorzeichen) darstellen?`, ok: fmtNum(v, 0), wrong: [fmtNum(v - 1, 0), fmtNum(2 * n, 0), fmtNum(n * n, 0), fmtNum(v / 2, 0)],
     w: `2<sup>${n}</sup> = ${fmtNum(v, 0)} Werte (0 bis ${fmtNum(v - 1, 0)}). ${fmtNum(v - 1, 0)} ist der größte Wert, nicht die Anzahl.` };
 }),
-gq('Bits & Bytes', (r) => {
+gq('Bits & Bytes', 'Übertragungsdauer', (r) => {
   const rate = r.pick([10, 16, 20, 25, 40, 50, 80, 100, 200]); let mb, t; do { mb = r.int(5, 500); t = mb * 8 / rate; } while (!Number.isInteger(t));
   return { q: `Eine Datei mit ${mb} MB wird mit ${rate} Mbit/s übertragen. Wie lange dauert das (ohne Overhead)?`, ok: `${fmtNum(t, 0)} s`,
     wrong: [`${dez(mb / rate, 2)} s`, `${dez(mb * rate / 8, 2)} s`, `${fmtNum(t * 8, 0)} s`, `${dez(t / 60, 2)} s`],
     w: `${mb} MB · 8 = ${fmtNum(mb * 8, 0)} Mbit; ${fmtNum(mb * 8, 0)} Mbit ÷ ${rate} Mbit/s = ${fmtNum(t, 0)} s. Byte und Bit nicht verwechseln: 1 Byte = 8 Bit.` };
 }),
-gq('Codes', (r) => {
+gq('Codes', 'ASCII-Code', (r) => {
   const f = r.int(0, 2), ch = f === 2 ? String(r.int(0, 9)) : String.fromCharCode((f === 0 ? 65 : 97) + r.int(0, 25)), c = ch.charCodeAt(0);
   const other = f === 0 ? c + 32 : f === 1 ? c - 32 : Number(ch);
   return { q: `Welchen dezimalen ASCII-Code hat „${ch}“?`, ok: String(c), wrong: [String(other), String(c + 1), String(c - 1), String(c + 16)],
     w: `Merkpunkte: „A“ = 65, „a“ = 97 (Unterschied 32), „0“ = 48. „${ch}“ = ${f === 2 ? '48 + ' + ch : f === 0 ? '65 + ' + (c - 65) : '97 + ' + (c - 97)} = ${c}.` };
 }),
-gq('Codes', (r) => {
+gq('Codes', 'Paritätsbit', (r) => {
   const n = r.int(1, 126), b = bin(n, 7), ones = b.split('').filter((x) => x === '1').length, even = r.int(0, 1) === 1;
   const p = even ? ones % 2 : 1 - ones % 2;
   return { q: `Ein Zeichen hat den 7-Bit-Code ${b}. Welches Paritätsbit ergibt <b>${even ? 'gerade' : 'ungerade'}</b> Parität?`, ok: String(p), wrong: [String(1 - p), `Keins, die Anzahl der Einsen passt schon`, String(ones)],
     w: `${b} hat ${ones} Einsen. Für ${even ? 'gerade' : 'ungerade'} Parität muss die Gesamtzahl der Einsen ${even ? 'gerade' : 'ungerade'} sein, also Paritätsbit <b>${p}</b>.` };
 }),
-gq('Codes', (r) => {
+gq('Codes', 'Fehlerhaftes Byte (Parität)', (r) => {
   const even = r.int(0, 1) === 1, cnt = (n) => bin(n, 8).split('').filter((x) => x === '1').length;
   const okPar = (n) => (cnt(n) % 2 === 0) === even, bytes = [];
   let badB; do { badB = r.int(1, 254); } while (okPar(badB));
@@ -4219,28 +4219,28 @@ gq('Codes', (r) => {
   return { q: `Welches Byte ist bei <b>${even ? 'gerader' : 'ungerader'}</b> Parität FEHLERHAFT?`, ok: grp(bin(badB, 8)), wrong: bytes.map((x) => grp(bin(x, 8))),
     w: `${grp(bin(badB, 8))} hat ${cnt(badB)} Einsen (${cnt(badB) % 2 ? 'ungerade' : 'gerade'}), die anderen haben ${bytes.map(cnt).join(', ')}.` };
 }),
-gq('Codes', (r) => {
+gq('Codes', 'Bildgröße', (r) => {
   const W = r.pick([8, 16, 32, 64, 100, 128, 200, 640]), H = r.pick([8, 16, 32, 48, 100, 120, 480]), d = r.pick([1, 4, 8, 16, 24]);
   const bits = W * H * d, by = bits / 8;
   return { q: `Wie viele Byte belegt ein unkomprimiertes Bild mit ${W} × ${H} Pixeln bei ${d} Bit Farbtiefe?`, ok: fmtNum(by, 0), wrong: [fmtNum(bits, 0), fmtNum(W * H, 0), fmtNum(by * 8 * 8, 0), fmtNum(W * H * d / 1024, 2)],
     w: `${W} · ${H} · ${d} Bit = ${fmtNum(bits, 0)} Bit ÷ 8 = ${fmtNum(by, 0)} Byte.` };
 }),
-gq('Zweierkomplement', (r) => {
+gq('Zweierkomplement', 'Zweierkomplement: negative Zahl', (r) => {
   const w = r.pick([4, 8, 8]), x = r.int(1, w === 4 ? 7 : 127), tw = twos(-x, w), pos = bin(x, w);
   return { q: `Wie lautet −${x} im ${w}-Bit-Zweierkomplement?`, ok: grp(tw), wrong: [grp(invert(pos)), grp('1' + pos.slice(1)), grp(pos), grp(twos(-(x + 1), w))],
     w: `${x} = ${grp(pos)} → invertiert ${grp(invert(pos))} → +1 = <b>${grp(tw)}</b>. (Nur invertieren wäre das Einerkomplement.)` };
 }),
-gq('Zweierkomplement', (r) => {
+gq('Zweierkomplement', 'Zweierkomplement: negative Zahl', (r) => {
   const w = r.pick([4, 8, 8]), x = r.int(1, w === 4 ? 7 : 127), tw = twos(-x, w), pos = bin(x, w);
   return { q: `Wie lautet −${x} im ${w}-Bit-Zweierkomplement?`, ok: grp(tw), wrong: [grp(invert(pos)), grp('1' + pos.slice(1)), grp(pos), grp(twos(-(x - 1 || 2), w))],
     w: `${x} = ${grp(pos)} → invertiert ${grp(invert(pos))} → +1 = <b>${grp(tw)}</b>.` };
 }),
-gq('Zweierkomplement', (r) => {
+gq('Zweierkomplement', 'Zweierkomplement → Dezimal', (r) => {
   const n = r.int(128, 255), s = bin(n, 8), v = fromTwos(s);
   return { q: `Welche Dezimalzahl ist ${grp(s)} im 8-Bit-Zweierkomplement?`, ok: String(v), wrong: [String(n), String(-(n & 127)), String(v - 1), String(v + 1)],
     w: `Das MSB hat den Stellenwert −128: −128 + ${n - 128} = <b>${v}</b>. (${n} wäre der Wert ohne Vorzeichen.)` };
 }),
-gq('Zweierkomplement', (r) => {
+gq('Zweierkomplement', 'Zweierkomplement: Addition/Überlauf', (r) => {
   const over = r.int(0, 1) === 1; let a, b;
   if (over) { a = r.int(40, 120); b = r.int(128 - a, 127); } else { a = r.int(10, 120); b = -r.int(1, 120); }
   const raw = (a + b) & 255, s = bin(raw, 8), v = fromTwos(s), sum = a + b;
@@ -4249,7 +4249,7 @@ gq('Zweierkomplement', (r) => {
     wrong: over ? [`${grp(s)} = +${raw}`, `${grp(bin(sum & 127, 8))} = +${sum & 127}`, 'Es passt genau in 8 Bit'] : [`Überlauf: ${grp(s)} = ${v}`, `${grp(bin((sum + 1) & 255, 8))} = ${sum + 1}`, `${grp(bin(Math.abs(sum) & 255, 8))} = ${-sum}`],
     w: over ? `${a} + ${b} = ${sum} liegt über +127. Das Ergebnis kippt ins Negative (${grp(s)} = ${v}): <b>Überlauf</b>.` : `${a} + (${b}) = ${sum} liegt im Bereich −128 bis +127, der Übertrag aus der höchsten Stelle wird verworfen.` };
 }),
-gq('Zweierkomplement', (r) => {
+gq('Zweierkomplement', 'Einerkomplement', (r) => {
   const n = r.int(1, 254), s = bin(n, 8);
   return { q: `Welche Dualzahl ist das Einerkomplement von ${grp(s)}?`, ok: grp(invert(s)), wrong: [grp(twos(-n, 8)), grp(s), grp(s.split('').reverse().join('')), grp(bin(n ^ 15, 8)), grp(bin(n ^ 240, 8))],
     w: `Einerkomplement: alle Bits invertieren. Mit +1 ergäbe sich das Zweierkomplement ${grp(twos(-n, 8))}.` };
@@ -4286,9 +4286,9 @@ const wubFrist = (who) => (r) => {
     w: ag ? `§ 622 Abs. 2 BGB: ab 2 Jahren 1 Monat, ab 5 Jahren 2, ab 8 Jahren 3, ab 10 Jahren 4, ab 12 Jahren 5, ab 15 Jahren 6, ab 20 Jahren 7 Monate (jeweils zum Monatsende). Darunter gilt die Grundfrist von 4 Wochen.` : `Die verlängerten Fristen gelten nur für Kündigungen durch den <b>Arbeitgeber</b>. Der Arbeitnehmer kündigt immer mit der Grundfrist: 4 Wochen zum 15. oder zum Monatsende.` };
 };
 D.mc.wub.push(
-gq('Kündigung', wubFrist('ag')),
-gq('Kündigung', wubFrist('x')),
-gq('Kündigung', (r) => {
+gq('Kündigung', 'Kündigungsfrist (Arbeitgeber)', wubFrist('ag')),
+gq('Kündigung', 'Kündigungsfrist (AG oder AN)', wubFrist('x')),
+gq('Kündigung', 'Sozialauswahl: Punkte', (r) => {
   let p, s; do { const alter = r.int(22, 62); p = { alter, jahre: r.int(1, Math.min(alter - 18, 35)), verh: r.int(0, 1) === 1, kinder: r.int(0, 3), schwer: r.int(0, 6) === 0 }; s = sozialPunkte(p); } while (p.alter <= 55 && p.jahre <= 10 && r.int(0, 2) > 0);
   const name = r.pick(['Sophie', 'Tobias', 'Mehmet', 'Eva', 'Jonas', 'Lena', 'Murat', 'Petra']);
   const naivBz = p.jahre <= 10 ? p.jahre : 10 + 2 * (p.jahre - 10), naiv = p.alter + naivBz + s.unterhalt + s.schwer;
@@ -4297,18 +4297,18 @@ gq('Kündigung', (r) => {
     ok: String(s.summe), wrong: [String(naiv), String(einfach), String(ohneVerh), String(s.summe + 4), String(s.summe - 2)],
     w: `Alter ${s.alter}${p.alter > 55 ? ' (höchstens 55)' : ''} + Betriebszugehörigkeit ${s.bz}${p.jahre > 10 ? ' (bis 10 Jahre 1 P., danach 2 P. je Jahr' + (p.alter > 55 ? ', nur bis zum 55. Lebensjahr' : '') + ')' : ''} + Unterhalt ${s.unterhalt} + Schwerbehinderung ${s.schwer} = <b>${s.summe}</b>.` };
 }),
-gq('Berufsausbildung', (r) => {
+gq('Berufsausbildung', 'Urlaub nach Alter', (r) => {
   const a = r.pick([14, 15, 16, 17, 18]), t = { 14: 30, 15: 30, 16: 27, 17: 25, 18: 24 }[a];
   return { q: `Wie viele <b>Werktage</b> Urlaub stehen einer Person zu, die zu Beginn des Kalenderjahres ${a} Jahre alt ist?`, ok: `${t} Werktage`, wrong: ['30 Werktage', '27 Werktage', '25 Werktage', '24 Werktage', '20 Werktage'].filter((x) => x !== `${t} Werktage`),
     w: `Jugendarbeitsschutzgesetz: noch nicht 16 → 30, noch nicht 17 → 27, noch nicht 18 → 25 Werktage. Ab 18 gilt das Bundesurlaubsgesetz mit 24 Werktagen. Maßgeblich ist das Alter zu Beginn des Kalenderjahres.` };
 }),
-gq('Berufsausbildung', (r) => {
+gq('Berufsausbildung', 'Ruhepause', (r) => {
   const jung = r.int(0, 1) === 1, h = jung ? r.pick([4, 5, 5.5, 6, 7, 8]) : r.pick([5, 6, 6.5, 7, 8, 8.5, 9, 9.5, 10]);
   const p = jung ? (h > 6 ? 60 : h > 4.5 ? 30 : 0) : (h > 9 ? 45 : h > 6 ? 30 : 0), t = (m) => (m ? `${m} Minuten` : 'keine Pause vorgeschrieben');
   return { q: `Welche Ruhepause steht ${jung ? 'einem <b>Jugendlichen</b>' : 'einem <b>Erwachsenen</b>'} bei ${dez(h, 1)} Stunden Arbeitszeit mindestens zu?`, ok: t(p), wrong: [0, 15, 30, 45, 60].map(t).filter((x) => x !== t(p)),
     w: jung ? 'Jugendarbeitsschutzgesetz: mehr als 4,5 bis 6 Stunden → 30 Minuten, mehr als 6 Stunden → 60 Minuten.' : 'Arbeitszeitgesetz: mehr als 6 bis 9 Stunden → 30 Minuten, mehr als 9 Stunden → 45 Minuten.' };
 }),
-gq('Abrechnung', (r) => {
+gq('Abrechnung', 'Kirchensteuer', (r) => {
   const lst = r.int(2000, 60000) / 100, ok = Math.floor(lst * 9 + 1e-6), e = (c) => eur(c);
   return { q: `Die Lohnsteuer beträgt ${eur(Math.round(lst * 100))}. Wie hoch ist die Kirchensteuer in NRW?`, ok: e(ok),
     wrong: [e(Math.floor(lst * 8 + 1e-6)), e(Math.ceil(lst * 9 - 1e-6) === ok ? ok + 1 : Math.ceil(lst * 9 - 1e-6)), e(Math.floor(lst * 5.5 + 1e-6)), e(Math.round(lst * 90))],
@@ -4359,20 +4359,20 @@ gs('Berufsausbildung', 4, (r) => {
   const TABS = [['lern', 'Lernhilfe'], ['kk', 'Karteikarten'], ['qz', 'Quiz'], ['tr', 'Rechentrainer'], ['pt', 'Probetest']];
   const PLAN = {
     evp: {
-      kurz: { name: 'Kurztest', min: 25, gens: ['dez2bin', 'bin2hex', 'hex2dez', 'bitsNeeded', 'prefix', 'transfer', 'parity', 'image', 'zkDez2Bin', 'zkSub'], mc: 4, self: 2 },
-      voll: { name: 'Vollständiger Test', min: 60, gens: ['dez2bin', 'bin2dez', 'bin2hex', 'hex2bin', 'dez2hex', 'hex2dez', 'bitsNeeded', 'prefix', 'transfer', 'transfer', 'ascii', 'parity', 'parity', 'protocol', 'image', 'zkDez2Bin', 'zkMin', 'zkBin2Dez', 'zkSub', 'zkRange'], mc: 10, self: 6 }
+      kurz: { name: 'Kurztest', min: 30, gens: ['dez2bin', 'bin2hex', 'hex2dez', 'bitsNeeded', 'prefix', 'transfer', 'parity', 'image', 'zkDez2Bin', 'zkSub'], mc: 4, self: 2 },
+      voll: { name: 'Vollständiger Test', min: 90, gens: ['dez2bin', 'bin2dez', 'bin2hex', 'hex2bin', 'dez2hex', 'hex2dez', 'bitsNeeded', 'prefix', 'transfer', 'transfer', 'ascii', 'parity', 'parity', 'protocol', 'image', 'zkDez2Bin', 'zkMin', 'zkBin2Dez', 'zkSub', 'zkRange'], mc: 10, self: 6 }
     },
     wub: {
       kurz: { name: 'Kurztest', min: 30, gens: ['kuendFrist', 'sozialauswahl', 'netto'], mc: 9, self: 3 },
-      voll: { name: 'Vollständiger Test', min: 60, gens: ['kuendFrist', 'sozialauswahl', 'sozialauswahl', 'netto', 'svAn', 'agKosten'], mc: 18, self: 7 }
+      voll: { name: 'Vollständiger Test', min: 90, gens: ['kuendFrist', 'sozialauswahl', 'sozialauswahl', 'netto', 'svAn', 'agKosten'], mc: 18, self: 7 }
     },
     sud: {
-      kurz: { name: 'Kurztest', min: 40, gens: ['intDiv', 'typeMix', 'incDec', 'forCount', 'switchFall', 'arrLoop', 'callByValue', 'overload', 'bubbleRun', 'sortWhich', 'recursion'], mc: 9, self: 3 },
-      voll: { name: 'Vollständiger Test', min: 100, gens: ['intDiv', 'typeMix', 'incDec', 'strConcat', 'castRound', 'forCount', 'whileTrace', 'digitSum', 'switchFall', 'arrLoop', 'arrMaxIdx', 'arr2d', 'callByValue', 'overload', 'zahnbuerste', 'bubbleRun', 'selectionRun', 'insertionRun', 'sortWhich', 'sortCount', 'quickPart', 'recursion'], mc: 17, self: 8 }
+      kurz: { name: 'Kurztest', min: 30, gens: ['intDiv', 'typeMix', 'incDec', 'forCount', 'switchFall', 'arrLoop', 'callByValue', 'overload', 'bubbleRun', 'sortWhich', 'recursion'], mc: 9, self: 3 },
+      voll: { name: 'Vollständiger Test', min: 90, gens: ['intDiv', 'typeMix', 'incDec', 'strConcat', 'castRound', 'forCount', 'whileTrace', 'digitSum', 'switchFall', 'arrLoop', 'arrMaxIdx', 'arr2d', 'callByValue', 'overload', 'zahnbuerste', 'bubbleRun', 'selectionRun', 'insertionRun', 'sortWhich', 'sortCount', 'quickPart', 'recursion'], mc: 17, self: 8 }
     },
     deu: {
-      kurz: { name: 'Kurztest', min: 20, gens: ['wahrFalsch', 'ebene', 'kommArt'], mc: 3, self: 2 },
-      voll: { name: 'Wie der echte Test (15 Fragen)', min: 45, gens: ['begriff', 'wahrFalsch', 'signal', 'seite'], mc: 4, self: 7 }
+      kurz: { name: 'Kurztest', min: 30, gens: ['wahrFalsch', 'ebene', 'kommArt'], mc: 3, self: 2 },
+      voll: { name: 'Wie der echte Test (15 Fragen)', min: 90, gens: ['begriff', 'wahrFalsch', 'signal', 'seite'], mc: 4, self: 7 }
     }
   };
   const state = { fach: 'evp', tab: 'lern' };
@@ -4680,7 +4680,7 @@ gs('Berufsausbildung', 4, (r) => {
     const old = S[state.fach].qz, q = S[state.fach].qz = { phase: 'run', topic: old.topic, count: old.count, fach: state.fach, retry: !!retry, t0: Date.now(), t1: null, save: null };
     let list = shuf(pool); if (count) list = list.slice(0, count);
     const qr = makeRng(Math.floor(Math.random() * 2147483647));   // erzeugte Fragen bei jedem Start neu würfeln
-    q.list = list.map((m0) => { const m = mcInst(m0, qr); return { t: m.t, q: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : shuf(m.o.map((t, i) => ({ t, c: i === m.a }))), src: m0, ok: false }; });
+    q.list = list.map((m0) => { const m = mcInst(m0, qr); return { t: m.t, lbl: m.lbl, q: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : shuf(m.o.map((t, i) => ({ t, c: i === m.a }))), src: m0, ok: false }; });
     q.i = 0; q.right = 0; q.wrong = []; q.picked = null;
   }
 
@@ -4689,14 +4689,15 @@ gs('Berufsausbildung', 4, (r) => {
     const f = state.fach, tr = S[f].tr, keys = gensOn(f);
     const key = tr.key === 'mix' ? keys[Math.floor(Math.random() * keys.length)] : tr.key;
     tr.task = genTask(FACH[f].gens, key, makeRng(Math.floor(Math.random() * 2147483647)), { satz: tr.satz || 'blatt' });
-    tr.checked = false; tr.ok = null; tr.val = '';
+    tr.checked = false; tr.ok = null; tr.val = ''; tr.revealed = false;
   }
   // Neue Trainer-Sitzung (eigene Baserow-Zeile); Aufgabentyp und Beitragssätze bleiben erhalten
   function trNew(f, key, satz) {
-    return { fach: f, key: key || 'mix', satz: satz || 'blatt', task: null, checked: false, ok: null, val: '', n: 0, right: 0, streak: 0, best: 0, log: [], t0: Date.now(), t1: null, save: null };
+    return { fach: f, key: key || 'mix', satz: satz || 'blatt', task: null, checked: false, ok: null, val: '', n: 0, right: 0, streak: 0, best: 0, log: [], t0: null, t1: null, save: null };   // t0 = erste Eingabe (nicht das Öffnen)
   }
   function trDone(tr) {      // nach Prüfen oder „Lösung zeigen“: Aufgabe protokollieren und speichern
-    tr.t1 = Date.now(); tr.log.push({ label: tr.task.label, pts: tr.task.pts, ok: tr.ok });
+    tr.t1 = Date.now(); if (!tr.t0) tr.t0 = tr.t1;
+    tr.log.push({ label: tr.task.label, pts: tr.task.pts, ok: tr.ok, dein: tr.val, richtig: solShort(tr.task), q: plain(tr.task.prompt, 90), shown: !String(tr.val).trim() || tr.revealed });
     bsSave(tr, 'tr');
   }
   function viewTR(v) {
@@ -4727,7 +4728,7 @@ gs('Berufsausbildung', 4, (r) => {
       return out;
     };
     plan.gens.filter((k) => !topicOff(f, FACH[f].gens[k].topic)).forEach((k) => tasks.push(genTask(FACH[f].gens, k, r, { satz: 'blatt' })));
-    balanced(D.mc[f].filter(isOn(f)), plan.mc).map((m) => mcInst(m, r)).forEach((m) => tasks.push({ kind: 'mc', topic: m.t, pts: 1, prompt: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : r.shuffle(m.o.map((t, i) => ({ t, c: i === m.a }))), user: null }));
+    balanced(D.mc[f].filter(isOn(f)), plan.mc).map((m) => mcInst(m, r)).forEach((m) => tasks.push({ kind: 'mc', topic: m.t, lbl: m.lbl, pts: 1, prompt: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : r.shuffle(m.o.map((t, i) => ({ t, c: i === m.a }))), user: null }));
     balanced(D.self[f].filter(isOn(f)), plan.self).map((m) => selfInst(m, r)).forEach((m) => tasks.push({ kind: 'self', topic: m.t, pts: m.pts, prompt: m.q, model: m.m, user: '', rating: null }));
     tasks.forEach((t, i) => { t.n = i + 1; if (t.kind === 'input') t.user = ''; });
     return { phase: 'run', fach: f, preset, seed, name: plan.name, limit: plan.min, ask: null, tasks, total: tasks.reduce((a, t) => a + t.pts, 0), t0: Date.now(), timer: null };
@@ -4759,7 +4760,11 @@ gs('Berufsausbildung', 4, (r) => {
   // Quiz: Am Ende jedes Durchgangs (auch „Falsche Fragen wiederholen“) wird eine Zeile angelegt.
   // Rechentrainer: Eine Zeile pro Sitzung; die erste geprüfte Aufgabe legt sie an, jede weitere
   // aktualisiert sie. Wechsel von Aufgabentyp oder Beitragssätzen beginnt eine neue Sitzung.
+  // In „Anmerkungen“ steht am Ende die Liste der falsch beantworteten Aufgaben (Nr., Thema, Aufgabenart,
+  // deine Antwort, richtige Antwort); Freitext unter voller Punktzahl mit ◐. „Code Version“ = Stand der Website.
   // Der Token darf nur erstellen und aktualisieren.
+  // Code-Version: bei jeder Änderung an der Website hochzählen, wird in Baserow („Code Version“) mitgespeichert
+  const CODE_VERSION = 'v4 · 20.11.2026';
   const BASEROW = {
     url: 'https://api.baserow.io/api/database/rows/table/1332609/',
     token: 'hu1mpYN2Vg0rOs0b0W71VpQML1dGKocX'
@@ -4779,6 +4784,16 @@ gs('Berufsausbildung', 4, (r) => {
     const dauer = fmtT(Math.max(0, Math.round((ende - t0) / 1000)));
     return { dauer, zeit: `${p2(d.getDate())}.${p2(d.getMonth() + 1)}.${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())} · Dauer ${dauer} min` };
   }
+  // Lesbare Kurzform für die Fehlerliste: HTML entfernen, Code-Blöcke als [Code], gekürzt
+  function plain(h, max) {
+    const t = String(h == null ? '' : h).replace(/<pre[\s\S]*?<\/pre>/g, ' [Code] ').replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, ' ')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+    return max && t.length > max ? t.slice(0, max - 1) + '…' : t;
+  }
+  const solShort = (t) => plain(t.ans !== undefined ? t.ans : ((String(t.solution).match(/<b>([\s\S]*?)<\/b>/) || [0, t.solution])[1]), 80);
+  // eine Zeile je Fehler: Nr. · Thema · Aufgabenart · deine Antwort · richtig
+  const fehlerZeile = (nr, thema, art, dein, richtig) => `✗ ${nr ? 'Nr. ' + nr + ' · ' : ''}${thema}${art ? ' · ' + art : ''} · deine Antwort: „${dein}“ · richtig: „${richtig}“`;
+  function fehlerBlock(zeilen) { return zeilen.length ? [`Falsch beantwortet (${zeilen.length}):`].concat(zeilen) : ['Falsch beantwortet: keine']; }
   function themenText(list) {        // list: [{ topic, got, pts }]
     const th = {};
     list.forEach((x) => { const k = x.topic || 'ohne Thema', y = th[k] || (th[k] = { got: 0, pts: 0 }); y.got += x.got; y.pts += x.pts; });
@@ -4790,8 +4805,8 @@ gs('Berufsausbildung', 4, (r) => {
       `Quiz${q.retry ? ' · Wiederholung der falschen Fragen' : ''} · Thema: ${q.retry ? 'gemischt' : q.topic} · ${n} Frage${n === 1 ? '' : 'n'}`,
       `${q.right} / ${n} richtig · ${fmtNum(pct, 1)} % · Note ${g.text} (${g.name})`,
       'Themen: ' + themenText(q.list.map((m) => ({ topic: m.t, got: m.ok ? 1 : 0, pts: 1 })))
-    ];
-    return { Zeit: z.zeit, Anmerkungen: anm.join('\n'), Bestanden: g.n <= 4, IP: ip, Fach: FACH[q.fach].label };
+    ].concat(fehlerBlock(q.wrong.map((m) => fehlerZeile(q.list.indexOf(m) + 1, m.t, m.lbl || plain(m.q, 90), plain(m.dein, 60), plain(m.opts.filter((o) => o.c)[0].t, 60)))));
+    return { Zeit: z.zeit, Anmerkungen: anm.join('\n'), Bestanden: g.n <= 4, IP: ip, Fach: FACH[q.fach].label , 'Code Version': CODE_VERSION };
   }
   function trRow(tr, ip) {
     const f = tr.fach, gens = FACH[f].gens, pct = tr.n ? Math.round(1000 * tr.right / tr.n) / 10 : 0, g = schulnote(pct), z = zeitInfo(tr.t0, tr.t1);
@@ -4802,8 +4817,8 @@ gs('Berufsausbildung', 4, (r) => {
       `${tr.right} / ${tr.n} Aufgaben gelöst · ${fmtNum(pct, 1)} % · Note ${g.text} (${g.name})`,
       `${pGot} / ${pAll} Punkte (Gewichtung wie im Probetest) · beste Serie ${tr.best}`,
       'Aufgaben: ' + themenText(tr.log.map((x) => ({ topic: x.label, got: x.ok ? 1 : 0, pts: 1 })))
-    ];
-    return { Zeit: z.zeit, Anmerkungen: anm.join('\n'), Bestanden: g.n <= 4, IP: ip, Fach: FACH[f].label };
+    ].concat(fehlerBlock(tr.log.map((x, i) => (x.ok ? null : fehlerZeile(i + 1, x.label, '', x.shown ? 'Lösung angezeigt' : plain(x.dein, 60), x.richtig))).filter(Boolean)));
+    return { Zeit: z.zeit, Anmerkungen: anm.join('\n'), Bestanden: g.n <= 4, IP: ip, Fach: FACH[f].label , 'Code Version': CODE_VERSION };
   }
   function ptRow(pt, ip) {
     const sc = score(pt), pct = Math.round(1000 * sc.got / pt.total) / 10, g = schulnote(pct);
@@ -4820,13 +4835,19 @@ gs('Berufsausbildung', 4, (r) => {
       sc.open ? `Vorläufig: ${sc.open} Freitextaufgabe${sc.open > 1 ? 'n' : ''} noch nicht selbst bewertet` : 'Alle Freitextaufgaben bewertet',
       `Richtzeit ${pt.limit} min, gebraucht ${dauer} min`,
       'Themen: ' + Object.keys(themen).map((k) => `${k} ${themen[k].got}/${themen[k].pts}${themen[k].open ? ' (offen)' : ''}`).join(' · ')
-    ];
+    ].concat(fehlerBlock(pt.tasks.map((t) => {
+      if (t.kind === 'input') return evalTask(t) ? null : fehlerZeile(t.n, t.topic, t.label, String(t.user).trim() ? plain(t.user, 60) : 'keine Antwort', solShort(t));
+      if (t.kind === 'mc') return evalTask(t) ? null : fehlerZeile(t.n, t.topic, t.lbl || plain(t.prompt, 90), t.user === null ? 'keine Antwort' : plain(t.opts[t.user].t, 60), plain(t.opts.filter((o) => o.c)[0].t, 60));
+      if (t.rating !== null && t.rating < t.pts) return `◐ Nr. ${t.n} · ${t.topic} · Freitext: ${plain(t.prompt, 90)} · selbst bewertet ${t.rating}/${t.pts}`;
+      return null;
+    }).filter(Boolean)));
     return {
       Zeit: zeit,
       Anmerkungen: anm.join('\n'),
       Bestanden: g.n <= 4,
       IP: ip,
-      Fach: FACH[pt.fach].label
+      Fach: FACH[pt.fach].label,
+      'Code Version': CODE_VERSION
     };
   }
   // Je Übungsart: Zeilenaufbau, Element-ID der Statuszeile, Aktion für „Erneut versuchen“, aktuelles Objekt
@@ -4934,18 +4955,18 @@ gs('Berufsausbildung', 4, (r) => {
       case 'kkreset': { const kk = kkState(); D.cards[f].forEach((c) => { if (kk.topic === 'Alle' || c.t === kk.topic) kk.known.delete(c.q); }); kkSave(); kkBuild(); render(); return; }
       /* Quiz */
       case 'qzstart': { const q = s.qz; q.topic = $('#qz-topic').value; q.count = +$('#qz-count').value; qzStart(D.mc[f].filter(isOn(f)).filter((m) => q.topic === 'Alle' || m.t === q.topic), q.count); render(); return; }
-      case 'qzpick': { const q = s.qz; if (q.picked !== null) return; q.picked = +a.dataset.i; const m = q.list[q.i]; if (m.opts[q.picked].c) { q.right++; m.ok = true; } else q.wrong.push(m); render(); return; }
+      case 'qzpick': { const q = s.qz; if (q.picked !== null) return; q.picked = +a.dataset.i; const m = q.list[q.i]; m.dein = m.opts[q.picked].t; if (m.opts[q.picked].c) { q.right++; m.ok = true; } else q.wrong.push(m); render(); return; }
       case 'qznext': { const q = s.qz; if (q.i + 1 < q.list.length) { q.i++; q.picked = null; render(); } else { q.phase = 'done'; q.t1 = Date.now(); render(); bsSave(q, 'qz'); } window.scrollTo(0, 0); return; }
       case 'qzretry': { const q = s.qz, pool = q.wrong.map((m) => m.src); qzStart(pool, 0, true); render(); return; }
       case 'qzsave': if (s.qz && s.qz.phase === 'done') bsSave(s.qz, 'qz'); return;
       case 'qznew': s.qz.phase = 'setup'; render(); return;
       /* Trainer */
       case 'tcheck': { const tr = s.tr, val = $('#tin').value; if (!val.trim()) { $('#tin').focus(); return; } tr.val = val; tr.checked = true; tr.ok = !!tr.task.check(val); tr.n++; if (tr.ok) { tr.right++; tr.streak++; tr.best = Math.max(tr.best, tr.streak); } else tr.streak = 0; render(); trDone(tr); return; }
-      case 'treveal': { const tr = s.tr; tr.val = $('#tin').value; tr.checked = true; tr.ok = false; tr.n++; tr.streak = 0; render(); trDone(tr); return; }
+      case 'treveal': { const tr = s.tr; tr.revealed = true; tr.val = $('#tin').value; tr.checked = true; tr.ok = false; tr.n++; tr.streak = 0; render(); trDone(tr); return; }
       case 'trsave': if (s.tr && s.tr.n) bsSave(s.tr, 'tr'); return;
       case 'tnext': newTask(); render(); return;
       /* Probetest */
-      case 'pstart': { const raw = $('#ptseed') && $('#ptseed').value; const seed = raw && +raw > 0 ? Math.floor(+raw) : rndSeed(); stopTimer(s.pt); s.pt = buildTest(f, a.dataset.v, seed); s.pt.timer = setInterval(tick, 1000); render(); window.scrollTo(0, 0); return; }
+      case 'pstart': { const raw = $('#ptseed') && $('#ptseed').value; const seed = raw && +raw > 0 ? (Math.floor(+raw) % 2147483647 || 1) : rndSeed(); stopTimer(s.pt); s.pt = buildTest(f, a.dataset.v, seed); s.pt.timer = setInterval(tick, 1000); render(); window.scrollTo(0, 0); return; }
       case 'psubmit': s.pt.ask = 'submit'; render(); return;
       case 'pcancel': s.pt.ask = 'cancel'; render(); return;
       case 'pno': s.pt.ask = null; render(); return;
@@ -4961,6 +4982,7 @@ gs('Berufsausbildung', 4, (r) => {
     const t = e.target, pt = S[state.fach].pt;
     if (t.dataset && t.dataset.ti !== undefined && pt) pt.tasks[+t.dataset.ti].user = t.value;
     if (t.dataset && t.dataset.ts !== undefined && pt) pt.tasks[+t.dataset.ts].user = t.value;
+    if (t.id === 'tin') { const tr = S[state.fach].tr; if (tr && !tr.t0) tr.t0 = Date.now(); }   // Trainer-Dauer startet mit der ersten Eingabe
   }
   function onChange(e) {
     const t = e.target, f = state.fach, s = S[f];
