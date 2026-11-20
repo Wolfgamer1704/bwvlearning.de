@@ -4201,16 +4201,17 @@ D.self.deu = [
       return;
     }
     const pct = Math.round(100 * q.right / q.list.length);
-    v.innerHTML = `<div class="card result"><div class="big">${q.right} / ${q.list.length}</div><div class="note">${pct} % richtig</div></div>
+    v.innerHTML = `<div class="card result"><div class="big">${q.right} / ${q.list.length}</div><div class="note">${pct} % richtig</div><p class="muted" id="qzsave">${saveText(q, 'qz')}</p></div>
       ${q.wrong.length ? `<div class="card"><h3 style="margin-top:0">Das solltest du wiederholen</h3>${q.wrong.map((m) => `<div class="task no"><div class="meta">${esc(m.t)}</div><div class="q">${m.q}</div>
         <div class="sol"><b>Richtig:</b> ${m.opts.filter((o) => o.c)[0].t}<br>${m.w}</div></div>`).join('')}</div>` : '<div class="card">Keine Fehler, sehr gut.</div>'}
       <div class="row center">${q.wrong.length ? '<button class="btn" data-act="qzretry">Falsche Fragen wiederholen</button>' : ''}<button class="btn ghost" data-act="qznew">Neues Quiz</button></div>`;
   }
-  function qzStart(pool, count) {
-    const q = S[state.fach].qz;
+  function qzStart(pool, count, retry) {
+    // Neues Objekt je Durchgang, damit ein noch laufendes Speichern den alten Durchgang nicht vermischt
+    const old = S[state.fach].qz, q = S[state.fach].qz = { phase: 'run', topic: old.topic, count: old.count, fach: state.fach, retry: !!retry, t0: Date.now(), t1: null, save: null };
     let list = shuf(pool); if (count) list = list.slice(0, count);
-    q.list = list.map((m) => ({ t: m.t, q: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : shuf(m.o.map((t, i) => ({ t, c: i === m.a }))), src: m }));
-    q.i = 0; q.right = 0; q.wrong = []; q.picked = null; q.phase = 'run';
+    q.list = list.map((m) => ({ t: m.t, q: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : shuf(m.o.map((t, i) => ({ t, c: i === m.a }))), src: m, ok: false }));
+    q.i = 0; q.right = 0; q.wrong = []; q.picked = null;
   }
 
   /* ---------- Rechentrainer ---------- */
@@ -4220,15 +4221,24 @@ D.self.deu = [
     tr.task = genTask(FACH[f].gens, key, makeRng(Math.floor(Math.random() * 2147483647)), { satz: tr.satz || 'blatt' });
     tr.checked = false; tr.ok = null; tr.val = '';
   }
+  // Neue Trainer-Sitzung (eigene Baserow-Zeile); Aufgabentyp und Beitragssätze bleiben erhalten
+  function trNew(f, key, satz) {
+    return { fach: f, key: key || 'mix', satz: satz || 'blatt', task: null, checked: false, ok: null, val: '', n: 0, right: 0, streak: 0, best: 0, log: [], t0: Date.now(), t1: null, save: null };
+  }
+  function trDone(tr) {      // nach Prüfen oder „Lösung zeigen“: Aufgabe protokollieren und speichern
+    tr.t1 = Date.now(); tr.log.push({ label: tr.task.label, pts: tr.task.pts, ok: tr.ok });
+    bsSave(tr, 'tr');
+  }
   function viewTR(v) {
     const f = state.fach, s = S[f];
-    if (!s.tr) { s.tr = { key: 'mix', satz: 'blatt', task: null, checked: false, ok: null, val: '', n: 0, right: 0, streak: 0, best: 0 }; }
+    if (!s.tr) s.tr = trNew(f);
     const tr = s.tr; if (!tr.task) newTask();
     const gens = FACH[f].gens, t = tr.task;
     v.innerHTML = `<div class="card"><div class="row" style="margin-top:0"><label class="inl">Aufgabentyp
       <select id="tgen"><option value="mix" ${tr.key === 'mix' ? 'selected' : ''}>Gemischt</option>${Object.keys(gens).map((k) => `<option value="${k}" ${tr.key === k ? 'selected' : ''}>${gens[k].label}</option>`).join('')}</select></label>
       ${f === 'wub' ? `<label class="inl">Beitragssätze <select id="tsatz"><option value="blatt" ${tr.satz === 'blatt' ? 'selected' : ''}>Arbeitsblatt (Stand 2024)</option><option value="aktuell" ${tr.satz === 'aktuell' ? 'selected' : ''}>aktuell (2026)</option></select></label>` : ''}</div>
       <div class="stat" style="margin-top:12px"><span>Gelöst: <b>${tr.right} / ${tr.n}</b></span><span>Serie: <b>${tr.streak}</b></span><span>Beste Serie: <b>${tr.best}</b></span></div>
+      <p class="muted" id="trsave" style="margin:6px 0 0">${saveText(tr, 'tr')}</p>
       <div class="meta">${esc(t.label)} · ${t.pts} Punkte im Test</div><div class="q">${t.prompt}</div>
       <div class="row"><input type="text" class="big" id="tin" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(t.ph || '')}" value="${esc(tr.val)}" ${tr.checked ? 'readonly' : ''} aria-label="Deine Antwort"></div>
       ${tr.checked ? `<div class="fb ${tr.ok ? 'ok' : 'no'}"><b>${tr.ok ? 'Richtig.' : 'Leider falsch.'}</b><div class="sol" style="margin-top:8px">${t.solution}</div></div>
@@ -4273,9 +4283,13 @@ D.self.deu = [
     return { got, open };
   }
 
-  /* ---------- Probetest-Ergebnisse in Baserow speichern ---------- */
-  // Nach jeder Abgabe wird eine Zeile angelegt (POST). Jede spätere Selbstbewertung
-  // aktualisiert dieselbe Zeile (PATCH). Der Token darf nur erstellen und aktualisieren.
+  /* ---------- Ergebnisse in Baserow speichern (Probetest, Quiz, Rechentrainer) ---------- */
+  // Alles, was Punkte berechnet, landet in derselben Tabelle; Feld „Anmerkungen“ nennt die Übungsart.
+  // Probetest: Abgabe legt eine Zeile an (POST), jede spätere Selbstbewertung aktualisiert sie (PATCH).
+  // Quiz: Am Ende jedes Durchgangs (auch „Falsche Fragen wiederholen“) wird eine Zeile angelegt.
+  // Rechentrainer: Eine Zeile pro Sitzung; die erste geprüfte Aufgabe legt sie an, jede weitere
+  // aktualisiert sie. Wechsel von Aufgabentyp oder Beitragssätzen beginnt eine neue Sitzung.
+  // Der Token darf nur erstellen und aktualisieren.
   const BASEROW = {
     url: 'https://api.baserow.io/api/database/rows/table/1332609/',
     token: 'hu1mpYN2Vg0rOs0b0W71VpQML1dGKocX'
@@ -4290,10 +4304,40 @@ D.self.deu = [
     }
     return ipPromise;
   }
+  function zeitInfo(t0, t1) {
+    const ende = t1 || Date.now(), d = new Date(ende), p2 = (n) => String(n).padStart(2, '0');
+    const dauer = fmtT(Math.max(0, Math.round((ende - t0) / 1000)));
+    return { dauer, zeit: `${p2(d.getDate())}.${p2(d.getMonth() + 1)}.${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())} · Dauer ${dauer} min` };
+  }
+  function themenText(list) {        // list: [{ topic, got, pts }]
+    const th = {};
+    list.forEach((x) => { const k = x.topic || 'ohne Thema', y = th[k] || (th[k] = { got: 0, pts: 0 }); y.got += x.got; y.pts += x.pts; });
+    return Object.keys(th).map((k) => `${k} ${th[k].got}/${th[k].pts}`).join(' · ');
+  }
+  function qzRow(q, ip) {
+    const n = q.list.length, pct = Math.round(1000 * q.right / n) / 10, g = schulnote(pct), z = zeitInfo(q.t0, q.t1);
+    const anm = [
+      `Quiz${q.retry ? ' · Wiederholung der falschen Fragen' : ''} · Thema: ${q.retry ? 'gemischt' : q.topic} · ${n} Frage${n === 1 ? '' : 'n'}`,
+      `${q.right} / ${n} richtig · ${fmtNum(pct, 1)} % · Note ${g.text} (${g.name})`,
+      'Themen: ' + themenText(q.list.map((m) => ({ topic: m.t, got: m.ok ? 1 : 0, pts: 1 })))
+    ];
+    return { Zeit: z.zeit, Anmerkungen: anm.join('\n'), Bestanden: g.n <= 4, IP: ip, Fach: FACH[q.fach].label };
+  }
+  function trRow(tr, ip) {
+    const f = tr.fach, gens = FACH[f].gens, pct = tr.n ? Math.round(1000 * tr.right / tr.n) / 10 : 0, g = schulnote(pct), z = zeitInfo(tr.t0, tr.t1);
+    const pGot = tr.log.reduce((a, x) => a + (x.ok ? x.pts : 0), 0), pAll = tr.log.reduce((a, x) => a + x.pts, 0);
+    const name = f === 'sud' ? 'Code-Trainer' : f === 'deu' ? 'Übungstrainer' : 'Rechentrainer';
+    const anm = [
+      `${name} · Aufgabentyp: ${tr.key === 'mix' ? 'Gemischt' : gens[tr.key].label}${f === 'wub' ? ` · Beitragssätze: ${tr.satz === 'aktuell' ? 'aktuell (2026)' : 'Arbeitsblatt (Stand 2024)'}` : ''}`,
+      `${tr.right} / ${tr.n} Aufgaben gelöst · ${fmtNum(pct, 1)} % · Note ${g.text} (${g.name})`,
+      `${pGot} / ${pAll} Punkte (Gewichtung wie im Probetest) · beste Serie ${tr.best}`,
+      'Aufgaben: ' + themenText(tr.log.map((x) => ({ topic: x.label, got: x.ok ? 1 : 0, pts: 1 })))
+    ];
+    return { Zeit: z.zeit, Anmerkungen: anm.join('\n'), Bestanden: g.n <= 4, IP: ip, Fach: FACH[f].label };
+  }
   function ptRow(pt, ip) {
     const sc = score(pt), pct = Math.round(1000 * sc.got / pt.total) / 10, g = schulnote(pct);
-    const ende = pt.t1 || Date.now(), d = new Date(ende), p2 = (n) => String(n).padStart(2, '0');
-    const dauer = fmtT(Math.max(0, Math.round((ende - pt.t0) / 1000)));
+    const { zeit, dauer } = zeitInfo(pt.t0, pt.t1);
     const themen = {};
     pt.tasks.forEach((t) => {
       const x = themen[t.topic || 'ohne Thema'] || (themen[t.topic || 'ohne Thema'] = { got: 0, pts: 0, open: 0 });
@@ -4301,34 +4345,42 @@ D.self.deu = [
       if (t.kind === 'self') { if (t.rating === null) x.open++; else x.got += t.rating; } else if (evalTask(t)) x.got += t.pts;
     });
     const anm = [
-      `${pt.name} · Test-Nr. ${pt.seed}`,
+      `Probetest · ${pt.name} · Test-Nr. ${pt.seed}`,
       `${sc.got} / ${pt.total} Punkte · ${fmtNum(pct, 1)} % · Note ${g.text} (${g.name})`,
       sc.open ? `Vorläufig: ${sc.open} Freitextaufgabe${sc.open > 1 ? 'n' : ''} noch nicht selbst bewertet` : 'Alle Freitextaufgaben bewertet',
       `Richtzeit ${pt.limit} min, gebraucht ${dauer} min`,
       'Themen: ' + Object.keys(themen).map((k) => `${k} ${themen[k].got}/${themen[k].pts}${themen[k].open ? ' (offen)' : ''}`).join(' · ')
     ];
     return {
-      Zeit: `${p2(d.getDate())}.${p2(d.getMonth() + 1)}.${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())} · Dauer ${dauer} min`,
+      Zeit: zeit,
       Anmerkungen: anm.join('\n'),
       Bestanden: g.n <= 4,
       IP: ip,
       Fach: FACH[pt.fach].label
     };
   }
-  function saveText(pt) {
-    const sv = pt.save;
-    if (!sv || sv.status === 'busy') return 'Ergebnis wird gespeichert …';
-    if (sv.status === 'ok') return sv.id ? 'Ergebnis gespeichert.' : 'Ergebnis gespeichert. Spätere Bewertungen können nicht nachgetragen werden (keine Zeilen-ID erhalten).';
-    return `Speichern fehlgeschlagen (${esc(sv.err)}). <button class="btn small ghost" data-act="psave">Erneut versuchen</button>`;
+  // Je Übungsart: Zeilenaufbau, Element-ID der Statuszeile, Aktion für „Erneut versuchen“, aktuelles Objekt
+  const SAVE = {
+    pt: { row: ptRow, el: 'ptsave', act: 'psave', cur: () => S[state.fach].pt },
+    qz: { row: qzRow, el: 'qzsave', act: 'qzsave', cur: () => S[state.fach].qz },
+    tr: { row: trRow, el: 'trsave', act: 'trsave', cur: () => S[state.fach].tr }
+  };
+  function saveText(o, art) {
+    const sv = o.save;
+    if (!sv) return art === 'tr' ? 'Wird nach der ersten geprüften Aufgabe gespeichert.' : 'Ergebnis wird gespeichert …';
+    if (sv.status === 'busy') return 'Ergebnis wird gespeichert …';
+    if (sv.status === 'ok') return sv.id ? 'Ergebnis gespeichert.' : 'Ergebnis gespeichert. Spätere Änderungen können nicht nachgetragen werden (keine Zeilen-ID erhalten).';
+    return `Speichern fehlgeschlagen (${esc(sv.err)}). <button class="btn small ghost" data-act="${SAVE[art].act}">Erneut versuchen</button>`;
   }
-  function showSave(pt) { const el = document.getElementById('ptsave'); if (el && S[state.fach].pt === pt) el.innerHTML = saveText(pt); }
-  async function ptSave(pt) {
-    const sv = pt.save || (pt.save = { id: null, busy: false, again: false, status: 'busy', err: '' });
+  function showSave(o, art) { const el = document.getElementById(SAVE[art].el); if (el && SAVE[art].cur() === o) el.innerHTML = saveText(o, art); }
+  const ptSave = (pt) => bsSave(pt, 'pt');
+  async function bsSave(o, art) {
+    const sv = o.save || (o.save = { id: null, busy: false, again: false, status: 'busy', err: '' });
     if (sv.busy) { sv.again = true; return; }          // läuft schon: danach noch einmal mit dem neuesten Stand
     if (sv.status === 'ok' && !sv.id && sv.sent) return;  // ohne ID kein Aktualisieren möglich
-    sv.busy = true; sv.status = 'busy'; showSave(pt);
+    sv.busy = true; sv.status = 'busy'; showSave(o, art);
     try {
-      const body = JSON.stringify(ptRow(pt, await getIP()));
+      const body = JSON.stringify(SAVE[art].row(o, await getIP()));
       const neu = !sv.id;
       const res = await fetch(BASEROW.url + (neu ? '' : sv.id + '/') + '?user_field_names=true', {
         method: neu ? 'POST' : 'PATCH',
@@ -4342,8 +4394,8 @@ D.self.deu = [
       sv.status = 'fehler'; sv.err = String((e && e.message) || e);
     }
     sv.busy = false;
-    if (sv.again) { sv.again = false; return ptSave(pt); }
-    showSave(pt);
+    if (sv.again) { sv.again = false; return bsSave(o, art); }
+    showSave(o, art);
   }
   function taskHTML(t, done) {
     const head = `<h5>Aufgabe ${t.n} · ${esc(t.topic)} · ${t.pts} Punkt${t.pts > 1 ? 'e' : ''}</h5>`;
@@ -4391,7 +4443,7 @@ D.self.deu = [
     const sc = score(pt), pct = Math.round(1000 * sc.got / pt.total) / 10, g = schulnote(pct);
     v.innerHTML = `<div class="card result"><div class="big">${sc.got} / ${pt.total} Punkte</div><div class="note">${fmtNum(pct, 1)} % · Note <b>${g.text}</b> (${g.name})</div>
       ${sc.open ? `<p class="muted">Vorläufig: ${sc.open} Freitextaufgabe${sc.open > 1 ? 'n sind' : ' ist'} noch nicht bewertet.</p>` : ''}
-      <p class="muted" id="ptsave">${saveText(pt)}</p>
+      <p class="muted" id="ptsave">${saveText(pt, 'pt')}</p>
       <div class="row center"><button class="btn" data-act="pnew">Neuer Probetest</button><button class="btn ghost" data-act="pagain">Gleichen Test wiederholen (Nr. ${pt.seed})</button></div></div>${body}`;
   }
 
@@ -4412,13 +4464,15 @@ D.self.deu = [
       case 'kkreset': { const kk = kkState(); D.cards[f].forEach((c) => { if (kk.topic === 'Alle' || c.t === kk.topic) kk.known.delete(c.q); }); kkSave(); kkBuild(); render(); return; }
       /* Quiz */
       case 'qzstart': { const q = s.qz; q.topic = $('#qz-topic').value; q.count = +$('#qz-count').value; qzStart(D.mc[f].filter((m) => q.topic === 'Alle' || m.t === q.topic), q.count); render(); return; }
-      case 'qzpick': { const q = s.qz; if (q.picked !== null) return; q.picked = +a.dataset.i; const m = q.list[q.i]; if (m.opts[q.picked].c) q.right++; else q.wrong.push(m); render(); return; }
-      case 'qznext': { const q = s.qz; if (q.i + 1 < q.list.length) { q.i++; q.picked = null; } else q.phase = 'done'; render(); window.scrollTo(0, 0); return; }
-      case 'qzretry': { const q = s.qz, pool = q.wrong.map((m) => m.src); qzStart(pool, 0); render(); return; }
+      case 'qzpick': { const q = s.qz; if (q.picked !== null) return; q.picked = +a.dataset.i; const m = q.list[q.i]; if (m.opts[q.picked].c) { q.right++; m.ok = true; } else q.wrong.push(m); render(); return; }
+      case 'qznext': { const q = s.qz; if (q.i + 1 < q.list.length) { q.i++; q.picked = null; render(); } else { q.phase = 'done'; q.t1 = Date.now(); render(); bsSave(q, 'qz'); } window.scrollTo(0, 0); return; }
+      case 'qzretry': { const q = s.qz, pool = q.wrong.map((m) => m.src); qzStart(pool, 0, true); render(); return; }
+      case 'qzsave': if (s.qz && s.qz.phase === 'done') bsSave(s.qz, 'qz'); return;
       case 'qznew': s.qz.phase = 'setup'; render(); return;
       /* Trainer */
-      case 'tcheck': { const tr = s.tr, val = $('#tin').value; if (!val.trim()) { $('#tin').focus(); return; } tr.val = val; tr.checked = true; tr.ok = !!tr.task.check(val); tr.n++; if (tr.ok) { tr.right++; tr.streak++; tr.best = Math.max(tr.best, tr.streak); } else tr.streak = 0; render(); return; }
-      case 'treveal': { const tr = s.tr; tr.val = $('#tin').value; tr.checked = true; tr.ok = false; tr.n++; tr.streak = 0; render(); return; }
+      case 'tcheck': { const tr = s.tr, val = $('#tin').value; if (!val.trim()) { $('#tin').focus(); return; } tr.val = val; tr.checked = true; tr.ok = !!tr.task.check(val); tr.n++; if (tr.ok) { tr.right++; tr.streak++; tr.best = Math.max(tr.best, tr.streak); } else tr.streak = 0; render(); trDone(tr); return; }
+      case 'treveal': { const tr = s.tr; tr.val = $('#tin').value; tr.checked = true; tr.ok = false; tr.n++; tr.streak = 0; render(); trDone(tr); return; }
+      case 'trsave': if (s.tr && s.tr.n) bsSave(s.tr, 'tr'); return;
       case 'tnext': newTask(); render(); return;
       /* Probetest */
       case 'pstart': { const raw = $('#ptseed') && $('#ptseed').value; const seed = raw && +raw > 0 ? Math.floor(+raw) : rndSeed(); stopTimer(s.pt); s.pt = buildTest(f, a.dataset.v, seed); s.pt.timer = setInterval(tick, 1000); render(); window.scrollTo(0, 0); return; }
@@ -4440,8 +4494,9 @@ D.self.deu = [
   }
   function onChange(e) {
     const t = e.target, f = state.fach, s = S[f];
-    if (t.id === 'tgen') { s.tr.key = t.value; newTask(); render(); }
-    if (t.id === 'tsatz') { s.tr.satz = t.value; newTask(); render(); }
+    // Typwechsel beginnt eine neue Sitzung (Zähler auf 0, neue Baserow-Zeile), außer es wurde noch nichts geprüft
+    if (t.id === 'tgen') { if (s.tr.n) s.tr = trNew(f, s.tr.key, s.tr.satz); s.tr.key = t.value; newTask(); render(); }
+    if (t.id === 'tsatz') { if (s.tr.n) s.tr = trNew(f, s.tr.key, s.tr.satz); s.tr.satz = t.value; newTask(); render(); }
     if (t.dataset && t.dataset.tm !== undefined && s.pt) s.pt.tasks[+t.dataset.tm].user = +t.value;
   }
   function onKey(e) {
