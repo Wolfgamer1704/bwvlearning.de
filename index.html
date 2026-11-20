@@ -52,6 +52,9 @@ header.top p { margin: 2px 0 0; color: var(--muted); font-size: .9rem; }
 .tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
 .tabs button { flex: 0 0 auto; border: 0; background: transparent; color: var(--muted); font: inherit; font-weight: 600; padding: 9px 14px; border-radius: 10px 10px 0 0; cursor: pointer; border-bottom: 3px solid transparent; }
 .tabs button.on { color: var(--accent); border-bottom-color: var(--accent); }
+.topicbar { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: -6px 0 14px; font-size: .92rem; color: var(--muted); }
+.topicbar:empty { display: none; }
+.topicbar label { color: var(--text); cursor: pointer; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
 details.sec { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; }
 details.sec > summary { cursor: pointer; padding: 14px 16px; font-weight: 700; font-size: 1.05rem; list-style: none; }
@@ -164,6 +167,7 @@ footer.foot { color: var(--muted); font-size: .84rem; margin-top: 26px; text-ali
   </header>
   <div class="faches" id="faches"></div>
   <div class="tabs" id="tabs"></div>
+  <div class="topicbar" id="topicbar"></div>
   <main id="view"></main>
   <footer class="foot">Alle Zahlen zur Sozialversicherung und Steuer: Stand 2026, online geprüft. Java-Beispiele und -Aufgaben (SUD): mit Java 21 ausgeführt und geprüft. Deutsch: Inhalte aus der Unterrichtsbesprechung vom 9. November 2026 (automatische Zusammenfassung, bitte mit den Folien abgleichen). Das Material deiner Lehrkraft hat im Zweifel Vorrang.</footer>
 </div>
@@ -3928,6 +3932,23 @@ D.self.deu = [
   };
   const state = { fach: 'evp', tab: 'lern' };
   const S = { evp: {}, wub: {}, sud: {}, deu: {} };
+
+  /* ---------- Abschaltbare Themen ---------- */
+  // Themen, die per Haken ein- und ausgeschaltet werden können (Standard: aus).
+  // Ein ausgeschaltetes Thema fehlt in Karteikarten, Quiz, Trainer und Probetest; die Lernhilfe bleibt vollständig.
+  const OPTIONAL = { sud: ['Sortieren', 'Rekursion & Quicksort'] };
+  const topicsOn = store.get('themen-an', {});
+  const topicOff = (f, t) => (OPTIONAL[f] || []).indexOf(t) >= 0 && (topicsOn[f] || []).indexOf(t) < 0;
+  const isOn = (f) => (x) => !topicOff(f, x.t);                       // für Karten, MC- und Freitextfragen
+  const gensOn = (f) => Object.keys(FACH[f].gens).filter((k) => !topicOff(f, FACH[f].gens[k].topic));
+  function setTopic(f, t, on) {
+    const list = (topicsOn[f] || []).filter((x) => x !== t); if (on) list.push(t);
+    topicsOn[f] = list; store.set('themen-an', topicsOn);
+    const s = S[f];
+    if (s.kk) { if (topicOff(f, s.kk.topic)) s.kk.topic = 'Alle'; s.kk.queue = null; }      // Karten neu mischen
+    if (s.qz && s.qz.phase === 'setup' && topicOff(f, s.qz.topic)) s.qz.topic = 'Alle';
+    if (s.tr) { if (s.tr.key !== 'mix' && topicOff(f, FACH[f].gens[s.tr.key].topic)) s.tr.key = 'mix'; if (!s.tr.checked && s.tr.task && topicOff(f, s.tr.task.topic)) s.tr.task = null; }
+  }
   const view = () => $('#view');
 
   /* ---------- Rahmen ---------- */
@@ -3935,6 +3956,9 @@ D.self.deu = [
     $('#faches').innerHTML = Object.keys(FACH).map((k) =>
       `<button class="fach ${state.fach === k ? 'on' : ''}" data-act="fach" data-v="${k}"><b>${FACH[k].label}</b><span>${FACH[k].sub}</span></button>`).join('');
     $('#tabs').innerHTML = TABS.map(([k, n]) => `<button class="${state.tab === k ? 'on' : ''}" data-act="tab" data-v="${k}">${k === 'tr' && state.fach === 'sud' ? 'Code-Trainer' : k === 'tr' && state.fach === 'deu' ? 'Übungstrainer' : n}</button>`).join('');
+    const opt = state.tab === 'lern' ? [] : (OPTIONAL[state.fach] || []);
+    $('#topicbar').innerHTML = opt.length ? '<span>Themen einbeziehen:</span>' + opt.map((t) =>
+      `<label class="inl"><input type="checkbox" data-topic="${esc(t)}" ${topicOff(state.fach, t) ? '' : 'checked'}> ${esc(t)}</label>`).join('') : '';
   }
   function render() {
     drawFrame();
@@ -4149,11 +4173,11 @@ D.self.deu = [
   }
   function kkBuild() {
     const kk = kkState(), cards = D.cards[state.fach];
-    const idx = cards.map((c, i) => i).filter((i) => (kk.topic === 'Alle' || cards[i].t === kk.topic) && !kk.known.has(cards[i].q));
+    const idx = cards.map((c, i) => i).filter((i) => !topicOff(state.fach, cards[i].t) && (kk.topic === 'Alle' || cards[i].t === kk.topic) && !kk.known.has(cards[i].q));
     kk.queue = shuf(idx); kk.flip = false;
   }
   function viewKK(v) {
-    const kk = kkState(), cards = D.cards[state.fach];
+    const kk = kkState(), cards = D.cards[state.fach].filter(isOn(state.fach));
     if (!kk.queue) kkBuild();
     const topics = ['Alle'].concat(uniq(cards.map((c) => c.t)));
     const inTopic = cards.filter((c) => kk.topic === 'Alle' || c.t === kk.topic), knownN = inTopic.filter((c) => kk.known.has(c.q)).length;
@@ -4182,10 +4206,10 @@ D.self.deu = [
   function viewQZ(v) {
     const f = state.fach, s = S[f];
     if (!s.qz) s.qz = { phase: 'setup', topic: 'Alle', count: 10 };
-    const q = s.qz, topics = ['Alle'].concat(uniq(D.mc[f].map((m) => m.t)));
+    const q = s.qz, pool = D.mc[f].filter(isOn(f)), topics = ['Alle'].concat(uniq(pool.map((m) => m.t)));
     if (q.phase === 'setup') {
       v.innerHTML = `<div class="card"><h3 style="margin-top:0">Quiz starten</h3>
-        <p class="muted">Multiple Choice mit sofortiger Rückmeldung. ${D.mc[f].length} Fragen im Pool.</p>
+        <p class="muted">Multiple Choice mit sofortiger Rückmeldung. ${pool.length} Fragen im Pool.</p>
         <div class="row"><label class="inl">Thema <select id="qz-topic">${topics.map((t) => `<option ${t === q.topic ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
         <label class="inl">Anzahl <select id="qz-count">${[10, 20, 0].map((n) => `<option value="${n}" ${n === q.count ? 'selected' : ''}>${n || 'alle'}</option>`).join('')}</select></label></div>
         <div class="row"><button class="btn" data-act="qzstart">Los geht’s</button></div></div>`;
@@ -4216,7 +4240,7 @@ D.self.deu = [
 
   /* ---------- Rechentrainer ---------- */
   function newTask() {
-    const f = state.fach, tr = S[f].tr, keys = Object.keys(FACH[f].gens);
+    const f = state.fach, tr = S[f].tr, keys = gensOn(f);
     const key = tr.key === 'mix' ? keys[Math.floor(Math.random() * keys.length)] : tr.key;
     tr.task = genTask(FACH[f].gens, key, makeRng(Math.floor(Math.random() * 2147483647)), { satz: tr.satz || 'blatt' });
     tr.checked = false; tr.ok = null; tr.val = '';
@@ -4235,7 +4259,7 @@ D.self.deu = [
     const tr = s.tr; if (!tr.task) newTask();
     const gens = FACH[f].gens, t = tr.task;
     v.innerHTML = `<div class="card"><div class="row" style="margin-top:0"><label class="inl">Aufgabentyp
-      <select id="tgen"><option value="mix" ${tr.key === 'mix' ? 'selected' : ''}>Gemischt</option>${Object.keys(gens).map((k) => `<option value="${k}" ${tr.key === k ? 'selected' : ''}>${gens[k].label}</option>`).join('')}</select></label>
+      <select id="tgen"><option value="mix" ${tr.key === 'mix' ? 'selected' : ''}>Gemischt</option>${gensOn(f).map((k) => `<option value="${k}" ${tr.key === k ? 'selected' : ''}>${gens[k].label}</option>`).join('')}</select></label>
       ${f === 'wub' ? `<label class="inl">Beitragssätze <select id="tsatz"><option value="blatt" ${tr.satz === 'blatt' ? 'selected' : ''}>Arbeitsblatt (Stand 2024)</option><option value="aktuell" ${tr.satz === 'aktuell' ? 'selected' : ''}>aktuell (2026)</option></select></label>` : ''}</div>
       <div class="stat" style="margin-top:12px"><span>Gelöst: <b>${tr.right} / ${tr.n}</b></span><span>Serie: <b>${tr.streak}</b></span><span>Beste Serie: <b>${tr.best}</b></span></div>
       <p class="muted" id="trsave" style="margin:6px 0 0">${saveText(tr, 'tr')}</p>
@@ -4256,9 +4280,9 @@ D.self.deu = [
       for (let round = 0; out.length < n && round < 1000; round++) { let any = false; keys.forEach((k) => { if (out.length < n && groups[k][round]) { out.push(groups[k][round]); any = true; } }); if (!any) break; }
       return out;
     };
-    plan.gens.forEach((k) => tasks.push(genTask(FACH[f].gens, k, r, { satz: 'blatt' })));
-    balanced(D.mc[f], plan.mc).forEach((m) => tasks.push({ kind: 'mc', topic: m.t, pts: 1, prompt: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : r.shuffle(m.o.map((t, i) => ({ t, c: i === m.a }))), user: null }));
-    balanced(D.self[f], plan.self).forEach((m) => tasks.push({ kind: 'self', topic: m.t, pts: m.pts, prompt: m.q, model: m.m, user: '', rating: null }));
+    plan.gens.filter((k) => !topicOff(f, FACH[f].gens[k].topic)).forEach((k) => tasks.push(genTask(FACH[f].gens, k, r, { satz: 'blatt' })));
+    balanced(D.mc[f].filter(isOn(f)), plan.mc).forEach((m) => tasks.push({ kind: 'mc', topic: m.t, pts: 1, prompt: m.q, w: m.w, opts: m.fix ? m.o.map((t, i) => ({ t, c: i === m.a })) : r.shuffle(m.o.map((t, i) => ({ t, c: i === m.a }))), user: null }));
+    balanced(D.self[f].filter(isOn(f)), plan.self).forEach((m) => tasks.push({ kind: 'self', topic: m.t, pts: m.pts, prompt: m.q, model: m.m, user: '', rating: null }));
     tasks.forEach((t, i) => { t.n = i + 1; if (t.kind === 'input') t.user = ''; });
     return { phase: 'run', fach: f, preset, seed, name: plan.name, limit: plan.min, ask: null, tasks, total: tasks.reduce((a, t) => a + t.pts, 0), t0: Date.now(), timer: null };
   }
@@ -4427,7 +4451,7 @@ D.self.deu = [
     if (!pt || pt.phase === 'setup') {
       v.innerHTML = `<div class="card"><h3 style="margin-top:0">Probetest für ${FACH[f].label}</h3>
         <p class="muted">Aufgaben mit zufälligen Zahlen, Multiple Choice und Freitext wie in einer Klassenarbeit. Rechenaufgaben werden automatisch geprüft, Freitext bewertest du anhand der Musterlösung selbst. Die Note folgt dem Schlüssel 92/81/67/50/30 %.</p>
-        <div class="choice">${['kurz', 'voll'].map((k) => { const p = PLAN[f][k]; const n = p.gens.length + p.mc + p.self; return `<button class="btnc" data-act="pstart" data-v="${k}"><b>${p.name}</b><span>${n} Aufgaben · Richtzeit ${p.min} Minuten</span></button>`; }).join('')}</div>
+        <div class="choice">${['kurz', 'voll'].map((k) => { const p = PLAN[f][k]; const n = p.gens.filter((g) => !topicOff(f, FACH[f].gens[g].topic)).length + p.mc + p.self; return `<button class="btnc" data-act="pstart" data-v="${k}"><b>${p.name}</b><span>${n} Aufgaben · Richtzeit ${p.min} Minuten</span></button>`; }).join('')}</div>
         <div class="row"><label class="inl">Test-Nr. (optional, gleiche Nr. = gleicher Test) <input type="number" id="ptseed" placeholder="z. B. 123456" min="1" style="width:170px"></label></div></div>`;
       return;
     }
@@ -4463,7 +4487,7 @@ D.self.deu = [
       case 'kkshuf': kkBuild(); render(); return;
       case 'kkreset': { const kk = kkState(); D.cards[f].forEach((c) => { if (kk.topic === 'Alle' || c.t === kk.topic) kk.known.delete(c.q); }); kkSave(); kkBuild(); render(); return; }
       /* Quiz */
-      case 'qzstart': { const q = s.qz; q.topic = $('#qz-topic').value; q.count = +$('#qz-count').value; qzStart(D.mc[f].filter((m) => q.topic === 'Alle' || m.t === q.topic), q.count); render(); return; }
+      case 'qzstart': { const q = s.qz; q.topic = $('#qz-topic').value; q.count = +$('#qz-count').value; qzStart(D.mc[f].filter(isOn(f)).filter((m) => q.topic === 'Alle' || m.t === q.topic), q.count); render(); return; }
       case 'qzpick': { const q = s.qz; if (q.picked !== null) return; q.picked = +a.dataset.i; const m = q.list[q.i]; if (m.opts[q.picked].c) { q.right++; m.ok = true; } else q.wrong.push(m); render(); return; }
       case 'qznext': { const q = s.qz; if (q.i + 1 < q.list.length) { q.i++; q.picked = null; render(); } else { q.phase = 'done'; q.t1 = Date.now(); render(); bsSave(q, 'qz'); } window.scrollTo(0, 0); return; }
       case 'qzretry': { const q = s.qz, pool = q.wrong.map((m) => m.src); qzStart(pool, 0, true); render(); return; }
@@ -4495,6 +4519,7 @@ D.self.deu = [
   function onChange(e) {
     const t = e.target, f = state.fach, s = S[f];
     // Typwechsel beginnt eine neue Sitzung (Zähler auf 0, neue Baserow-Zeile), außer es wurde noch nichts geprüft
+    if (t.dataset && t.dataset.topic !== undefined) { setTopic(f, t.dataset.topic, t.checked); render(); return; }
     if (t.id === 'tgen') { if (s.tr.n) s.tr = trNew(f, s.tr.key, s.tr.satz); s.tr.key = t.value; newTask(); render(); }
     if (t.id === 'tsatz') { if (s.tr.n) s.tr = trNew(f, s.tr.key, s.tr.satz); s.tr.satz = t.value; newTask(); render(); }
     if (t.dataset && t.dataset.tm !== undefined && s.pt) s.pt.tasks[+t.dataset.tm].user = +t.value;
